@@ -47353,7 +47353,7 @@ set_and_render = function() {
 
 window.onload = function() {
   set_and_render();
-  return window.onresize(debounce(set_and_render, 100, false));
+  return window.onresize = debounce(set_and_render, 100, false);
 };
 
 
@@ -47631,6 +47631,13 @@ arq = {};
 
 concord_channel = {};
 
+concord_channel['lookup_resp'] = function(arg) {
+  var action, data, state;
+  state = arg.state, action = arg.action, data = arg.data;
+  c('state hello ?', data);
+  return state.setIn(['match'], data.payload);
+};
+
 keys_concord_channel = keys(concord_channel);
 
 arq['primus:data'] = function(arg) {
@@ -47638,6 +47645,8 @@ arq['primus:data'] = function(arg) {
   state = arg.state, action = arg.action;
   data = action.payload.data;
   ref = action.payload.data, type = ref.type, payload = ref.payload;
+  c(state, action, '393939');
+  c(action.payload.data, payload.data);
   if (includes(keys_concord_channel, type)) {
     return concord_channel[type]({
       state: state,
@@ -47647,6 +47656,15 @@ arq['primus:data'] = function(arg) {
   } else {
     return state;
   }
+};
+
+arq['lookup_prefix'] = function(arg) {
+  var action, state;
+  state = arg.state, action = arg.action;
+  return state.setIn(['desires', shortid()], {
+    type: 'lookup_prefix',
+    payload: action.payload
+  });
 };
 
 keys_arq = keys(arq);
@@ -47678,16 +47696,11 @@ exports["default"] = {
     desires: Imm.Map((
       obj = {},
       obj["" + (shortid())] = {
-        type: 'init_keyboard',
-        payload: 'asnetuhnn'
-      },
-      obj["" + (shortid())] = {
         type: 'init_primus'
       },
       obj
     )),
-    chat_log: Imm.List([]),
-    username: 'placholder username'
+    match: ''
   }
 };
 
@@ -47738,6 +47751,17 @@ exports["default"] = side_effects_f;
 var arq;
 
 arq = {};
+
+arq['lookup_prefix'] = function(arg) {
+  var desire, payload, store;
+  desire = arg.desire, store = arg.store;
+  payload = desire.payload;
+  return primus.write({
+    type: 'lookup_prefix',
+    payload: payload,
+    lookup: true
+  });
+};
 
 arq['init_primus'] = function(arg) {
   var desire, store;
@@ -47795,7 +47819,35 @@ var comp, map_dispatch_to_props, map_state_to_props;
 
 comp = rr({
   render: function() {
-    return div(null, "hello");
+    c(this.props.match, '@props.match');
+    return div({
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: 'ivory',
+        height: '100%'
+      }
+    }, input({
+      type: 'text',
+      onChange: (function(_this) {
+        return function(e) {
+          c('e', e.currentTarget.value);
+          return _this.props.lookup_prefix({
+            payload: {
+              prefix_text: e.currentTarget.value
+            }
+          });
+        };
+      })(this),
+      placeholder: 'prefix'
+    }), h3({
+      style: {
+        fontSize: 14,
+        color: 'grey'
+      }
+    }, (this.props.match === 'Not found.') || (this.props.match === '') ? this.props.match : this.props.match.match_word));
   }
 });
 
@@ -47805,6 +47857,14 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
+    lookup_prefix: function(arg) {
+      var payload;
+      payload = arg.payload;
+      return dispatch({
+        type: 'lookup_prefix',
+        payload: payload
+      });
+    },
     placeholder: function(arg) {
       var payload;
       payload = arg.payload;

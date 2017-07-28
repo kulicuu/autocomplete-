@@ -17,8 +17,17 @@ arq = {}
 #         type: 'send_message'
 #         payload: desire.payload
 
+
+arq['lookup_prefix'] = ({ desire, store }) ->
+    { payload } = desire
+    primus.write
+        type: 'lookup_prefix'
+        payload: payload
+        lookup: true
+
 arq['init_primus'] = ({ desire, store }) ->
     primus.on 'data', (data) ->
+        # c 'walla', data
         store.dispatch
             type: 'primus:data'
             payload: { data }

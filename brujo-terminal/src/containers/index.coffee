@@ -28,4 +28,4 @@ set_and_render = ->
 
 window.onload = ->
     set_and_render()
-    window.onresize debounce(set_and_render, 100, false)
+    window.onresize = debounce(set_and_render, 100, false)

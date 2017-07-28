@@ -4,7 +4,7 @@
 lookup_node_at_prefix = ({ prefix, tree }) ->
     cursor = tree
     prefix_rayy = prefix.split ''
-    c prefix
+    c prefix, color.blue('prefix', on)
     for char in prefix_rayy
         cursor = cursor.chd_nodes[char]
         if cursor is undefined
@@ -23,10 +23,12 @@ api_load = ({ tree }) ->
             tree: tree
 
     # api returned as a function
-    ({ prefix, opts }) ->
-        c arguments
+    ({ prefix, opts, spark }) ->
+        c arguments, 'arguments'
         if _.includes(_.keys(opts), 'lookup_type')
-            api[opts.lookup_type] { prefix, tree }  # returns a_node
+            spark.write
+                type: 'lookup_resp'
+                payload: api[opts.lookup_type] { prefix, tree }  # returns a_node
 
 
 # there will be more than one dictionary but for now just this one tree
