@@ -2,6 +2,8 @@
     "dependencies": {
         "bash-color": "latest",
         "coffeescript": "next",
+        "coffee-script": "latest",
+        "coffee-loader": "latest",
         "connect-redis": "latest",
         "cookie-parser": "latest",
         "express": "latest",

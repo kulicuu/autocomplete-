@@ -17,7 +17,8 @@ brujo_arq = do ->
     cookies = cookie_parser cookie_parser_secret
     cookie_parser_secret: cookie_parser_secret
     cookies: cookies
-    public_dir: path.resolve('..', 'brujo')
+    public_dir: path.resolve('..', 'brujo-terminal', 'public')
+    index_path: '/dev_index.html'
     port: 2229
     primus_opts:
         transformer: 'websockets'
@@ -80,3 +81,5 @@ brujo_primus.on 'connection', (spark) ->
     # dispatch to concord
 
     spark.on 'data', (data) ->
+
+        # call api
