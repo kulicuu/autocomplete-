@@ -1,0 +1,11 @@
+{
+    "dependencies": {
+        "bash-color": "latest",
+        "commander": "latest",
+        "immutable": "latest",
+        "lodash": "latest",
+        "primus": "latest",
+        "react": "latest",
+        "react-dom": "latest"
+    }
+}
