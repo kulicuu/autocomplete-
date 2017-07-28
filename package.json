@@ -13,6 +13,7 @@
         "react": "latest",
         "redis": "latest",
         "react-dom": "latest",
-        "shortid": "latest"
+        "shortid": "latest",
+        "ws": "latest"
     }
 }
