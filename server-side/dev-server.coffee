@@ -90,11 +90,11 @@ the_api = require('../lookup_api/index').default
 
 
 brujo_primus.on 'connection', (spark) ->
-
     # dispatch to concord
 
     spark.on 'data', (data) ->
 
-        the_api data
+        if _.includes(_.keys(data), 'lookup')
+            the_api data
 
         # call api

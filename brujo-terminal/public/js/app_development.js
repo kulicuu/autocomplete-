@@ -47319,13 +47319,42 @@ function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, dis
 /* 240 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Provider, root_el, store;
+var Provider, nexus, root_component, root_el, set_and_render, store;
 
 root_el = document.getElementById('root');
 
 Provider = rc(__webpack_require__(90).Provider);
 
 store = __webpack_require__(241);
+
+nexus = rc(__webpack_require__(252)["default"]);
+
+root_component = rr({
+  render: function() {
+    var ref, wh, ww;
+    ref = this.props, ww = ref.ww, wh = ref.wh;
+    return Provider({
+      store: store
+    }, nexus({
+      ww: .9893 * ww,
+      wh: wh
+    }));
+  }
+});
+
+set_and_render = function() {
+  var height, ref, width;
+  ref = root_el.getBoundingClientRect(), width = ref.width, height = ref.height;
+  return React_DOM.render(root_component({
+    ww: width,
+    wh: height
+  }), root_el);
+};
+
+window.onload = function() {
+  set_and_render();
+  return window.onresize(debounce(set_and_render, 100, false));
+};
 
 
 /***/ }),
@@ -47342,7 +47371,7 @@ thunk = __webpack_require__(247)["default"];
 
 middleware = thunk;
 
-lookup = __webpack_require__(250)["default"];
+lookup = __webpack_require__(248)["default"];
 
 reducers = {
   lookup: lookup
@@ -47354,7 +47383,7 @@ imm_initial_state = Imm.fromJS(initial_state);
 
 store = createStore(combineReducers(reducers), imm_initial_state, compose(applyMiddleware(middleware)));
 
-side_effects = __webpack_require__(248)["default"]({
+side_effects = __webpack_require__(250)["default"]({
   store: store
 });
 
@@ -47596,68 +47625,6 @@ exports['default'] = thunk;
 /* 248 */
 /***/ (function(module, exports) {
 
-var arq, keys_arq, side_effects_f;
-
-arq = {};
-
-keys_arq = keys(arq);
-
-side_effects_f = function(arg) {
-  var store;
-  store = arg.store;
-  return function(arg1) {
-    var desire, key_id, ref, results, state, state_js;
-    state_js = arg1.state_js;
-    state = state_js;
-    ref = state.lookup.desires;
-    results = [];
-    for (key_id in ref) {
-      desire = ref[key_id];
-      if (includes(keys_arq, desire.type)) {
-        results.push(arq[desire.type]({
-          desire: desire,
-          store: store
-        }));
-      } else {
-        results.push(void 0);
-      }
-    }
-    return results;
-  };
-};
-
-exports["default"] = side_effects_f;
-
-
-/***/ }),
-/* 249 */
-/***/ (function(module, exports) {
-
-var obj;
-
-exports["default"] = {
-  lookup: {
-    desires: Imm.Map((
-      obj = {},
-      obj["" + (shortid())] = {
-        type: 'init_keyboard',
-        payload: 'asnetuhnn'
-      },
-      obj["" + (shortid())] = {
-        type: 'init_primus'
-      },
-      obj
-    )),
-    chat_log: Imm.List([]),
-    username: 'placholder username'
-  }
-};
-
-
-/***/ }),
-/* 250 */
-/***/ (function(module, exports) {
-
 var arq, concord_channel, keys_arq, keys_concord_channel, lookup;
 
 arq = {};
@@ -47698,6 +47665,157 @@ lookup = function(state, action) {
 };
 
 exports["default"] = lookup;
+
+
+/***/ }),
+/* 249 */
+/***/ (function(module, exports) {
+
+var obj;
+
+exports["default"] = {
+  lookup: {
+    desires: Imm.Map((
+      obj = {},
+      obj["" + (shortid())] = {
+        type: 'init_keyboard',
+        payload: 'asnetuhnn'
+      },
+      obj["" + (shortid())] = {
+        type: 'init_primus'
+      },
+      obj
+    )),
+    chat_log: Imm.List([]),
+    username: 'placholder username'
+  }
+};
+
+
+/***/ }),
+/* 250 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arq, keys_arq, side_effects_f;
+
+arq = {};
+
+arq = assign(arq, __webpack_require__(251)["default"]);
+
+keys_arq = keys(arq);
+
+side_effects_f = function(arg) {
+  var store;
+  store = arg.store;
+  return function(arg1) {
+    var desire, key_id, ref, results, state, state_js;
+    state_js = arg1.state_js;
+    state = state_js;
+    ref = state.lookup.desires;
+    results = [];
+    for (key_id in ref) {
+      desire = ref[key_id];
+      if (includes(keys_arq, desire.type)) {
+        results.push(arq[desire.type]({
+          desire: desire,
+          store: store
+        }));
+      } else {
+        results.push(void 0);
+      }
+    }
+    return results;
+  };
+};
+
+exports["default"] = side_effects_f;
+
+
+/***/ }),
+/* 251 */
+/***/ (function(module, exports) {
+
+var arq;
+
+arq = {};
+
+arq['init_primus'] = function(arg) {
+  var desire, store;
+  desire = arg.desire, store = arg.store;
+  return primus.on('data', function(data) {
+    return store.dispatch({
+      type: 'primus:data',
+      payload: {
+        data: data
+      }
+    });
+  });
+};
+
+exports["default"] = arq;
+
+
+/***/ }),
+/* 252 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var brujo_dash, comp, map_dispatch_to_props, map_state_to_props, render;
+
+brujo_dash = rc(__webpack_require__(253)["default"]);
+
+render = function() {
+  var ref, wh, ww;
+  ref = this.props, ww = ref.ww, wh = ref.wh;
+  return brujo_dash({
+    ww: ww,
+    wh: wh
+  });
+};
+
+comp = rr({
+  render: render
+});
+
+map_state_to_props = function(state) {
+  return {};
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {};
+};
+
+exports["default"] = connect(map_state_to_props, map_dispatch_to_props)(comp);
+
+
+/***/ }),
+/* 253 */
+/***/ (function(module, exports) {
+
+var comp, map_dispatch_to_props, map_state_to_props;
+
+comp = rr({
+  render: function() {
+    return div(null, "hello");
+  }
+});
+
+map_state_to_props = function(state) {
+  return state.get('lookup').toJS();
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {
+    placeholder: function(arg) {
+      var payload;
+      payload = arg.payload;
+      return dispatch({
+        type: 'placeholder'
+      });
+    }
+  };
+};
+
+exports["default"] = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 
 /***/ })

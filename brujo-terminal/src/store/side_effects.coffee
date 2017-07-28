@@ -3,7 +3,7 @@ arq = {}
 # arq = assign arq, require('./side_effects/init.coffee').default
 
 
-# arq = assign arq, require('./side_effects/chat_core.coffee').default
+arq = assign arq, require('./side_effects/core.coffee').default
 
 
 keys_arq = keys arq
