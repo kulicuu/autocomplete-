@@ -1,5 +1,8 @@
 
 
+
+require './globals.coffee'
+
 c = console.log.bind console
 _ = require 'lodash'
 express = require 'express'
@@ -83,7 +86,7 @@ brujo_server.listen brujo_arq.port, ->
 
 
 
-
+the_api = require('../lookup_api/index').default
 
 
 brujo_primus.on 'connection', (spark) ->
@@ -91,5 +94,7 @@ brujo_primus.on 'connection', (spark) ->
     # dispatch to concord
 
     spark.on 'data', (data) ->
+
+        the_api data
 
         # call api

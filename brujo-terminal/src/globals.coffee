@@ -53,5 +53,4 @@ window.reduce = _.reduce
 window.get_abs_val_open = (fig_raw) ->
     { ww , wh } = @props
     ratio_zzz = fig_raw / 1366
-    fig_abs = ratio_zzz * ww
-return fig_abs
+    ratio_zzz * ww

@@ -1,5 +1,7 @@
 
 
+fs = require 'fs'
+
 
 break_ties = ({ candides }) ->
     # for now will just return the first,
