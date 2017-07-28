@@ -4,7 +4,7 @@ c = console.log.bind console
 _ = require 'lodash'
 express = require 'express'
 cookie_parser = require 'cookie-parser'
-
+color = require 'bash-color'
 path = require 'path'
 fs = require 'fs'
 
@@ -54,6 +54,16 @@ primus_session = (options) ->
 
 app_brujo = express()
 
+
+
+app_brujo.all '/', (req, res, next) ->
+    c color.purple(req.url)
+    res.sendFile path.join(brujo_arq.public_dir, brujo_arq.index_path)
+
+
+app_brujo.use express.static(brujo_arq.public_dir)
+
+
 brujo_server = http.createServer app_brujo
 
 opts_brujo_primus =
@@ -66,10 +76,10 @@ brujo_primus.use 'session', primus_session, { store: brujo_redis_store }
 
 
 
-
+brujo_primus.save path.join(brujo_arq.public_dir, '/js' , '/primus.js')
 
 brujo_server.listen brujo_arq.port, ->
-    c 'server on'
+    c 'server on', brujo_arq.port
 
 
 

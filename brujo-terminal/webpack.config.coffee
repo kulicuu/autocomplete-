@@ -9,10 +9,10 @@ module.exports =
 
         filename: "app_development.js"
 
-        publicPath: "/js/"
+        # publicPath: "/js/"
 
-        library: "brujo-terminal"
-
+        # library: "brujo-terminal"
+# 
         libraryTarget: "umd"
 
     module:
