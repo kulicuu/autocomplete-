@@ -7,7 +7,7 @@ break_ties = ({ candides }) ->
     candides[0]
 
 
-map_prefix_to_word = ({ dictionary, prefix }) ->
+map_prefix_to_match = ({ dictionary, prefix }) ->
     # c color.green prefix
     # c dictionary
     candides = []
@@ -18,8 +18,6 @@ map_prefix_to_word = ({ dictionary, prefix }) ->
         return break_ties { candides }
     else
         return candides.pop()
-
-
 
 
 # At some point there will be multiple dictionaries, but for now just the one.
@@ -45,13 +43,12 @@ load_func = ->
                 prefix+= char
                 if not _.includes(_.keys(cursor.chd_nodes), char)
                     cursor.chd_nodes[char] =
-                        match_word: map_prefix_to_word({ prefix, dictionary: d1 })
+                        match_word: map_prefix_to_match({ prefix, dictionary: d1 })
                         prefix: prefix
                         chd_nodes: {}
                 cursor = cursor.chd_nodes[char]
 
     { tree }
-
 
 
 

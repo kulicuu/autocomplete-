@@ -1,11 +1,5 @@
 
 
-
-
-
-
-
-
 # private
 lookup_node_at_prefix = ({ prefix, tree }) ->
     cursor = tree
@@ -31,10 +25,6 @@ api_load = ({ tree }) ->
     # api returned as a function
     ({ prefix, opts }) ->
         api[opts.lookup_type] { prefix, tree }  # returns a_node
-
-
-
-
 
 
 # there will be more than one dictionary but for now just this one tree

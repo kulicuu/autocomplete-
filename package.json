@@ -1,11 +1,18 @@
 {
     "dependencies": {
         "bash-color": "latest",
-        "commander": "latest",
+        "coffeescript": "next",
+        "connect-redis": "latest",
+        "cookie-parser": "latest",
+        "express": "latest",
+        "express-session": "latest",
         "immutable": "latest",
         "lodash": "latest",
+        "node-uuid": "latest",
         "primus": "latest",
         "react": "latest",
-        "react-dom": "latest"
+        "redis": "latest",
+        "react-dom": "latest",
+        "shortid": "latest"
     }
 }
