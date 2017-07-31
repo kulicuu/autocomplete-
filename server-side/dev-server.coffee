@@ -93,10 +93,23 @@ brujo_primus.on 'connection', (spark) ->
     # dispatch to concord
     spark.on 'data', (data) ->
         if _.includes(_.keys(data), 'lookup')
-            the_api
-                prefix: data.payload.prefix_text
-                opts:
-                    lookup_type: 'lookup_prefix_000'
-                spark: spark
+            # the_api
+            #     prefix: data.payload.prefix_text
+            #     opts:
+            #         lookup_type: 'lookup_prefix_000'
+            #     spark: spark
+            #
+            # resp_001  = the_api_001
+            #     prefix: data.payload.prefix_text
+            #     opts:
+            #         lookup_type: 'lookup_prefix_000'
+
+            spark.write
+                type: 'lookup_resp'
+                payload: the_api
+                    prefix: data.payload.prefix_text
+                    opts:
+                        lookup_type: 'lookup_prefix_000'
+
 
         # call api

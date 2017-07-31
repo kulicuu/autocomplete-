@@ -23,12 +23,16 @@ api_load = ({ tree }) ->
             tree: tree
 
     # api returned as a function
-    ({ prefix, opts, spark }) ->
-        c arguments, 'arguments'
+    # orig__ = ({ prefix, opts, spark }) ->
+    #     # c arguments, 'arguments'
+    #     if _.includes(_.keys(opts), 'lookup_type')
+    #         spark.write
+    #             type: 'lookup_resp'
+    #             payload: api[opts.lookup_type] { prefix, tree }  # returns a_node
+
+    ({ prefix, opts }) ->
         if _.includes(_.keys(opts), 'lookup_type')
-            spark.write
-                type: 'lookup_resp'
-                payload: api[opts.lookup_type] { prefix, tree }  # returns a_node
+            api[opts.lookup_type] { prefix, tree }
 
 
 # there will be more than one dictionary but for now just this one tree
