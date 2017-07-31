@@ -10,10 +10,9 @@ cookie_parser = require 'cookie-parser'
 color = require 'bash-color'
 path = require 'path'
 fs = require 'fs'
-
 http = require 'http'
-
 Primus = require 'primus'
+
 
 brujo_arq = do ->
     cookie_parser_secret = 'very secret 388383824'
@@ -54,9 +53,7 @@ primus_session = (options) ->
             next()
 
 
-
 app_brujo = express()
-
 
 
 app_brujo.all '/', (req, res, next) ->
@@ -84,9 +81,6 @@ the_api = require('./lookup_api/index').default
 
 brujo_server.listen brujo_arq.port, ->
     c 'server on', brujo_arq.port
-
-
-
 
 
 brujo_primus.on 'connection', (spark) ->

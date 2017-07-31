@@ -16,6 +16,9 @@ lookup_node_at_prefix = ({ prefix, tree }) ->
 api_load = ({ tree }) ->
     api = {}
 
+
+    api.browse_dictionary = ({ dictionary_id, rayy_range }) ->
+
     # public function on api
     api.lookup_prefix_000 = ({ prefix}) ->
         lookup_node_at_prefix
