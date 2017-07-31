@@ -53,8 +53,8 @@ keys_concord_channel = keys concord_channel
 arq['primus:data'] = ({ state, action }) ->
     { data } = action.payload
     { type, payload } = action.payload.data
-    c state, action, '393939'
-    c action.payload.data, payload.data
+    # c state, action, '393939'
+    # c action.payload.data, payload.data
     if includes(keys_concord_channel, type)
         concord_channel[type] { state, action, data }
     else
