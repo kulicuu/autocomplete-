@@ -5,7 +5,7 @@
 
 comp = rr
     render: ->
-        c @props.match, '@props.match'
+        # c @props.match, '@props.match'
         div
             style:
                 display: 'flex'

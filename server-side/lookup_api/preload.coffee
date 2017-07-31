@@ -38,6 +38,7 @@ load_func = ->
 
 
     for word, idx in d1
+        c "Building word: #{color.cyan(word, on)}"
         cursor = tree
         prefix = ''
         unless word.length < 1
@@ -50,6 +51,7 @@ load_func = ->
                         chd_nodes: {}
                 cursor = cursor.chd_nodes[char]
 
+    c "\n\n\n #{color.green('Done building cache tree.', on)} \n \n \n"
     { tree }
 
 

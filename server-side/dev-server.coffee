@@ -76,40 +76,26 @@ brujo_primus = new Primus(brujo_server, brujo_arq.primus_opts)
 
 brujo_primus.use 'cookies', brujo_arq.cookies
 brujo_primus.use 'session', primus_session, { store: brujo_redis_store }
-
-
-
 brujo_primus.save path.join(brujo_arq.public_dir, '/js' , '/primus.js')
+
+
+the_api = require('./lookup_api/index').default
+
 
 brujo_server.listen brujo_arq.port, ->
     c 'server on', brujo_arq.port
 
 
 
-the_api = require('./lookup_api/index').default
 
 
 brujo_primus.on 'connection', (spark) ->
-    # dispatch to concord
+    # dispatch to concord if want state
     spark.on 'data', (data) ->
         if _.includes(_.keys(data), 'lookup')
-            # the_api
-            #     prefix: data.payload.prefix_text
-            #     opts:
-            #         lookup_type: 'lookup_prefix_000'
-            #     spark: spark
-            #
-            # resp_001  = the_api_001
-            #     prefix: data.payload.prefix_text
-            #     opts:
-            #         lookup_type: 'lookup_prefix_000'
-
             spark.write
                 type: 'lookup_resp'
                 payload: the_api
                     prefix: data.payload.prefix_text
                     opts:
                         lookup_type: 'lookup_prefix_000'
-
-
-        # call api

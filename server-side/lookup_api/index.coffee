@@ -22,13 +22,6 @@ api_load = ({ tree }) ->
             prefix: prefix
             tree: tree
 
-    # api returned as a function
-    # orig__ = ({ prefix, opts, spark }) ->
-    #     # c arguments, 'arguments'
-    #     if _.includes(_.keys(opts), 'lookup_type')
-    #         spark.write
-    #             type: 'lookup_resp'
-    #             payload: api[opts.lookup_type] { prefix, tree }  # returns a_node
 
     ({ prefix, opts }) ->
         if _.includes(_.keys(opts), 'lookup_type')
