@@ -7,6 +7,9 @@
 # https://en.wikipedia.org/wiki/Levenshtein_distance
 
 
+
+
+# recursive version
 lev_d = ( s, len_s, t, len_t ) ->
 
     cost = null
