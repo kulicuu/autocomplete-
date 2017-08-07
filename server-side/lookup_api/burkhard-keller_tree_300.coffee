@@ -61,7 +61,6 @@ contains_key = ({ node, key }) ->
 # operate on node
 add_chd_to_node = ({ node, key, word }) ->
     node.chd_nodes[key] = node_f { word }
-    { node }
 
 
 
@@ -69,30 +68,36 @@ counter = 0
 
 # tree
 tree_add_word = ({ bktree, word }) ->
-    c counter++
+    # c counter++
+
     if bktree.root is null
         bktree.root = node_f({ word })
-        c bktree
+        # c bktree
         return { bktree }
 
     cur_node = bktree.root
-    c cur_node
-    c bktree
+    # c cur_node
+    # c bktree
 
     delta = lev_d cur_node.word, word
-    while _.includes(_.keys(cur_node), delta)
-        if delta is 0 then return { bktree }
+    c _.keys(cur_node.chd_nodes)
+    while _.includes(_.keys(cur_node.chd_nodes), '' + delta)
+        c delta
+        if delta is 0
+            c 'is zero'
+            break
 
-        cur_node = cur_node[delta]
+        cur_node = cur_node.chd_nodes[delta]
         delta = lev_d cur_node.word, word
 
-    { node } = add_chd_to_node
+    add_chd_to_node
         node: cur_node
         key: delta
         word: word
-    cur_node[delta] = node
+    # cur_node.chd_nodes[delta] = node
 
     { bktree }
+
 
 
 
@@ -153,7 +158,7 @@ search = ({ bktree, word, delta }) ->
 
 
 load_func = ->
-    blob_1 = fs.readFileSync '../../dictionaries/d1.txt', 'utf8'
+    blob_1 = fs.readFileSync '../../dictionaries/reduced_000.txt', 'utf8'
     d1 = blob_1.split '\n'
 
     bktree = { root: null }
@@ -163,6 +168,14 @@ load_func = ->
         { bktree } = tree_add_word
             bktree: bktree
             word: word
+
+
+
+    c bktree.root
+    c bktree.root.chd_nodes[4].chd_nodes
+    # for idx in [4 .. 12]
+    #     c bktree.root.chd_nodes['' + idx]
+    #     c bktree.root.chd_nodes['' + idx].chd
 
 
 load_func()
