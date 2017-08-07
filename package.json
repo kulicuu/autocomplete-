@@ -1,6 +1,8 @@
 {
     "dependencies": {
+        "async": "latest",
         "bash-color": "latest",
+        "bluebird": "latest",
         "coffeescript": "next",
         "coffee-script": "latest",
         "coffee-loader": "latest",
