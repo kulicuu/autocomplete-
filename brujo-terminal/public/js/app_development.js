@@ -47645,8 +47645,6 @@ arq['primus:data'] = function(arg) {
   state = arg.state, action = arg.action;
   data = action.payload.data;
   ref = action.payload.data, type = ref.type, payload = ref.payload;
-  c(state, action, '393939');
-  c(action.payload.data, payload.data);
   if (includes(keys_concord_channel, type)) {
     return concord_channel[type]({
       state: state,
@@ -47819,7 +47817,6 @@ var comp, map_dispatch_to_props, map_state_to_props;
 
 comp = rr({
   render: function() {
-    c(this.props.match, '@props.match');
     return div({
       style: {
         display: 'flex',
@@ -47829,7 +47826,15 @@ comp = rr({
         backgroundColor: 'ivory',
         height: '100%'
       }
+    }, div({
+      style: {
+        display: 'flex'
+      }
     }, input({
+      type: 'button'
+    }, "autocomplete"), input({
+      type: 'button'
+    }, "spellcheck")), input({
       type: 'text',
       onChange: (function(_this) {
         return function(e) {

@@ -14,6 +14,18 @@ comp = rr
                 justifyContent: 'center'
                 backgroundColor: 'ivory'
                 height: '100%'
+            div
+                style:
+                    display: 'flex'
+
+                input
+                    type: 'button'
+
+                    "autocomplete"
+                input
+                    type: 'button'
+
+                    "spellcheck"
             input
                 type: 'text'
                 # color: 'grey'

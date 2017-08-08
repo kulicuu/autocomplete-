@@ -73,11 +73,11 @@ load_func = ->
 
     c "\n\n\n #{color.green('Done building cache tree.', on)} \n \n \n"
 
-    load_tree_to_redis { tree }
-    .then (re) ->
-        c "            #{color.green('\n \n \n have re from load redis .   \n \n \n ')}"
-        c re
-        c '... \n \n \n'
+    # load_tree_to_redis { tree }
+    # .then (re) ->
+    #     c "            #{color.green('\n \n \n have re from load redis .   \n \n \n ')}"
+    #     c re
+    #     c '... \n \n \n'
 
     { tree }
 

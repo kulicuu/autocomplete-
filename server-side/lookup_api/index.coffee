@@ -38,7 +38,7 @@ api_load = ({ prefix_tree, bktree }) ->
 # there will be more than one dictionary but for now just this one tree
 { tree: prefix_tree } = require('./preload.coffee').default()
 
-# { bktree } = require('./burkhard-keller_tree_300.coffee').default
+{ bktree } = require('./burkhard-keller_tree_300.coffee').default()
 
 
 exports.default = api_load { prefix_tree }

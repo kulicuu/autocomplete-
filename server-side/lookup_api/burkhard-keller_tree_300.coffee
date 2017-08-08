@@ -148,21 +148,22 @@ load_func = ->
                 word: word
 
 
+    { bktree }
 
     # c bktree.root
-    c '\n'
+    # c '\n'
     # c bktree.root.chd_nodes[4].chd_nodes
 
 
-    search
-        bktree: bktree
-        word: 'addresh'
+    # search
+    #     bktree: bktree
+    #     word: 'addresh'
     # for idx in [4 .. 12]
     #     c bktree.root.chd_nodes['' + idx]
     #     c bktree.root.chd_nodes['' + idx].chd
 
 
-load_func()
+# load_func()
 
 
 
@@ -170,5 +171,5 @@ load_func()
 
 
 
-exports.default = ->
-    c 'say hi'
+exports.default = load_func
+    # c 'say hi'
