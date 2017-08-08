@@ -11,6 +11,18 @@
 # composition pattern.
 
 
+# bktree :   add word
+#               search   word
+#                  recursive_search    node, rtn, string_word, delta
+#                       lev_d : imported
+#
+
+# node  :
+#           constructor
+#           keys_return
+#           add_chd
+
+
 fs = require 'fs'
 _ = require 'lodash'
 c = console.log.bind console
@@ -27,16 +39,7 @@ lev_d = require('./levenshtein_distance.coffee').default
 
 
 
-# bktree :   add word
-#               search   word
-#                  recursive_search    node, rtn, string_word, delta
-#                       lev_d : imported
-#
 
-# node  :
-#           constructor
-#           keys_return
-#           add_chd
 
 
 
@@ -63,38 +66,21 @@ add_chd_to_node = ({ node, key, word }) ->
     node.chd_nodes[key] = node_f { word }
 
 
-
-counter = 0
-
-# tree
 tree_add_word = ({ bktree, word }) ->
-    # c counter++
-
     if bktree.root is null
         bktree.root = node_f({ word })
-        # c bktree
         return { bktree }
-
     cur_node = bktree.root
-    # c cur_node
-    # c bktree
-
     delta = lev_d cur_node.word, word
-    c _.keys(cur_node.chd_nodes)
     while _.includes(_.keys(cur_node.chd_nodes), '' + delta)
-        c delta
         if delta is 0
-            c 'is zero'
-            break
-
+            return { bktree }
         cur_node = cur_node.chd_nodes[delta]
         delta = lev_d cur_node.word, word
-
     add_chd_to_node
         node: cur_node
         key: delta
         word: word
-    # cur_node.chd_nodes[delta] = node
 
     { bktree }
 
@@ -107,72 +93,70 @@ tree_add_word = ({ bktree, word }) ->
 
 
 
-cursive_search_001 = ({ node, bktree, word, delta}) ->
-    cur_delta = lev_del node.word, word
+cursive_search_001 = (node, rayy, word, delta) ->
+    cur_delta = lev_d node.word, word
     min_delta = cur_delta - delta
     max_delta = cur_delta + delta
 
-    if cur_delta is delta
-        add_node({bktree})
+    if cur_delta <= delta
+        rayy.push node.word
+
+    c node, '\n'
+    c cur_delta, 'cur'
+    the_keys = _.keys(node.chd_nodes)
+    c the_keys
+    # c _.includes(the_keys, '' + cur_delta)
+    if (the_keys.length > 0) and (_.includes(the_keys, '' + cur_delta))
+        delta_node = node.chd_nodes[cur_delta]
+        # c delta_node, '111'
+            # add_node({bktree})
+
+        rayy.push delta_node.word
+        _.forEach delta_node.chd_nodes, (node2, key) ->
+            cursive_search_001 node2, rayy, word, delta
+    return rayy
 
 
 
-# not recursive version levenshtein distance
-lev_del = ({ s, t }) ->
-    len_s = s.length
-    len_t = t.length
-    if len_s is 0 then return len_t
-    if len_t is 0 then return len_s
-
-
-
-    # d = [len_s + 1, len_t + 1]
-    matrix = []
-    for idx in [0 .. len_s]
-        matrix[idx] = []
-        for jdx in [0 .. len_t]
-            matrix[idx][jdx] = 'void'
-
-
-    for idx in [0 .. len_s]
-        matrix[idx][0] = idx
-
-    for jdx in [0 .. len_t]
-        matrix[0][jdx] = jdx
-
-    for idx in [1 .. len_s]
-        for jdx in [1 .. len_t]
-            match = null
-            if s[idx - 1] is t[j - 1]
-                match = 0
-            else
-                match = 1
-
-            matrix[idx][jdx] = Math.min(Math.min(matrix[idx - 1][jdx] + 1, matrix[idx][jdx - 1] + 1), matrix[idx - 1][jdx - 1] + match)
-
-    matrix[len_s][len_t]
 
 
 search = ({ bktree, word, delta }) ->
+    word = word.toLowerCase()
+    rtn = cursive_search_001 bktree.root, [], word, 1
+    c rtn, 'rtn'
 
 
 
 load_func = ->
     blob_1 = fs.readFileSync '../../dictionaries/reduced_000.txt', 'utf8'
-    d1 = blob_1.split '\n'
+    blob_2 = fs.readFileSync '../../dictionaries/rdc_003.txt', 'utf8'
+    blob_3 = fs.readFileSync '../../dictionaries/d1.txt', 'utf8'
+    blob_4 = fs.readFileSync '../../dictionaries/reduced_a_.txt', 'utf8'
+
+    d1 = blob_4.split '\n'
 
     bktree = { root: null }
 
     d1 = _.map d1, (word, idx) ->
         word.toLowerCase()
-        { bktree } = tree_add_word
-            bktree: bktree
-            word: word
+
+    for word, idx in d1
+        unless word.length is 0
+            c 'word loading', word
+            { bktree } = tree_add_word
+                bktree: bktree
+                word: word
 
 
 
-    c bktree.root
-    c bktree.root.chd_nodes[4].chd_nodes
+    # c bktree.root
+    c '\n'
+    # c bktree.root.chd_nodes[4].chd_nodes
+
+
+    search
+        bktree: bktree
+        word: 'addresh'
     # for idx in [4 .. 12]
     #     c bktree.root.chd_nodes['' + idx]
     #     c bktree.root.chd_nodes['' + idx].chd

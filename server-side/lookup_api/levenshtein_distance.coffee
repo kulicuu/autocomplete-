@@ -50,3 +50,39 @@ exports.test = ->
     run_it
         s: 'howdy'
         t: 'howdo'
+
+
+
+# another, non-recursive implementation
+# not recursive version levenshtein distance
+# unused
+lev_del_nocurse = ({ s, t }) ->
+    len_s = s.length
+    len_t = t.length
+    if len_s is 0 then return len_t
+    if len_t is 0 then return len_s
+
+    # d = [len_s + 1, len_t + 1]
+    matrix = []
+    for idx in [0 .. len_s]
+        matrix[idx] = []
+        for jdx in [0 .. len_t]
+            matrix[idx][jdx] = 'void'
+
+    for idx in [0 .. len_s]
+        matrix[idx][0] = idx
+
+    for jdx in [0 .. len_t]
+        matrix[0][jdx] = jdx
+
+    for idx in [1 .. len_s]
+        for jdx in [1 .. len_t]
+            match = null
+            if s[idx - 1] is t[j - 1]
+                match = 0
+            else
+                match = 1
+
+            matrix[idx][jdx] = Math.min(Math.min(matrix[idx - 1][jdx] + 1, matrix[idx][jdx - 1] + 1), matrix[idx - 1][jdx - 1] + match)
+
+    matrix[len_s][len_t]
