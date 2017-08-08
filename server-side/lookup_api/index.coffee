@@ -1,8 +1,8 @@
 
 
 # private
-lookup_node_at_prefix = ({ prefix, tree }) ->
-    cursor = tree
+lookup_node_at_prefix = ({ prefix, prefix_tree }) ->
+    cursor = prefix_tree
     prefix_rayy = prefix.split ''
     c prefix, color.blue('prefix', on)
     for char in prefix_rayy
@@ -13,26 +13,32 @@ lookup_node_at_prefix = ({ prefix, tree }) ->
 
 
 # public constructor for api
-api_load = ({ tree }) ->
+api_load = ({ prefix_tree, bktree }) ->
     api = {}
 
 
-    api.browse_dictionary = ({ dictionary_id, rayy_range }) ->
+    # api.browse_dictionary = ({ dictionary_id, rayy_range }) ->
+
+
+
+    # api.lookup_bktree = ({ word }) ->
 
     # public function on api
-    api.lookup_prefix_000 = ({ prefix}) ->
+    api.lookup_prefix_000 = ({ prefix, prefix_tree }) ->
         lookup_node_at_prefix
             prefix: prefix
-            tree: tree
+            prefix_tree: prefix_tree
 
 
     ({ prefix, opts }) ->
         if _.includes(_.keys(opts), 'lookup_type')
-            api[opts.lookup_type] { prefix, tree }
+            api[opts.lookup_type] { prefix, prefix_tree }
 
 
 # there will be more than one dictionary but for now just this one tree
-{ tree } = require('./preload.coffee').default()
+{ tree: prefix_tree } = require('./preload.coffee').default()
+
+# { bktree } = require('./burkhard-keller_tree_300.coffee').default
 
 
-exports.default = api_load { tree }
+exports.default = api_load { prefix_tree }

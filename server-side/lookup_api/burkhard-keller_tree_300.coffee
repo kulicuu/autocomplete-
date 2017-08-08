@@ -104,7 +104,7 @@ cursive_search_001 = (node, rayy, word, delta) ->
     c node, '\n'
     c cur_delta, 'cur'
     the_keys = _.keys(node.chd_nodes)
-    c the_keys
+    # c the_keys
     # c _.includes(the_keys, '' + cur_delta)
     if (the_keys.length > 0) and (_.includes(the_keys, '' + cur_delta))
         delta_node = node.chd_nodes[cur_delta]
@@ -128,10 +128,10 @@ search = ({ bktree, word, delta }) ->
 
 
 load_func = ->
-    blob_1 = fs.readFileSync '../../dictionaries/reduced_000.txt', 'utf8'
-    blob_2 = fs.readFileSync '../../dictionaries/rdc_003.txt', 'utf8'
-    blob_3 = fs.readFileSync '../../dictionaries/d1.txt', 'utf8'
-    blob_4 = fs.readFileSync '../../dictionaries/reduced_a_.txt', 'utf8'
+    blob_1 = fs.readFileSync '../dictionaries/reduced_000.txt', 'utf8'
+    blob_2 = fs.readFileSync '../dictionaries/rdc_003.txt', 'utf8'
+    blob_3 = fs.readFileSync '../dictionaries/d1.txt', 'utf8'
+    blob_4 = fs.readFileSync '../dictionaries/reduced_a_.txt', 'utf8'
 
     d1 = blob_4.split '\n'
 
@@ -163,3 +163,12 @@ load_func = ->
 
 
 load_func()
+
+
+
+
+
+
+
+exports.default = ->
+    c 'say hi'
