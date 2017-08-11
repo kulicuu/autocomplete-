@@ -127,6 +127,10 @@ search = ({ bktree, word, delta }) ->
 
 
 
+load_100 = Bluebird.promisify ({ filename }, cb) ->
+    the_blob = fs.readFile path.resolve
+
+
 load_func = ->
     blob_1 = fs.readFileSync '../dictionaries/reduced_000.txt', 'utf8'
     blob_2 = fs.readFileSync '../dictionaries/rdc_003.txt', 'utf8'
