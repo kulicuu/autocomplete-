@@ -38,19 +38,62 @@ get_library_contents = Bluebird.promisify (cb) ->
 
 
 
+cursive_redis_add (node, node_id) ->
+
+    # TODO make this asyncy
+
+    chd_nodes_id = v4()
+
+    node_hash =
+        word: node.word
+        chd_nodes: chd_nodes_id
+
+    # redis.sadd chd_node_set_id, _.keys(node.chd_nodes)
+
+    redis.hmsetAsync node_id, node_hash
+
+    _.forEach node.chd_nodes, (chd_node, key) ->
+        chd_node_id = v4()
+        redis.hset chd_nodes_id, key, chd_node_id
+        cursive_redis_add chd_node, chd_node_id
+
+
+
+actual_load_d = Bluebird.promisify ({ bktree, root_node_ref }, cb) ->
+
+    cur_node = bktree.root
+
+
+
+    cursive_redis_add cur_node
+
+    # if _.keys(cur_node.chd_nodes).length > 0
+
+
+
 
 
 # CREATE
-load_d = ({ bktree }) ->
+load_d = ({ bktree, name, description, filename, path }) ->
     # given a bktree structure in nodejs memory, translate it into a redis data structure, and save a reference in a common library, also in redis.
-    "give it an id."
     # We need a reference to a common library
 
 
+
+
     the_lib_id = v4()
+    the_root_node_ref = v4()
 
 
-    redis.hmset the_lib_id
+    redis.hmsetAsync the_lib_id,
+        lib_id: the_lib_id
+        name: name
+        description: description
+        filename: filename
+        path: path
+        root_node_ref: the_root_node_ref
+
+
 
     redis.saddAsync "bktree_library_contents", the_lib_id
     .then (re) ->
