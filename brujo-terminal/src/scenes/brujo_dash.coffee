@@ -18,14 +18,16 @@ comp = rr
                 style:
                     display: 'flex'
 
-                input
-                    type: 'button'
-
-                    "autocomplete"
-                input
-                    type: 'button'
-
-                    "spellcheck"
+                button
+                    style:
+                        background: 'red'
+                    'autocomplete'
+                button
+                    onClick: =>
+                        @props.change_to_spellcheck_mode
+                    style:
+                        background: 'cyan'
+                    'spellcheck'
             input
                 type: 'text'
                 # color: 'grey'
@@ -59,6 +61,16 @@ map_state_to_props = (state) ->
     state.get('lookup').toJS()
 
 map_dispatch_to_props = (dispatch) ->
+
+
+    change_to_autocomplete_mode: ->
+        dispatch
+            type: 'change_to_autocomplete_mode'
+
+    change_to_spellcheck_mode: ->
+        dispatch
+            type: 'change_to_spellcheck_mode'
+
 
     lookup_prefix: ({ payload }) ->
         dispatch

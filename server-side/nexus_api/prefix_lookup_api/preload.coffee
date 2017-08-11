@@ -24,23 +24,75 @@ map_prefix_to_match = ({ dictionary, prefix }) ->
 
 # At some point there will be multiple dictionaries, but for now just the one.
 
+lookup_tree_in_redis_by_prefix = ({ tree_id, prefix }) ->
 
-load_tree_to_redis = Bluebird.promisify ({ tree }, cb) ->
+load_tree_from_redis_to_mem = ->
+
+
+delete_tree_from_redis = ->
+
+
+
+cursive_redis_node_load_001 = ( the_node, node_id ) ->
+
+    node_arq =
+        word: the_node.word
+
+
+    _.map the_node.chd_nodes, (chd_node, key) ->
+        chd_id = v4()
+        node_arq[key] = chd_id
+        cursive_redis_node_load_001 chd_node, chd_id
+
+    redis.hmset node_id, node_arq
+
+
+
+
+
+
+load_tree_to_redis_001 = Bluebird.promisify ({ tree_name, tree }, cb) ->
+
+
+
+load_tree_to_redis_000 = Bluebird.promisify ({ tree_name, tree }, cb) ->
 
 
 
 
     c "        #{color.blue('\n \n \n have tree \n \n \n', on)}"
 
-    redis.setAsync 'started_tree_insert', 'true'
-    .then (re) ->
-        c 're', re
-        c _.keys(tree.chd_nodes)
+    tree_id = v4()
+
+    # chd_nodes_id = v4()
+    redis.hset 'prefix_trees', tree_name, tree_id
+
+    cursor = tree
+
+    arq =
+        word: cursor.word
+
+    _.forEach cursor.chd_nodes, (chd, key) ->
+        chd_id = v4()
+        arq[key] = chd_id
+        redis.hmset chd_id
+            word: chd.word
+            chd_nodes
+
+
+    redis.hmset tree_id,
+        word: cursor.word
+        chd_nodes: chd_nodes_id
 
 
 
 
-        cb null, 'hello tree redis load re'
+
+
+
+
+
+        # cb null, 'hello tree redis load re'
 
 
 
@@ -73,11 +125,13 @@ load_func = ->
 
     c "\n\n\n #{color.green('Done building cache tree.', on)} \n \n \n"
 
-    # load_tree_to_redis { tree }
-    # .then (re) ->
-    #     c "            #{color.green('\n \n \n have re from load redis .   \n \n \n ')}"
-    #     c re
-    #     c '... \n \n \n'
+    load_tree_to_redis
+        tree_name: 'first_prefix_tree'
+        tree: tree
+    .then (re) ->
+        c "            #{color.green('\n \n \n have re from load redis .   \n \n \n ')}"
+        c re
+        c '... \n \n \n'
 
     { tree }
 

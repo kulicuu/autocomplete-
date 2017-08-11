@@ -76,7 +76,7 @@ brujo_primus.use 'session', primus_session, { store: brujo_redis_store }
 brujo_primus.save path.join(brujo_arq.public_dir, '/js' , '/primus.js')
 
 
-the_api = require('./lookup_api/index').default
+the_api = require('./nexus_api/index').default
 
 
 brujo_server.listen brujo_arq.port, ->
@@ -87,6 +87,8 @@ brujo_primus.on 'connection', (spark) ->
     # dispatch to concord if want state
     spark.on 'data', (data) ->
         if _.includes(_.keys(data), 'lookup')
+            # NOTE: Putting the calculation of the payload into the payload expression is cute but only works
+            # if synchronous operation, may need to change.
             spark.write
                 type: 'lookup_resp'
                 payload: the_api
