@@ -8,7 +8,8 @@
 
 
 # NOTE copy translating out of C into CoffeeScript . at the same time from class pattern to functional
-# composition pattern.
+# composition pattern.  ...[edit ] though it's kind of a mess at the moment, not in a bad way but
+# it's an intermediate pattern.  function composition with some shared scope vars mutated.
 
 
 # bktree :   add word

@@ -17,7 +17,6 @@ nexus_api = _.assign nexus_api, require('./prefix_lookup_api/index.coffee').defa
 keys_nexus_api = _.keys nexus_api
 
 nexus_api_f = ({ type, payload }) ->
-
     if _.includes(keys_nexus_api, type)
         nexus_api[type] { type, payload }
     else

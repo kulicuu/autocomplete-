@@ -1,6 +1,8 @@
 
 
-
+# NOTE The UI support for features:
+# 1.  loading dictionary file from disc, caching raw in redis as a string, in the
+# main meta hash of that.
 
 
 comp = rr
