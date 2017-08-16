@@ -2,6 +2,8 @@ exports.default =
 
     lookup:
 
+        get_dctns_list_state: null
+
         desires : Imm.Map
             # "#{shortid()}":
             #     type: 'init_keyboard'

@@ -40,7 +40,7 @@ get_library_contents_100 = Bluebird.promisify (cb) ->
 
 
 
-cursive_redis_add (node, node_id) ->
+cursive_redis_add = (node, node_id) ->
 
     # TODO make this asyncy
 

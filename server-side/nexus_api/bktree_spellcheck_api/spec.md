@@ -23,16 +23,15 @@ Base hash with library name, filename, path, id, datetime created, maybe name of
 
 
 ```coffeescript
-
-    lib_hash =
-        name: "<string>"
-        filename: "<string>"
-        path: "<string>"
-        id: "<string>"
-        datetime_created: "<datestring>"
-        algo_name: "<string>"   # some description
-        file_contents_raw: "<string>"  # string file contents
-        root_node: "<string>"  # uuid reference
+lib_hash =
+    name: "<string>"
+    filename: "<string>"
+    path: "<string>"
+    id: "<string>"
+    datetime_created: "<datestring>"
+    algo_name: "<string>"   # some description
+    file_contents_raw: "<string>"  # string file contents
+    root_node: "<string>"  # uuid reference
 ```
 
 

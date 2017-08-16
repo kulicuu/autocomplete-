@@ -16424,6 +16424,8 @@ window._ = __webpack_require__(104);
 
 window.React = __webpack_require__(34);
 
+c("React.version:", React.version);
+
 window.React_DOM = __webpack_require__(119);
 
 window.shortid = __webpack_require__(205);
@@ -47656,6 +47658,15 @@ arq['primus:data'] = function(arg) {
   }
 };
 
+arq['get_raw_dctns_list'] = function(arg) {
+  var action, state;
+  state = arg.state, action = arg.action;
+  state = state.setIn(['desires', shortid()], {
+    type: 'get_raw_dctns_list'
+  });
+  return state.setIn(['get_dctns_list_state'], 'sent_request');
+};
+
 arq['lookup_prefix'] = function(arg) {
   var action, state;
   state = arg.state, action = arg.action;
@@ -47691,6 +47702,7 @@ var obj;
 
 exports["default"] = {
   lookup: {
+    get_dctns_list_state: null,
     desires: Imm.Map((
       obj = {},
       obj["" + (shortid())] = {
@@ -47750,6 +47762,15 @@ var arq;
 
 arq = {};
 
+arq['get_raw_dctns_list'] = function(arg) {
+  var desire, store;
+  desire = arg.desire, store = arg.store;
+  c('88383838');
+  return primus.write({
+    type: 'get_raw_dctns_list'
+  });
+};
+
 arq['lookup_prefix'] = function(arg) {
   var desire, payload, store;
   desire = arg.desire, store = arg.store;
@@ -47764,7 +47785,9 @@ arq['lookup_prefix'] = function(arg) {
 arq['init_primus'] = function(arg) {
   var desire, store;
   desire = arg.desire, store = arg.store;
+  c('initialising');
   return primus.on('data', function(data) {
+    c('walla', data);
     return store.dispatch({
       type: 'primus:data',
       payload: {
@@ -47813,55 +47836,40 @@ exports["default"] = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 253 */
 /***/ (function(module, exports) {
 
-var comp, map_dispatch_to_props, map_state_to_props;
+var comp, list_of_components, map_dispatch_to_props, map_state_to_props, raw_dctn_pane;
+
+list_of_components = {
+  'raw dictionary list': 'aeu',
+  'browse dictionary list pane': 'sth'
+};
+
+raw_dctn_pane = function(props, state) {
+  return div({
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'start',
+      justifyContent: 'start',
+      background: 'palegreen',
+      width: '30%',
+      height: '60%'
+    }
+  }, p(null, 'hello'));
+};
 
 comp = rr({
+  componentWillMount: function() {
+    return this.props.get_raw_dctns_list();
+  },
   render: function() {
     return div({
       style: {
         display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'ivory',
-        height: '100%'
+        backgroundColor: 'lightsteelblue',
+        height: '100%',
+        width: '100%'
       }
-    }, div({
-      style: {
-        display: 'flex'
-      }
-    }, button({
-      style: {
-        background: 'red'
-      }
-    }, 'autocomplete'), button({
-      onClick: (function(_this) {
-        return function() {
-          return _this.props.change_to_spellcheck_mode;
-        };
-      })(this),
-      style: {
-        background: 'cyan'
-      }
-    }, 'spellcheck')), input({
-      type: 'text',
-      onChange: (function(_this) {
-        return function(e) {
-          c('e', e.currentTarget.value);
-          return _this.props.lookup_prefix({
-            payload: {
-              prefix_text: e.currentTarget.value
-            }
-          });
-        };
-      })(this),
-      placeholder: 'prefix'
-    }), h3({
-      style: {
-        fontSize: 14,
-        color: 'grey'
-      }
-    }, (this.props.match === 'Not found.') || (this.props.match === '') ? this.props.match : this.props.match.match_word));
+    }, raw_dctn_pane());
   }
 });
 
@@ -47871,6 +47879,11 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
+    get_raw_dctns_list: function() {
+      return dispatch({
+        type: 'get_raw_dctns_list'
+      });
+    },
     change_to_autocomplete_mode: function() {
       return dispatch({
         type: 'change_to_autocomplete_mode'

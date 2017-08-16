@@ -86,12 +86,16 @@ brujo_server.listen brujo_arq.port, ->
 brujo_primus.on 'connection', (spark) ->
     # dispatch to concord if want state
     spark.on 'data', (data) ->
-        if _.includes(_.keys(data), 'lookup')
-            # NOTE: Putting the calculation of the payload into the payload expression is cute but only works
-            # if synchronous operation, may need to change.
-            spark.write
-                type: 'lookup_resp'
-                payload: the_api
-                    prefix: data.payload.prefix_text
-                    opts:
-                        lookup_type: 'lookup_prefix_000'
+
+
+        the_api
+            type: data.type
+            payload: data.payload
+            spark: spark
+
+            # spark.write
+            #     type: 'lookup_resp'
+            #     payload: the_api
+            #         prefix: data.payload.prefix_text
+            #         opts:
+            #             lookup_type: 'lookup_prefix_000'

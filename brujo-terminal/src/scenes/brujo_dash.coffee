@@ -5,49 +5,54 @@
 # main meta hash of that.
 
 
+# NOTE to reduce the work for the moment we'll just read in all the dictionaries as lists
+# on the server side on startup.  then these can be applied to various parser/data-strucutre-factories
+# and these can be browsed and tested
+
+
+list_of_components =
+    'raw dictionary list': 'aeu'
+    'browse dictionary list pane': 'sth'
+
+
+
+
+
+
+raw_dctn_pane = (props, state) ->
+    div
+        style:
+            display: 'flex'
+            flexDirection: 'column'
+            alignItems: 'start'
+            justifyContent: 'start'
+            background: 'palegreen'
+            width: '30%'
+            height: '60%'
+
+        p null, 'hello'
+
+
+
+
+
 comp = rr
+    componentWillMount: ->
+        # c 'okay'
+        @props.get_raw_dctns_list()
+
     render: ->
-        # c @props.match, '@props.match'
         div
             style:
                 display: 'flex'
-                flexDirection: 'column'
-                alignItems: 'center'
-                justifyContent: 'center'
-                backgroundColor: 'ivory'
+                # flexDirection: 'column'
+                # alignItems: 'center'
+                # justifyContent: 'center'
+                backgroundColor: 'lightsteelblue'
                 height: '100%'
-            div
-                style:
-                    display: 'flex'
-
-                button
-                    style:
-                        background: 'red'
-                    'autocomplete'
-                button
-                    onClick: =>
-                        @props.change_to_spellcheck_mode
-                    style:
-                        background: 'cyan'
-                    'spellcheck'
-            input
-                type: 'text'
-                # color: 'grey'
-                onChange: (e) =>
-                    c 'e', e.currentTarget.value
-                    @props.lookup_prefix
-                        payload:
-                            prefix_text: e.currentTarget.value
-                placeholder: 'prefix'
-
-            h3
-                style:
-                    fontSize: 14
-                    color: 'grey'
-                if (@props.match is 'Not found.') or (@props.match is '')
-                    @props.match
-                else
-                    @props.match.match_word
+                width: '100%'
+            raw_dctn_pane()
+            # "aeosunth"
 
 
 
@@ -63,6 +68,10 @@ map_state_to_props = (state) ->
     state.get('lookup').toJS()
 
 map_dispatch_to_props = (dispatch) ->
+
+    get_raw_dctns_list: ->
+        dispatch
+            type: 'get_raw_dctns_list'
 
 
     change_to_autocomplete_mode: ->

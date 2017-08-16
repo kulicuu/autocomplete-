@@ -3,6 +3,7 @@
 window.c = console.log.bind console
 window._ = require 'lodash'
 window.React = require 'react'
+c "React.version:", React.version
 window.React_DOM = require 'react-dom'
 window.shortid = require 'shortid'
 window.key_mirror = require 'keymirror'

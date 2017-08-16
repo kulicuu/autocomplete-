@@ -42,6 +42,10 @@ arq = {}
 
 concord_channel = {}
 
+
+
+
+
 concord_channel['lookup_resp'] = ({ state, action, data }) ->
     c 'state hello ?', data
     state.setIn ['match'], data.payload
@@ -59,6 +63,12 @@ arq['primus:data'] = ({ state, action }) ->
         concord_channel[type] { state, action, data }
     else
         state
+
+
+arq['get_raw_dctns_list'] = ({ state, action }) ->
+    state = state.setIn ['desires', shortid()],
+        type: 'get_raw_dctns_list'
+    state.setIn ['get_dctns_list_state'], 'sent_request'
 
 arq['lookup_prefix'] = ({ state, action }) ->
     # { prefix_text } = action.payload

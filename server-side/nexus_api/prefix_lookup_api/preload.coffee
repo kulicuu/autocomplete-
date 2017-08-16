@@ -22,6 +22,18 @@ map_prefix_to_match = ({ dictionary, prefix }) ->
         return candides.pop()
 
 
+load_tree_to_redis = ({}) ->
+    lib_hash =
+        name: "<string>"
+        filename: "<string>"
+        path: "<string>"
+        id: "<string>"
+        datetime_created: "<datestring>"
+        algo_name: "<string>"   # some description
+        file_contents_raw: "<string>"  # string file contents
+        root_node: "<string>"  # uuid reference
+
+
 # At some point there will be multiple dictionaries, but for now just the one.
 
 lookup_tree_in_redis_by_prefix = ({ tree_id, prefix }) ->

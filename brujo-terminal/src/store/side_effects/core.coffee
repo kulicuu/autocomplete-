@@ -18,6 +18,13 @@ arq = {}
 #         payload: desire.payload
 
 
+arq['get_raw_dctns_list'] = ({ desire, store }) ->
+    c '88383838'
+    primus.write
+        type: 'get_raw_dctns_list'
+
+
+
 arq['lookup_prefix'] = ({ desire, store }) ->
     { payload } = desire
     primus.write
@@ -26,8 +33,9 @@ arq['lookup_prefix'] = ({ desire, store }) ->
         lookup: true
 
 arq['init_primus'] = ({ desire, store }) ->
+    c 'initialising'
     primus.on 'data', (data) ->
-        # c 'walla', data
+        c 'walla', data
         store.dispatch
             type: 'primus:data'
             payload: { data }
