@@ -87,6 +87,7 @@ brujo_primus.on 'connection', (spark) ->
     # dispatch to concord if want state
     spark.on 'data', (data) ->
 
+        c data, 'data'
 
         the_api
             type: data.type

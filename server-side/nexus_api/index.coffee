@@ -13,9 +13,6 @@ renew_cache = true
 
 
 
-
-
-
 startup_routine = ->
 
     "read_redis_cache"
@@ -47,12 +44,13 @@ redis_base_cache_get = (cb) ->
 
 
 
-redis_base_cache_cons_200 = (cb) ->
-    redis.hgetallAsync 'base_cache_hash'
-    .then (the_hash) ->
-        c the_hash, 'the_hash'
 
-        # assuming no errors
+part_464 =
+
+
+redis_base_cache_cons_200 = (cb) ->
+
+    part_264 = (the_hash) ->
         redis.smembersAsync the_hash.dictionaries_raw
         .then (members) ->
             ret_hash = _.assign {},
@@ -73,6 +71,66 @@ redis_base_cache_cons_200 = (cb) ->
             , (err) ->
                 c "#{color.yellow('.9383838', on)}", err
                 cb null, { ret_hash }
+
+
+    redis.hgetallAsync 'base_cache_hash'
+    .then (the_hash) ->
+        c the_hash, 'the_hash'
+
+
+        if the_hash is null
+            c 'is null'
+            initiate_redis_base_hash()
+            .then ->
+                redis.hgetallAsync 'base_cache_hash'
+                .then (the_hash) ->
+                    part_264 the_hash
+                    # redis.smembersAsync the_hash.dictionaries_raw
+                    # .then (members) ->
+                    #     ret_hash = _.assign {},
+                    #         base_cache_created: the_hash.base_cache_created
+                    #         base_cache_updated: the_hash.base_cache_updated
+                    #         dictionaries_raw: []
+                    #         data_sets_parsed: []
+                    #
+                    #     c members, 'members'
+                    #     control_flow.each members, (member_id, cb) ->
+                    #         c member_id, "#{color.cyan('9999', on)}"
+                    #         redis.hgetallAsync member_id
+                    #         .then (re) ->
+                    #             c _.keys(re)
+                    #             ret_hash.dictionaries_raw.push re # later will be more involved to get the hash out of redis
+                    #             cb null
+                    #
+                    #     , (err) ->
+                    #         c "#{color.yellow('.9383838', on)}", err
+                    #         cb null, { ret_hash }
+
+
+
+        else
+        # assuming no errors
+            part_264 the_hash
+            # redis.smembersAsync the_hash.dictionaries_raw
+            # .then (members) ->
+            #     ret_hash = _.assign {},
+            #         base_cache_created: the_hash.base_cache_created
+            #         base_cache_updated: the_hash.base_cache_updated
+            #         dictionaries_raw: []
+            #         data_sets_parsed: []
+            #
+            #     c members, 'members'
+            #     control_flow.each members, (member_id, cb) ->
+            #         c member_id, "#{color.cyan('9999', on)}"
+            #         redis.hgetallAsync member_id
+            #         .then (re) ->
+            #             c _.keys(re)
+            #             ret_hash.dictionaries_raw.push re # later will be more involved to get the hash out of redis
+            #             cb null
+            #
+            #     , (err) ->
+            #         c "#{color.yellow('.9383838', on)}", err
+            #         cb null, { ret_hash }
 
 
 
@@ -206,7 +264,11 @@ nexus_api = {}
 
 
 
-nexus_api.get_raw_dctns = (cb) ->
+nexus_api.get_raw_dctns_list =  ({ type, payload, spark }) ->
+    c "#{color.green('333.', on)}"
+    get_dictionaries_raw()
+    .then (hello) ->
+        c hello.length
 
 
 
@@ -217,9 +279,9 @@ nexus_api = _.assign nexus_api, require('./bktree_spellcheck_api/index.coffee').
 
 keys_nexus_api = _.keys nexus_api
 
-nexus_api_f = ({ type, payload }) ->
+nexus_api_f = ({ type, payload, spark }) ->
     if _.includes(keys_nexus_api, type)
-        nexus_api[type] { type, payload }
+        nexus_api[type] { type, payload, spark }
     else
         c "No-op in nexus_api."
 
