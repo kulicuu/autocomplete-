@@ -13,5 +13,7 @@ exports.default =
 
         # chat_log: Imm.List([])
         match: ''
+        raw_dctns_list: []
+        dctn_blob: ''
 
         # username: 'placholder username'

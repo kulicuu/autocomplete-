@@ -18,8 +18,12 @@ arq = {}
 #         payload: desire.payload
 
 
+arq['browse_dctn'] = ({ desire, state }) ->
+    primus.write
+        type: 'browse_dctn'
+        payload: desire.payload
+
 arq['get_raw_dctns_list'] = ({ desire, store }) ->
-    c '88383838'
     primus.write
         type: 'get_raw_dctns_list'
 

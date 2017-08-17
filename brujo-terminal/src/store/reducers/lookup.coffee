@@ -45,11 +45,16 @@ concord_channel = {}
 
 
 
+concord_channel['dctn_initial_blob'] = ({ state, action, data }) ->
+    state.setIn ['dctn_blob'], data.payload.blob
 
 concord_channel['lookup_resp'] = ({ state, action, data }) ->
-    c 'state hello ?', data
     state.setIn ['match'], data.payload
     # state
+
+
+concord_channel['ret_raw_dctns_list'] = ({ state, action, data }) ->
+    state.setIn ['raw_dctns_list'], data.payload.raw_dctns_rayy
 
 
 keys_concord_channel = keys concord_channel
@@ -64,6 +69,11 @@ arq['primus:data'] = ({ state, action }) ->
     else
         state
 
+
+arq['browse_dctn'] = ({ state, action }) ->
+    state.setIn ['desires', shortid()],
+        type: 'browse_dctn'
+        payload: action.payload
 
 arq['get_raw_dctns_list'] = ({ state, action }) ->
     state = state.setIn ['desires', shortid()],

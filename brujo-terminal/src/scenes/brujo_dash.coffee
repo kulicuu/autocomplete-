@@ -29,8 +29,25 @@ raw_dctn_pane = (props, state) ->
             background: 'palegreen'
             width: '30%'
             height: '60%'
+        div
+            style:
+                marginTop: 10
+            for v, idx in props.raw_dctns_list
+                do (v) =>
+                    p
+                        onClick: (e) =>
+                            c v
+                            props.browse_dctn v.filename
 
-        p null, 'hello'
+
+                        style:
+                            cursor: 'pointer'
+                            fontSize: 10
+                            margin: 0
+                            marginTop: 5
+                            marginLeft: 10
+                        key: "dctns_filename#{idx}"
+                        v.filename.split('.')[0]
 
 
 
@@ -51,7 +68,17 @@ comp = rr
                 backgroundColor: 'lightsteelblue'
                 height: '100%'
                 width: '100%'
-            raw_dctn_pane()
+            raw_dctn_pane @props, @state
+
+            c @props
+            div null,
+                for word, idx in @props.dctn_blob.split('\n')
+                    p
+                        style:
+                            margin: 4
+                            fontSize: 8
+                        key: "word#{idx}"
+                        "   #{word}"
             # "aeosunth"
 
 
@@ -68,6 +95,12 @@ map_state_to_props = (state) ->
     state.get('lookup').toJS()
 
 map_dispatch_to_props = (dispatch) ->
+
+    browse_dctn: (filename) ->
+        dispatch
+            type: 'browse_dctn'
+            payload:
+                filename: filename
 
     get_raw_dctns_list: ->
         dispatch

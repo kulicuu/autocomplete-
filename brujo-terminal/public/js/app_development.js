@@ -47633,11 +47633,22 @@ arq = {};
 
 concord_channel = {};
 
+concord_channel['dctn_initial_blob'] = function(arg) {
+  var action, data, state;
+  state = arg.state, action = arg.action, data = arg.data;
+  return state.setIn(['dctn_blob'], data.payload.blob);
+};
+
 concord_channel['lookup_resp'] = function(arg) {
   var action, data, state;
   state = arg.state, action = arg.action, data = arg.data;
-  c('state hello ?', data);
   return state.setIn(['match'], data.payload);
+};
+
+concord_channel['ret_raw_dctns_list'] = function(arg) {
+  var action, data, state;
+  state = arg.state, action = arg.action, data = arg.data;
+  return state.setIn(['raw_dctns_list'], data.payload.raw_dctns_rayy);
 };
 
 keys_concord_channel = keys(concord_channel);
@@ -47656,6 +47667,15 @@ arq['primus:data'] = function(arg) {
   } else {
     return state;
   }
+};
+
+arq['browse_dctn'] = function(arg) {
+  var action, state;
+  state = arg.state, action = arg.action;
+  return state.setIn(['desires', shortid()], {
+    type: 'browse_dctn',
+    payload: action.payload
+  });
 };
 
 arq['get_raw_dctns_list'] = function(arg) {
@@ -47710,7 +47730,9 @@ exports["default"] = {
       },
       obj
     )),
-    match: ''
+    match: '',
+    raw_dctns_list: [],
+    dctn_blob: ''
   }
 };
 
@@ -47762,10 +47784,18 @@ var arq;
 
 arq = {};
 
+arq['browse_dctn'] = function(arg) {
+  var desire, state;
+  desire = arg.desire, state = arg.state;
+  return primus.write({
+    type: 'browse_dctn',
+    payload: desire.payload
+  });
+};
+
 arq['get_raw_dctns_list'] = function(arg) {
   var desire, store;
   desire = arg.desire, store = arg.store;
-  c('88383838');
   return primus.write({
     type: 'get_raw_dctns_list'
   });
@@ -47844,6 +47874,7 @@ list_of_components = {
 };
 
 raw_dctn_pane = function(props, state) {
+  var idx, v;
   return div({
     style: {
       display: 'flex',
@@ -47854,7 +47885,37 @@ raw_dctn_pane = function(props, state) {
       width: '30%',
       height: '60%'
     }
-  }, p(null, 'hello'));
+  }, div({
+    style: {
+      marginTop: 10
+    }
+  }, (function() {
+    var i, len, ref, results;
+    ref = props.raw_dctns_list;
+    results = [];
+    for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
+      v = ref[idx];
+      results.push((function(_this) {
+        return function(v) {
+          return p({
+            onClick: function(e) {
+              c(v);
+              return props.browse_dctn(v.filename);
+            },
+            style: {
+              cursor: 'pointer',
+              fontSize: 10,
+              margin: 0,
+              marginTop: 5,
+              marginLeft: 10
+            },
+            key: "dctns_filename" + idx
+          }, v.filename.split('.')[0]);
+        };
+      })(this)(v));
+    }
+    return results;
+  }).call(this)));
 };
 
 comp = rr({
@@ -47862,6 +47923,7 @@ comp = rr({
     return this.props.get_raw_dctns_list();
   },
   render: function() {
+    var idx, word;
     return div({
       style: {
         display: 'flex',
@@ -47869,7 +47931,22 @@ comp = rr({
         height: '100%',
         width: '100%'
       }
-    }, raw_dctn_pane());
+    }, raw_dctn_pane(this.props, this.state), c(this.props), div(null, (function() {
+      var i, len, ref, results;
+      ref = this.props.dctn_blob.split('\n');
+      results = [];
+      for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
+        word = ref[idx];
+        results.push(p({
+          style: {
+            margin: 4,
+            fontSize: 8
+          },
+          key: "word" + idx
+        }, "   " + word));
+      }
+      return results;
+    }).call(this)));
   }
 });
 
@@ -47879,6 +47956,14 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
+    browse_dctn: function(filename) {
+      return dispatch({
+        type: 'browse_dctn',
+        payload: {
+          filename: filename
+        }
+      });
+    },
     get_raw_dctns_list: function() {
       return dispatch({
         type: 'get_raw_dctns_list'
