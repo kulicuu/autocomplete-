@@ -47866,7 +47866,7 @@ exports["default"] = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 253 */
 /***/ (function(module, exports) {
 
-var comp, list_of_components, map_dispatch_to_props, map_state_to_props, raw_dctn_pane;
+var browse_raw, comp, list_of_components, map_dispatch_to_props, map_state_to_props, raw_dctn_pane;
 
 list_of_components = {
   'raw dictionary list': 'aeu',
@@ -47918,12 +47918,36 @@ raw_dctn_pane = function(props, state) {
   }).call(this)));
 };
 
+browse_raw = function(props, state) {
+  var idx, word;
+  return div({
+    style: {
+      background: 'chartreuse',
+      scroll: 'auto'
+    }
+  }, (function() {
+    var i, len, ref, results;
+    ref = props.dctn_blob.split('\n');
+    results = [];
+    for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
+      word = ref[idx];
+      results.push(p({
+        style: {
+          margin: 4,
+          fontSize: 8
+        },
+        key: "word" + idx
+      }, "   " + word));
+    }
+    return results;
+  })());
+};
+
 comp = rr({
   componentWillMount: function() {
     return this.props.get_raw_dctns_list();
   },
   render: function() {
-    var idx, word;
     return div({
       style: {
         display: 'flex',
@@ -47931,22 +47955,7 @@ comp = rr({
         height: '100%',
         width: '100%'
       }
-    }, raw_dctn_pane(this.props, this.state), c(this.props), div(null, (function() {
-      var i, len, ref, results;
-      ref = this.props.dctn_blob.split('\n');
-      results = [];
-      for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
-        word = ref[idx];
-        results.push(p({
-          style: {
-            margin: 4,
-            fontSize: 8
-          },
-          key: "word" + idx
-        }, "   " + word));
-      }
-      return results;
-    }).call(this)));
+    }, raw_dctn_pane(this.props, this.state), c(this.props), browse_raw(this.props, this.state));
   }
 });
 

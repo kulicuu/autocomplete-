@@ -38,8 +38,6 @@ raw_dctn_pane = (props, state) ->
                         onClick: (e) =>
                             c v
                             props.browse_dctn v.filename
-
-
                         style:
                             cursor: 'pointer'
                             fontSize: 10
@@ -49,6 +47,20 @@ raw_dctn_pane = (props, state) ->
                         key: "dctns_filename#{idx}"
                         v.filename.split('.')[0]
 
+
+
+browse_raw = (props, state) ->
+    div
+        style:
+            background: 'chartreuse'
+            scroll: 'auto'
+        for word, idx in props.dctn_blob.split('\n')
+            p
+                style:
+                    margin: 4
+                    fontSize: 8
+                key: "word#{idx}"
+                "   #{word}"
 
 
 
@@ -71,14 +83,15 @@ comp = rr
             raw_dctn_pane @props, @state
 
             c @props
-            div null,
-                for word, idx in @props.dctn_blob.split('\n')
-                    p
-                        style:
-                            margin: 4
-                            fontSize: 8
-                        key: "word#{idx}"
-                        "   #{word}"
+            browse_raw @props, @state
+            # div null,
+            #     for word, idx in @props.dctn_blob.split('\n')
+            #         p
+            #             style:
+            #                 margin: 4
+            #                 fontSize: 8
+            #             key: "word#{idx}"
+            #             "   #{word}"
             # "aeosunth"
 
 

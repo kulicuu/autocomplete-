@@ -115,7 +115,7 @@ initiate_redis_base_hash = Bluebird.promisify (cb) ->
         cb null
 
 
-add_raw_dictionary = Bluebird.promisify ({filename}, cb) ->
+add_raw_dictionary = Bluebird.promisify ({ filename }, cb) ->
     redis.hgetAsync 'base_cache_hash', 'dictionaries_raw'
     .then (dctn_bskt_id) ->
         the_path = path.resolve(__dirname,'..' ,'..', 'dictionaries')
@@ -152,6 +152,8 @@ setup_and_background_tasks = ->
         [ redis_results, local_dir_results ] = results
         if redis_results is null
             initiate_redis_base_hash()
+            .then ->
+                setup_and_background_tasks()
         else
             red_rs_names = _.reduce redis_results.ret_hash.dictionaries_raw, (acc, v, k) ->
                 acc.push v.filename.split('.')[0]
