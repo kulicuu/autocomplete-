@@ -13,9 +13,15 @@ arq = {}
 #         payload: desire.payload
 #
 # arq['send_message'] = ({ desire, store }) ->
-#     primus.write
+#     primus.writeeo
 #         type: 'send_message'
 #         payload: desire.payload
+
+
+arq['apply_parse_build_data_structure'] = ({ desire, state }) ->
+    primus.write
+        type: 'apply_parse_build_data_structure'
+        payload: desire.payload
 
 
 arq['browse_dctn'] = ({ desire, state }) ->

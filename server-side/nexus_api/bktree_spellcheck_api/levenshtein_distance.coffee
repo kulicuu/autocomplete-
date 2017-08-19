@@ -36,20 +36,20 @@ lev_d_w = ( s, t ) ->
 exports.default = lev_d_w
 
 
-exports.test = ->
-
-    c = console.log.bind console
-
-    run_it = ({ s, t }) ->
-        len_s = s.length
-        len_t = t.length
-
-        x = lev_d s, len_s, t, len_t
-        c x
-
-    run_it
-        s: 'howdy'
-        t: 'howdo'
+# exports.test = ->
+#
+#     c = console.log.bind console
+#
+#     run_it = ({ s, t }) ->
+#         len_s = s.length
+#         len_t = t.length
+#
+#         x = lev_d s, len_s, t, len_t
+#         c x
+#
+#     run_it
+#         s: 'howdy'
+#         t: 'howdo'
 
 
 

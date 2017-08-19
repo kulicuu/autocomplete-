@@ -19,7 +19,7 @@ list_of_components =
 
 
 
-raw_dctn_pane = (props, state) ->
+raw_dctn_pane = (props, state, setState) ->
     div
         style:
             display: 'flex'
@@ -27,7 +27,7 @@ raw_dctn_pane = (props, state) ->
             alignItems: 'start'
             justifyContent: 'start'
             background: 'palegreen'
-            width: '30%'
+            width: '8%'
             height: '60%'
         div
             style:
@@ -37,8 +37,14 @@ raw_dctn_pane = (props, state) ->
                     p
                         onClick: (e) =>
                             c v
+                            setState
+                                dctn_selected: v.filename
                             props.browse_dctn v.filename
                         style:
+                            color: if v.filename is state.dctn_selected
+                                'white'
+                            else
+                                'black'
                             cursor: 'pointer'
                             fontSize: 10
                             margin: 0
@@ -53,6 +59,7 @@ browse_raw = (props, state) ->
     div
         style:
             background: 'chartreuse'
+            minWidth: '10%'
             scroll: 'auto'
         for word, idx in props.dctn_blob.split('\n')
             p
@@ -65,7 +72,42 @@ browse_raw = (props, state) ->
 
 
 
+
+
+apply_algo_panel = (props, state) ->
+    c state.dctn_selected
+    div
+        style:
+            background: 'magenta'
+            cursor: 'pointer'
+        h4
+            style:
+                color: 'blue'
+            "Apply algo:"
+        div null,
+            button
+                style:
+                    background: 'limegreen'
+                "burkhard-keller tree"
+        div null,
+            button
+                style:
+                    background: 'yellow'
+                "char-tree autocomplete"
+        h4
+            style:
+                color: 'blue'
+            "to #{state.dctn_selected} "
+
+
 comp = rr
+
+    getInitialState: ->
+        dctn_selected: 'null'
+        algo_selected: 'null'
+
+
+
     componentWillMount: ->
         # c 'okay'
         @props.get_raw_dctns_list()
@@ -80,9 +122,9 @@ comp = rr
                 backgroundColor: 'lightsteelblue'
                 height: '100%'
                 width: '100%'
-            raw_dctn_pane @props, @state
+            raw_dctn_pane @props, @state, @setState.bind(@)
 
-            c @props
+            # c @props
             browse_raw @props, @state
             # div null,
             #     for word, idx in @props.dctn_blob.split('\n')
@@ -94,6 +136,8 @@ comp = rr
             #             "   #{word}"
             # "aeosunth"
 
+
+            apply_algo_panel @props, @state
 
 
 

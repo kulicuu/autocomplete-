@@ -172,13 +172,57 @@ setup_and_background_tasks = ->
 nexus_api = {}
 
 
+algo_api = {}
+
+# NOTE typically these would be synch run functions but could be set
+# on another thread so setting up an async layer.
+
+algo_api['prefix_lookup_tree'] = Bluebird.promisify ({ blob }, cb) ->
+
+
+
+algo_api['bktree'] = Bluebird.promisify ({ blob }, cb) ->
+
+
+
+
+"redis_cache_parsed_blob"
+
+redis_cache_parsed_blob = Bluebird.promisify
+
+
+
+
+
+
+
+
+apply_parse_build_data_structure = Bluebird.promisify ({ blob, algo_name }, cb) ->
+
+    algo_api[algo_name] { blob }
+    .then ->
+        # TODO implement callback
+        # cache on redis as a separate function
+
+
+
+nexus_api['apply_parse_build_data_structure'] = ({ payload, spark }) ->
+    { filename, algo_name } = payload
+    redis.hgetAsync 'raw_dctns_lookup_table', filename
+    .then (dctn_id) ->
+        redis.hgetAsync dctn_id, 'blob'
+        .then (blob) ->
+            # TODO  now implement private
+            apply_parse_build_data_structure { blob, algo_name }
+            .then ->
+                # TODO now implement cb
+
+
 nexus_api.browse_dctn = ({ type, payload, spark }) ->
-    c payload
     redis.hgetAsync 'raw_dctns_lookup_table', payload.filename
     .then (dctn_id) ->
         redis.hgetAsync dctn_id, 'blob'
         .then (re) ->
-            c re
             spark.write
                 type: 'dctn_initial_blob'
                 payload:

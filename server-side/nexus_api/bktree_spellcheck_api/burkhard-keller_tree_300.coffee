@@ -132,6 +132,24 @@ load_100 = Bluebird.promisify ({ filename }, cb) ->
     the_blob = fs.readFile path.resolve
 
 
+
+"parse_blob_make_data_structure:"
+load_func_2064 = Bluebird.promisify ({ blob }, cb)->
+    d1 = blob.split '\n'
+    bktree = { root: null }
+    d1 = _.map d1, (word, idx) ->
+        word.toLowerCase()
+    for word, idx in d1
+        unless word.length is 0
+            c "#{color.green('Adding word: ', on)} #{color.cyan(word, on)}"
+            { bktree } = tree_add_word
+                bktree: bktree
+                word: word
+            c "#{color.blue('Done.', on)}"
+    { bktree }
+
+
+
 load_func = ->
     blob_1 = fs.readFileSync '../dictionaries/reduced_000.txt', 'utf8'
     blob_2 = fs.readFileSync '../dictionaries/rdc_003.txt', 'utf8'

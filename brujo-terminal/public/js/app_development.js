@@ -47784,6 +47784,15 @@ var arq;
 
 arq = {};
 
+arq['apply_parse_build_data_structure'] = function(arg) {
+  var desire, state;
+  desire = arg.desire, state = arg.state;
+  return primus.write({
+    type: 'apply_parse_build_data_structure',
+    payload: desire.payload
+  });
+};
+
 arq['browse_dctn'] = function(arg) {
   var desire, state;
   desire = arg.desire, state = arg.state;
@@ -47866,14 +47875,14 @@ exports["default"] = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 253 */
 /***/ (function(module, exports) {
 
-var browse_raw, comp, list_of_components, map_dispatch_to_props, map_state_to_props, raw_dctn_pane;
+var apply_algo_panel, browse_raw, comp, list_of_components, map_dispatch_to_props, map_state_to_props, raw_dctn_pane;
 
 list_of_components = {
   'raw dictionary list': 'aeu',
   'browse dictionary list pane': 'sth'
 };
 
-raw_dctn_pane = function(props, state) {
+raw_dctn_pane = function(props, state, setState) {
   var idx, v;
   return div({
     style: {
@@ -47882,7 +47891,7 @@ raw_dctn_pane = function(props, state) {
       alignItems: 'start',
       justifyContent: 'start',
       background: 'palegreen',
-      width: '30%',
+      width: '8%',
       height: '60%'
     }
   }, div({
@@ -47900,9 +47909,13 @@ raw_dctn_pane = function(props, state) {
           return p({
             onClick: function(e) {
               c(v);
+              setState({
+                dctn_selected: v.filename
+              });
               return props.browse_dctn(v.filename);
             },
             style: {
+              color: v.filename === state.dctn_selected ? 'white' : 'black',
               cursor: 'pointer',
               fontSize: 10,
               margin: 0,
@@ -47923,6 +47936,7 @@ browse_raw = function(props, state) {
   return div({
     style: {
       background: 'chartreuse',
+      minWidth: '10%',
       scroll: 'auto'
     }
   }, (function() {
@@ -47943,7 +47957,39 @@ browse_raw = function(props, state) {
   })());
 };
 
+apply_algo_panel = function(props, state) {
+  c(state.dctn_selected);
+  return div({
+    style: {
+      background: 'magenta',
+      cursor: 'pointer'
+    }
+  }, h4({
+    style: {
+      color: 'blue'
+    }
+  }, "Apply algo:"), div(null, button({
+    style: {
+      background: 'limegreen'
+    }
+  }, "burkhard-keller tree")), div(null, button({
+    style: {
+      background: 'yellow'
+    }
+  }, "char-tree autocomplete")), h4({
+    style: {
+      color: 'blue'
+    }
+  }, "to " + state.dctn_selected + " "));
+};
+
 comp = rr({
+  getInitialState: function() {
+    return {
+      dctn_selected: 'null',
+      algo_selected: 'null'
+    };
+  },
   componentWillMount: function() {
     return this.props.get_raw_dctns_list();
   },
@@ -47955,7 +48001,7 @@ comp = rr({
         height: '100%',
         width: '100%'
       }
-    }, raw_dctn_pane(this.props, this.state), c(this.props), browse_raw(this.props, this.state));
+    }, raw_dctn_pane(this.props, this.state, this.setState.bind(this)), browse_raw(this.props, this.state), apply_algo_panel(this.props, this.state));
   }
 });
 
