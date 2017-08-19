@@ -29,6 +29,10 @@ raw_dctn_pane = (props, state, setState) ->
             background: 'palegreen'
             width: '8%'
             height: '60%'
+        h4
+            style:
+                color: 'orange'
+            "raw dictionaries"
         div
             style:
                 marginTop: 10
@@ -74,30 +78,45 @@ browse_raw = (props, state) ->
 
 
 
-apply_algo_panel = (props, state) ->
+apply_algo_panel = (props, state, setState) ->
     c state.dctn_selected
     div
         style:
             background: 'magenta'
-            cursor: 'pointer'
         h4
             style:
                 color: 'blue'
             "Apply algo:"
         div null,
             button
+                onClick: ->
+                    setState
+                        algo_selected: 'bktree'
                 style:
-                    background: 'limegreen'
+                    cursor: 'pointer'
+                    background: if state.algo_selected is 'bktree' then 'white' else 'darkgrey'
                 "burkhard-keller tree"
         div null,
             button
+                onClick: ->
+                    setState
+                        algo_selected: 'char-tree-autocomplete'
                 style:
-                    background: 'yellow'
+                    cursor: 'pointer'
+                    background: if state.algo_selected is 'char-tree-autocomplete' then 'white' else 'darkgrey'
                 "char-tree autocomplete"
         h4
             style:
                 color: 'blue'
             "to #{state.dctn_selected} "
+        button
+            onClick:
+            style:
+                cursor: 'pointer'
+                backgroundColor: if ( ( state.dctn_selected isnt 'null') and (state.algo_selected isnt 'null') ) then 'white' else 'red'
+
+            "Go"
+
 
 
 comp = rr
@@ -137,7 +156,7 @@ comp = rr
             # "aeosunth"
 
 
-            apply_algo_panel @props, @state
+            apply_algo_panel @props, @state, @setState.bind(@)
 
 
 

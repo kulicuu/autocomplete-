@@ -47894,7 +47894,11 @@ raw_dctn_pane = function(props, state, setState) {
       width: '8%',
       height: '60%'
     }
-  }, div({
+  }, h4({
+    style: {
+      color: 'orange'
+    }
+  }, "raw dictionaries"), div({
     style: {
       marginTop: 10
     }
@@ -47957,30 +47961,46 @@ browse_raw = function(props, state) {
   })());
 };
 
-apply_algo_panel = function(props, state) {
+apply_algo_panel = function(props, state, setState) {
   c(state.dctn_selected);
   return div({
     style: {
-      background: 'magenta',
-      cursor: 'pointer'
+      background: 'magenta'
     }
   }, h4({
     style: {
       color: 'blue'
     }
   }, "Apply algo:"), div(null, button({
+    onClick: function() {
+      return setState({
+        algo_selected: 'bktree'
+      });
+    },
     style: {
-      background: 'limegreen'
+      cursor: 'pointer',
+      background: state.algo_selected === 'bktree' ? 'white' : 'darkgrey'
     }
   }, "burkhard-keller tree")), div(null, button({
+    onClick: function() {
+      return setState({
+        algo_selected: 'char-tree-autocomplete'
+      });
+    },
     style: {
-      background: 'yellow'
+      cursor: 'pointer',
+      background: state.algo_selected === 'char-tree-autocomplete' ? 'white' : 'darkgrey'
     }
   }, "char-tree autocomplete")), h4({
     style: {
       color: 'blue'
     }
-  }, "to " + state.dctn_selected + " "));
+  }, "to " + state.dctn_selected + " "), button({
+    style: {
+      cursor: 'pointer',
+      backgroundColor: ((state.dctn_selected !== 'null') && (state.algo_selected !== 'null')) ? 'white' : 'red'
+    }
+  }, "Go"));
 };
 
 comp = rr({
@@ -48001,7 +48021,7 @@ comp = rr({
         height: '100%',
         width: '100%'
       }
-    }, raw_dctn_pane(this.props, this.state, this.setState.bind(this)), browse_raw(this.props, this.state), apply_algo_panel(this.props, this.state));
+    }, raw_dctn_pane(this.props, this.state, this.setState.bind(this)), browse_raw(this.props, this.state), apply_algo_panel(this.props, this.state, this.setState.bind(this)));
   }
 });
 
