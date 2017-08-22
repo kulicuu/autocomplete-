@@ -45,3 +45,23 @@ this could include building data structures, keeping track of library, etc.  thi
 
 
 - then finally at a fairly low-level we have separate apis for each data-structure type, separately for redis and nodejsmem implementations.  in redis may want to go ahead and skip straight to lua without prototyping over a plain redis (node-redis) api high-transaction implemantation.
+
+
+
+
+#### brujo-terminal
+
+
+minimalist structure as follows:
+
+collect the names of the raw dictionaries and the algos available into a matrix / table / spreadsheet layout
+#### pane 0 main admin spreadsheet / control-panel
+each cell will indicate if there is something already cached and built on that, if it's cached is it in redis mem or nodejs mem ?  a feature, maybe offer to make different versions so could diff the structures.  this indicates a server side tree crawling system that will diff data-structures.  also a button for selecting active structure for text entry
+
+a panel for text entry and search result presentation
+#### pane 1  :: text entry and search results display
+if there is a data structure available and selected (maybe can select more than one and then aggregate results) then text entry in this pane induces immediately in a results sub-pane the search results
+
+graph analysis pane, graphics !
+#### pane 2   :: more later
+given selectwion in pane0 and text in pane2, the interactive graphics in pane2 allows for visually traversing tree by node. in a much smaller sub-pane, which will hide from view when not in use, any graph diffy results info may be displayed.  super advanced: display in graphics pane both trees superimposed, could be interesting to assess diff visually.
