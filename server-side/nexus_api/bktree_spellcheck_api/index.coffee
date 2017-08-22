@@ -108,3 +108,30 @@ load_d = ({ bktree, name, description, filename, path }) ->
 
 retrieve_d = ->
     "given an id get the structure into nodejs memory structure."
+
+
+
+
+" what if there was a successful parse up to a point that got cut off , how would we restart the process ?"
+"we would first have to recover it from redis.  "
+
+
+" we could also just put it into redis to begin with and just forget about ever putting it into nodejs memory."
+
+
+
+tree_add_word = require('./burkhard-keller_tree_300.coffee').tree_add_word
+
+exports.parse_blob_to_mem = parse_blob_to_mem = ({ blob }) ->
+    d1 = blob.split '\n'
+    bktree = { root: null }
+    d1 = _.map d1, (word, idx) ->
+        word.toLowerCase()
+    for word, idx in d1
+        unless word.length is 0
+            c 'word loading', word
+            { bktree } = tree_add_word
+                bktree: bktree
+                word: word
+    { bktree }
+    # " this is the func main for the new system."

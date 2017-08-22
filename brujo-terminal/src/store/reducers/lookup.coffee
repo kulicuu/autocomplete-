@@ -70,6 +70,13 @@ arq['primus:data'] = ({ state, action }) ->
         state
 
 
+
+arq['apply_parse_build_data_structure'] = ({ state, action }) ->
+    state.setIn ['desires', shortid()],
+        type: 'apply_parse_build_data_structure'
+        payload: action.payload
+
+
 arq['browse_dctn'] = ({ state, action }) ->
     state.setIn ['desires', shortid()],
         type: 'browse_dctn'

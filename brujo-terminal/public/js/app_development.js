@@ -47669,6 +47669,15 @@ arq['primus:data'] = function(arg) {
   }
 };
 
+arq['apply_parse_build_data_structure'] = function(arg) {
+  var action, state;
+  state = arg.state, action = arg.action;
+  return state.setIn(['desires', shortid()], {
+    type: 'apply_parse_build_data_structure',
+    payload: action.payload
+  });
+};
+
 arq['browse_dctn'] = function(arg) {
   var action, state;
   state = arg.state, action = arg.action;
@@ -47974,7 +47983,7 @@ apply_algo_panel = function(props, state, setState) {
   }, "Apply algo:"), div(null, button({
     onClick: function() {
       return setState({
-        algo_selected: 'bktree'
+        algo_selected: 'burkhard-keller_tree'
       });
     },
     style: {
@@ -47996,6 +48005,9 @@ apply_algo_panel = function(props, state, setState) {
       color: 'blue'
     }
   }, "to " + state.dctn_selected + " "), button({
+    onClick: function() {
+      return props.apply_parse_build_data_structure(state.dctn_selected, state.algo_selected);
+    },
     style: {
       cursor: 'pointer',
       backgroundColor: ((state.dctn_selected !== 'null') && (state.algo_selected !== 'null')) ? 'white' : 'red'
@@ -48031,6 +48043,15 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
+    apply_parse_build_data_structure: function(filename, algo_name) {
+      return dispatch({
+        type: 'apply_parse_build_data_structure',
+        payload: {
+          filename: filename,
+          algo_name: algo_name
+        }
+      });
+    },
     browse_dctn: function(filename) {
       return dispatch({
         type: 'browse_dctn',

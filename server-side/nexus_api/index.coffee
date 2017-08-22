@@ -8,6 +8,8 @@
 
 
 
+data_structs = {}
+
 renew_cache = true
 
 
@@ -177,11 +179,15 @@ algo_api = {}
 # NOTE typically these would be synch run functions but could be set
 # on another thread so setting up an async layer.
 
-algo_api['prefix_lookup_tree'] = Bluebird.promisify ({ blob }, cb) ->
+algo_api['char-tree-autocomplete'] = Bluebird.promisify ({ blob }, cb) ->
 
 
 
-algo_api['bktree'] = Bluebird.promisify ({ blob }, cb) ->
+
+
+
+algo_api['burkhard-keller_tree'] = require('./bktree_spellcheck_api/index').parse_blob_to_mem
+
 
 
 
@@ -198,16 +204,23 @@ redis_cache_parsed_blob = Bluebird.promisify
 
 
 apply_parse_build_data_structure = Bluebird.promisify ({ blob, algo_name }, cb) ->
-
-    algo_api[algo_name] { blob }
-    .then ->
+    # TODO because this is a long running task should
+    # make this async operation and set it into a child process.
+    { bktree } = algo_api[algo_name] { blob }
+    data_structs[algo_name] = bktree
+    # .then  ({ bktree }) ->
+    #     c "#{color.blue(_.keys(bktree), on)}"
         # TODO implement callback
         # cache on redis as a separate function
 
 
+nexus_api['client_spellcheck_w_bktree'] = ({ bktree, payload, spark }) ->
+
 
 nexus_api['apply_parse_build_data_structure'] = ({ payload, spark }) ->
+    c "#{color.green('833333333333388888888888888888888888888888888', on)}"
     { filename, algo_name } = payload
+
     redis.hgetAsync 'raw_dctns_lookup_table', filename
     .then (dctn_id) ->
         redis.hgetAsync dctn_id, 'blob'

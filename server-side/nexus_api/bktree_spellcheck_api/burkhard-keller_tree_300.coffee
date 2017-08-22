@@ -67,7 +67,7 @@ add_chd_to_node = ({ node, key, word }) ->
     node.chd_nodes[key] = node_f { word }
 
 
-tree_add_word = ({ bktree, word }) ->
+exports.tree_add_word = tree_add_word = ({ bktree, word }) ->
     if bktree.root is null
         bktree.root = node_f({ word })
         return { bktree }

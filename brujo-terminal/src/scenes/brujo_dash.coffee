@@ -91,7 +91,7 @@ apply_algo_panel = (props, state, setState) ->
             button
                 onClick: ->
                     setState
-                        algo_selected: 'bktree'
+                        algo_selected: 'burkhard-keller_tree'
                 style:
                     cursor: 'pointer'
                     background: if state.algo_selected is 'bktree' then 'white' else 'darkgrey'
@@ -110,11 +110,11 @@ apply_algo_panel = (props, state, setState) ->
                 color: 'blue'
             "to #{state.dctn_selected} "
         button
-            onClick:
+            onClick: ->
+                props.apply_parse_build_data_structure(state.dctn_selected, state.algo_selected)
             style:
                 cursor: 'pointer'
                 backgroundColor: if ( ( state.dctn_selected isnt 'null') and (state.algo_selected isnt 'null') ) then 'white' else 'red'
-
             "Go"
 
 
@@ -171,6 +171,13 @@ map_state_to_props = (state) ->
     state.get('lookup').toJS()
 
 map_dispatch_to_props = (dispatch) ->
+
+    apply_parse_build_data_structure: (filename, algo_name) ->
+        dispatch
+            type: 'apply_parse_build_data_structure'
+            payload:
+                filename: filename
+                algo_name: algo_name
 
     browse_dctn: (filename) ->
         dispatch
