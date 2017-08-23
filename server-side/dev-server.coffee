@@ -76,7 +76,7 @@ brujo_primus.use 'session', primus_session, { store: brujo_redis_store }
 brujo_primus.save path.join(brujo_arq.public_dir, '/js' , '/primus.js')
 
 
-the_api = require('./nexus_api/index').default
+the_api = require('./brujo_layer_control/index').default
 
 
 brujo_server.listen brujo_arq.port, ->
@@ -97,6 +97,6 @@ brujo_primus.on 'connection', (spark) ->
             # spark.write
             #     type: 'lookup_resp'
             #     payload: the_api
-            #         prefix: data.payload.prefix_text
+            #         # prefix: data.payload.prefix_text
             #         opts:
             #             lookup_type: 'lookup_prefix_000'

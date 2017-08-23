@@ -7,4 +7,9 @@ this could include building data structures, keeping track of library, etc.  thi
 
 
 
-redis-layer includes many things including caching in support of nodejsmem services, but lookup-redis should follow the structure of lookup-nodejsmem pretty much.
+### cache-redis api responsibilities
+
+
+- take nodejs mem graphs and move them into redis caching
+
+- retrieve these.

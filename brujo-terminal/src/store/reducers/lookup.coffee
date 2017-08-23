@@ -54,6 +54,7 @@ concord_channel['lookup_resp'] = ({ state, action, data }) ->
 
 
 concord_channel['ret_raw_dctns_list'] = ({ state, action, data }) ->
+    state = state.setIn ['get_dctns_list_state'], 'received_it'
     state.setIn ['raw_dctns_list'], data.payload.raw_dctns_rayy
 
 
@@ -62,8 +63,6 @@ keys_concord_channel = keys concord_channel
 arq['primus:data'] = ({ state, action }) ->
     { data } = action.payload
     { type, payload } = action.payload.data
-    # c state, action, '393939'
-    # c action.payload.data, payload.data
     if includes(keys_concord_channel, type)
         concord_channel[type] { state, action, data }
     else

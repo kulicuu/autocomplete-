@@ -47648,6 +47648,7 @@ concord_channel['lookup_resp'] = function(arg) {
 concord_channel['ret_raw_dctns_list'] = function(arg) {
   var action, data, state;
   state = arg.state, action = arg.action, data = arg.data;
+  state = state.setIn(['get_dctns_list_state'], 'received_it');
   return state.setIn(['raw_dctns_list'], data.payload.raw_dctns_rayy);
 };
 
@@ -47884,136 +47885,7 @@ exports["default"] = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 253 */
 /***/ (function(module, exports) {
 
-var apply_algo_panel, browse_raw, comp, list_of_components, map_dispatch_to_props, map_state_to_props, raw_dctn_pane;
-
-list_of_components = {
-  'raw dictionary list': 'aeu',
-  'browse dictionary list pane': 'sth'
-};
-
-raw_dctn_pane = function(props, state, setState) {
-  var idx, v;
-  return div({
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'start',
-      justifyContent: 'start',
-      background: 'palegreen',
-      width: '8%',
-      height: '60%'
-    }
-  }, h4({
-    style: {
-      color: 'orange'
-    }
-  }, "raw dictionaries"), div({
-    style: {
-      marginTop: 10
-    }
-  }, (function() {
-    var i, len, ref, results;
-    ref = props.raw_dctns_list;
-    results = [];
-    for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
-      v = ref[idx];
-      results.push((function(_this) {
-        return function(v) {
-          return p({
-            onClick: function(e) {
-              c(v);
-              setState({
-                dctn_selected: v.filename
-              });
-              return props.browse_dctn(v.filename);
-            },
-            style: {
-              color: v.filename === state.dctn_selected ? 'white' : 'black',
-              cursor: 'pointer',
-              fontSize: 10,
-              margin: 0,
-              marginTop: 5,
-              marginLeft: 10
-            },
-            key: "dctns_filename" + idx
-          }, v.filename.split('.')[0]);
-        };
-      })(this)(v));
-    }
-    return results;
-  }).call(this)));
-};
-
-browse_raw = function(props, state) {
-  var idx, word;
-  return div({
-    style: {
-      background: 'chartreuse',
-      minWidth: '10%',
-      scroll: 'auto'
-    }
-  }, (function() {
-    var i, len, ref, results;
-    ref = props.dctn_blob.split('\n');
-    results = [];
-    for (idx = i = 0, len = ref.length; i < len; idx = ++i) {
-      word = ref[idx];
-      results.push(p({
-        style: {
-          margin: 4,
-          fontSize: 8
-        },
-        key: "word" + idx
-      }, "   " + word));
-    }
-    return results;
-  })());
-};
-
-apply_algo_panel = function(props, state, setState) {
-  c(state.dctn_selected);
-  return div({
-    style: {
-      background: 'magenta'
-    }
-  }, h4({
-    style: {
-      color: 'blue'
-    }
-  }, "Apply algo:"), div(null, button({
-    onClick: function() {
-      return setState({
-        algo_selected: 'burkhard-keller_tree'
-      });
-    },
-    style: {
-      cursor: 'pointer',
-      background: state.algo_selected === 'bktree' ? 'white' : 'darkgrey'
-    }
-  }, "burkhard-keller tree")), div(null, button({
-    onClick: function() {
-      return setState({
-        algo_selected: 'char-tree-autocomplete'
-      });
-    },
-    style: {
-      cursor: 'pointer',
-      background: state.algo_selected === 'char-tree-autocomplete' ? 'white' : 'darkgrey'
-    }
-  }, "char-tree autocomplete")), h4({
-    style: {
-      color: 'blue'
-    }
-  }, "to " + state.dctn_selected + " "), button({
-    onClick: function() {
-      return props.apply_parse_build_data_structure(state.dctn_selected, state.algo_selected);
-    },
-    style: {
-      cursor: 'pointer',
-      backgroundColor: ((state.dctn_selected !== 'null') && (state.algo_selected !== 'null')) ? 'white' : 'red'
-    }
-  }, "Go"));
-};
+var comp, map_dispatch_to_props, map_state_to_props;
 
 comp = rr({
   getInitialState: function() {
@@ -48026,6 +47898,11 @@ comp = rr({
     return this.props.get_raw_dctns_list();
   },
   render: function() {
+    if (this.state['get_dctns_list_state'] === 'received_it') {
+      alert('gotit');
+    } else {
+      alert('notyet');
+    }
     return div({
       style: {
         display: 'flex',
@@ -48033,7 +47910,7 @@ comp = rr({
         height: '100%',
         width: '100%'
       }
-    }, raw_dctn_pane(this.props, this.state, this.setState.bind(this)), browse_raw(this.props, this.state), apply_algo_panel(this.props, this.state, this.setState.bind(this)));
+    });
   }
 });
 

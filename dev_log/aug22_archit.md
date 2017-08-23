@@ -65,3 +65,12 @@ if there is a data structure available and selected (maybe can select more than 
 graph analysis pane, graphics !
 #### pane 2   :: more later
 given selectwion in pane0 and text in pane2, the interactive graphics in pane2 allows for visually traversing tree by node. in a much smaller sub-pane, which will hide from view when not in use, any graph diffy results info may be displayed.  super advanced: display in graphics pane both trees superimposed, could be interesting to assess diff visually.
+
+
+
+#### development plan
+
+for bt, just pane0 and pane1 necessary for first stage.
+
+
+for server-side, only the redis parts necessary for caching of nodejs memory structures, and retrieving them, are necessary now.  the algos for nodejsmem implementation is done just development had no archi concept up until now, lots of ideas and no organisation.
