@@ -2,6 +2,102 @@
 
 
 
+table_row =
+    display: 'flex'
+    flexDirection: 'row'
+    flexWrap: 'no-wrap'
+    width: '100%'
+    paddingLeft: 15
+    paddingRight: 15
+
+
+header =
+    backgroundColor: '#FFEEDB'
+    fontWeight: 'bold'
+    paddingTop: 6
+    paddingBottom: 6
+
+table_row_header = _.assign table_row, header
+
+
+
+column =
+    flexGrow: 0
+    flexShrink: 0
+    verticalAlign: 'top'
+
+index =
+    textAlign: 'center'
+
+column_index = _.assign column, index
+
+
+wrapper =
+    display: 'flex'
+    flexDirection: 'row'
+
+attributes =
+    flexGrow: 1
+
+wrapper_attributes = _.assign wrapper, attributes
+
+
+
+
+
+pane_0_svg_000 = (props, state, setState) ->
+
+    div
+        style:
+            position: 'absolute'
+            top: '20%'
+            left: '20%'
+        svg
+            x: '10%'
+            y: '10%'
+            width: '60%'
+            height: '80%'
+            background: 'white'
+            rect
+                x: '0%'
+                y: '0%'
+                width: '100%'
+                height: '100%'
+                fill: 'magenta'
+
+            rect
+                x: '10%'
+                y: '10%'
+                width: '80%'
+                height: '80%'
+                fill: 'chartreuse'
+
+
+
+
+pane_0 = (props, state, setState) ->
+    div
+        style:
+            width: '40%'
+            height: '40%'
+        div
+            style: table_row_header
+            div
+                style: column_index
+                '#'
+            div
+                style: wrapper_attributes
+                div
+                    style: _.assign column,
+                        paddingLeft: 6
+                    "something"
+
+
+
+
+
+
+
 comp = rr
 
 
@@ -15,7 +111,7 @@ comp = rr
         @props.get_raw_dctns_list()
 
     render: ->
-        c @props['get_dctns_list_state']
+        c @props
         div
             style:
                 display: 'flex'
@@ -24,7 +120,8 @@ comp = rr
                 width: '100%'
 
             if @props['get_dctns_list_state'] is 'received_it'
-                h1 null, 'received_it'
+                # h1 null, 'received_it'
+                pane_0_svg_000()
 
 
 

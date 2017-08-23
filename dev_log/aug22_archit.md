@@ -74,3 +74,11 @@ for bt, just pane0 and pane1 necessary for first stage.
 
 
 for server-side, only the redis parts necessary for caching of nodejs memory structures, and retrieving them, are necessary now.  the algos for nodejsmem implementation is done just development had no archi concept up until now, lots of ideas and no organisation.
+
+
+
+
+#### css plan
+
+
+inline css is great, but it would be good to have the mixin and class capability.  class is easy, but mixing on top of it, would be good to provide a function if necessary.  

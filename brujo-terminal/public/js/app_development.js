@@ -47648,9 +47648,8 @@ concord_channel['lookup_resp'] = function(arg) {
 concord_channel['res_get_raw_dctns_list'] = function(arg) {
   var action, data, state;
   state = arg.state, action = arg.action, data = arg.data;
-  c('434333332');
   state = state.setIn(['get_dctns_list_state'], 'received_it');
-  return state.setIn(['raw_dctns_list'], data.payload.raw_dctns_rayy);
+  return state.setIn(['raw_dctns_list'], data.payload);
 };
 
 keys_concord_channel = keys(concord_channel);
@@ -47886,7 +47885,95 @@ exports["default"] = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 253 */
 /***/ (function(module, exports) {
 
-var comp, map_dispatch_to_props, map_state_to_props;
+var attributes, column, column_index, comp, header, index, map_dispatch_to_props, map_state_to_props, pane_0, pane_0_svg_000, table_row, table_row_header, wrapper, wrapper_attributes;
+
+table_row = {
+  display: 'flex',
+  flexDirection: 'row',
+  flexWrap: 'no-wrap',
+  width: '100%',
+  paddingLeft: 15,
+  paddingRight: 15
+};
+
+header = {
+  backgroundColor: '#FFEEDB',
+  fontWeight: 'bold',
+  paddingTop: 6,
+  paddingBottom: 6
+};
+
+table_row_header = _.assign(table_row, header);
+
+column = {
+  flexGrow: 0,
+  flexShrink: 0,
+  verticalAlign: 'top'
+};
+
+index = {
+  textAlign: 'center'
+};
+
+column_index = _.assign(column, index);
+
+wrapper = {
+  display: 'flex',
+  flexDirection: 'row'
+};
+
+attributes = {
+  flexGrow: 1
+};
+
+wrapper_attributes = _.assign(wrapper, attributes);
+
+pane_0_svg_000 = function(props, state, setState) {
+  return div({
+    style: {
+      position: 'absolute',
+      top: '20%',
+      left: '20%'
+    }
+  }, svg({
+    x: '10%',
+    y: '10%',
+    width: '60%',
+    height: '80%',
+    background: 'white'
+  }, rect({
+    x: '0%',
+    y: '0%',
+    width: '100%',
+    height: '100%',
+    fill: 'magenta'
+  }), rect({
+    x: '10%',
+    y: '10%',
+    width: '80%',
+    height: '80%',
+    fill: 'chartreuse'
+  })));
+};
+
+pane_0 = function(props, state, setState) {
+  return div({
+    style: {
+      width: '40%',
+      height: '40%'
+    }
+  }, div({
+    style: table_row_header
+  }, div({
+    style: column_index
+  }, '#'), div({
+    style: wrapper_attributes
+  }, div({
+    style: _.assign(column, {
+      paddingLeft: 6
+    })
+  }, "something"))));
+};
 
 comp = rr({
   getInitialState: function() {
@@ -47899,7 +47986,7 @@ comp = rr({
     return this.props.get_raw_dctns_list();
   },
   render: function() {
-    c(this.props['get_dctns_list_state']);
+    c(this.props);
     return div({
       style: {
         display: 'flex',
@@ -47907,7 +47994,7 @@ comp = rr({
         height: '100%',
         width: '100%'
       }
-    }, this.props['get_dctns_list_state'] === 'received_it' ? h1(null, 'received_it') : void 0);
+    }, this.props['get_dctns_list_state'] === 'received_it' ? pane_0_svg_000() : void 0);
   }
 });
 

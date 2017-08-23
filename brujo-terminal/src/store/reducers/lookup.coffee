@@ -50,18 +50,15 @@ concord_channel['dctn_initial_blob'] = ({ state, action, data }) ->
 
 concord_channel['lookup_resp'] = ({ state, action, data }) ->
     state.setIn ['match'], data.payload
-    # state
-
-
 
 
 concord_channel['res_get_raw_dctns_list'] = ({ state, action, data }) ->
-    c '434333332'
     state = state.setIn ['get_dctns_list_state'], 'received_it'
-    state.setIn ['raw_dctns_list'], data.payload.raw_dctns_rayy
+    state.setIn ['raw_dctns_list'], data.payload
 
 
 keys_concord_channel = keys concord_channel
+
 
 arq['primus:data'] = ({ state, action }) ->
     { data } = action.payload
@@ -70,7 +67,6 @@ arq['primus:data'] = ({ state, action }) ->
         concord_channel[type] { state, action, data }
     else
         state
-
 
 
 arq['apply_parse_build_data_structure'] = ({ state, action }) ->
@@ -84,33 +80,29 @@ arq['browse_dctn'] = ({ state, action }) ->
         type: 'browse_dctn'
         payload: action.payload
 
+
 arq['get_raw_dctns_list'] = ({ state, action }) ->
     state = state.setIn ['desires', shortid()],
         type: 'get_raw_dctns_list'
     state.setIn ['get_dctns_list_state'], 'sent_request'
 
+
 arq['lookup_prefix'] = ({ state, action }) ->
-    # { prefix_text } = action.payload
     state.setIn ['desires', shortid()],
         type: 'lookup_prefix'
         payload: action.payload
 
 
-
 keys_arq = keys arq
 
-# counter = 0
+
 lookup = (state, action) ->
-    # c state, action
     state = state.setIn ['desires'], Imm.Map({})
     if includes(keys_arq, action.type)
         arq[action.type]({ state, action })
     else
         c 'noop with ', action.type
         state
-
-
-
 
 
 exports.default = lookup
