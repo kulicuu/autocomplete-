@@ -16,7 +16,11 @@ brujo_api = {}
 
 brujo_api["get_raw_dctns_list"] = ({ type, spark }) ->
     cache_redis_api { type }
-    .then ({ ret_rayy }) ->
+    .then ({ payload }) ->
+        c payload, 'payload'
+        { ret_rayy } = payload
+        c 'goit i', ret_rayy
+
         spark.write
             type: 'res_get_raw_dctns_list'
             payload: ret_rayy

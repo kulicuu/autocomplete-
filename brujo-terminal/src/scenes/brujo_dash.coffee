@@ -4,6 +4,9 @@
 
 comp = rr
 
+
+
+
     getInitialState: ->
         dctn_selected: 'null'
         algo_selected: 'null'
@@ -12,16 +15,16 @@ comp = rr
         @props.get_raw_dctns_list()
 
     render: ->
-        if @state['get_dctns_list_state'] is 'received_it'
-            alert 'gotit'
-        else
-            alert 'notyet'
+        c @props['get_dctns_list_state']
         div
             style:
                 display: 'flex'
                 backgroundColor: 'lightsteelblue'
                 height: '100%'
                 width: '100%'
+
+            if @props['get_dctns_list_state'] is 'received_it'
+                h1 null, 'received_it'
 
 
 

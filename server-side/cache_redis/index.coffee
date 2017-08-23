@@ -14,6 +14,11 @@ initiate_redis_base_hash = Bluebird.promisify (cb) ->
         cb null
 
 
+initiate_redis_base_hash()
+.then ->
+    c 'gogogogoogoo'
+
+
 get_dictionaries_raw = Bluebird.promisify (cb) ->
     redis.hgetAsync 'base_cache_hash', 'dictionaries_raw'
     .then (set_id) ->
@@ -39,14 +44,13 @@ cache_redis_api['init_redis_cache_base'] = Bluebird.promisify (cb) ->
         cb null
 
 
-cache_redis_api['get_raw_dctns_list'] = Bluebird.promisify (cb) ->
+cache_redis_api['get_raw_dctns_list'] = Bluebird.promisify ({payload}, cb) ->
+    # c 'cb', cb
     get_dictionaries_raw()
     .then (ret_rayy) ->
-        # c ret_rayy
-        spark.write
-            type: 'ret_raw_dctns_list'
-            payload:
-                raw_dctns_rayy: ret_rayy
+        cb null,
+            payload: { ret_rayy }
+
 
 
 cache_redis_api['set_cache_bktree_from_nodejsmem'] = Bluebird.promisify ({ payload }, cb) ->
@@ -67,9 +71,11 @@ cache_redis_api['get_cache_bktree'] = Bluebird.promisify ({ payload }, cb) ->
 
 keys_cache_redis_api = _.keys cache_redis_api
 
-cache_redis_api_fncn = ({ type, payload }) ->
+cache_redis_api_fncn = Bluebird.promisify ({ type, payload }, cb) ->
     if _.includes(keys_cache_redis_api, type)
         cache_redis_api[type] { payload }
+        .then ({ payload }) ->
+            cb null, { payload }
     else
         c "#{color.yellow('no-op in cache-redis-api.', on)}"
 

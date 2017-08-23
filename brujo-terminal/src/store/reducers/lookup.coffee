@@ -53,7 +53,10 @@ concord_channel['lookup_resp'] = ({ state, action, data }) ->
     # state
 
 
-concord_channel['ret_raw_dctns_list'] = ({ state, action, data }) ->
+
+
+concord_channel['res_get_raw_dctns_list'] = ({ state, action, data }) ->
+    c '434333332'
     state = state.setIn ['get_dctns_list_state'], 'received_it'
     state.setIn ['raw_dctns_list'], data.payload.raw_dctns_rayy
 

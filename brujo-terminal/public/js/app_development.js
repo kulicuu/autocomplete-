@@ -47645,9 +47645,10 @@ concord_channel['lookup_resp'] = function(arg) {
   return state.setIn(['match'], data.payload);
 };
 
-concord_channel['ret_raw_dctns_list'] = function(arg) {
+concord_channel['res_get_raw_dctns_list'] = function(arg) {
   var action, data, state;
   state = arg.state, action = arg.action, data = arg.data;
+  c('434333332');
   state = state.setIn(['get_dctns_list_state'], 'received_it');
   return state.setIn(['raw_dctns_list'], data.payload.raw_dctns_rayy);
 };
@@ -47898,11 +47899,7 @@ comp = rr({
     return this.props.get_raw_dctns_list();
   },
   render: function() {
-    if (this.state['get_dctns_list_state'] === 'received_it') {
-      alert('gotit');
-    } else {
-      alert('notyet');
-    }
+    c(this.props['get_dctns_list_state']);
     return div({
       style: {
         display: 'flex',
@@ -47910,7 +47907,7 @@ comp = rr({
         height: '100%',
         width: '100%'
       }
-    });
+    }, this.props['get_dctns_list_state'] === 'received_it' ? h1(null, 'received_it') : void 0);
   }
 });
 
