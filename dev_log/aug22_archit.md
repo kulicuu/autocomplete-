@@ -57,6 +57,9 @@ minimalist structure as follows:
 collect the names of the raw dictionaries and the algos available into a matrix / table / spreadsheet layout
 #### pane 0 main admin spreadsheet / control-panel
 each cell will indicate if there is something already cached and built on that, if it's cached is it in redis mem or nodejs mem ?  a feature, maybe offer to make different versions so could diff the structures.  this indicates a server side tree crawling system that will diff data-structures.  also a button for selecting active structure for text entry
+**edit aug23** mvp: just make two dropdown lists
+
+#### pane 3 :: raw-data-linear browse
 
 a panel for text entry and search result presentation
 #### pane 1  :: text entry and search results display

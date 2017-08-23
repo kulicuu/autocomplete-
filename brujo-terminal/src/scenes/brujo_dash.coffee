@@ -13,33 +13,20 @@ data_structs_list = [
 pane_0 = (props, state, setState) ->
     div
         style:
-            position: 'absolute'
+            # position: 'absolute'
             backgroundColor: 'lightgreen'
             display: 'flex'
-            top: 4 + '%'
-            left: 4 + '%'
-            width: '24%'
-            height: '40%'
+            # top: 4 + '%'
+            # left: 4 + '%'
+            width: '100%'
+            height: '100%'
             # marginRight: 10
-        div
-            style:
-                display: 'flex'
-                flexDirection: 'column'
-                padding: 10
-            h6 null, "select data structure"
-            select
-                style:
-                    color: 'red'
-                _.map data_structs_list, (item, idx) ->
-                    option
-                        value: item
-                        item
 
         div
             style:
                 display: 'flex'
                 flexDirection: 'column'
-                padding: 10
+                paddingLeft: 6 + '%'
             h6 null, "select data source"
             select
                 style:
@@ -48,6 +35,62 @@ pane_0 = (props, state, setState) ->
                     option
                         value: dctn.filename
                         dctn.filename
+            div
+                style:
+                    height: '100%'
+                    width: '100%'
+                    # paddingTop: 6 + '%'
+                    marginTop: 6 + '%'
+                    paddingLeft: 6 + '%'
+                    backgroundColor: 'grey'
+                h6 null, "browse data source raw"
+
+
+        div
+            style:
+                display: 'flex'
+                flexDirection: 'column'
+                paddingLeft: 6 + '%'
+            h6 null, "select data structure"
+            select
+                style:
+                    color: 'red'
+                _.map data_structs_list, (item, idx) ->
+                    option
+                        value: item
+                        item
+            div
+                style:
+                    display: 'flex'
+                    marginTop: 10 + '%'
+                    backgroundColor: 'lightblue'
+                h6 null, "status:"
+
+        div
+            style:
+                display: 'flex'
+                flexDirection: 'column'
+                backgroundColor: 'ivory'
+                width: 20 + '%'
+                marginLeft: 4 + '%'
+
+            h6 null, 'search entry'
+            input
+                type: 'text'
+                placeholder: 'search text'
+                onChange: (e) =>
+                    c e.currentTarget.value
+            div
+                style:
+                    display: 'flex'
+                    flexDirection: 'column'
+                    backgroundColor: 'orange'
+                p null, 'hello'
+
+
+
+
+
 
 
 

@@ -47892,33 +47892,16 @@ data_structs_list = ["BK-tree", "prefix-tree"];
 pane_0 = function(props, state, setState) {
   return div({
     style: {
-      position: 'absolute',
       backgroundColor: 'lightgreen',
       display: 'flex',
-      top: 4 + '%',
-      left: 4 + '%',
-      width: '24%',
-      height: '40%'
+      width: '100%',
+      height: '100%'
     }
   }, div({
     style: {
       display: 'flex',
       flexDirection: 'column',
-      padding: 10
-    }
-  }, h6(null, "select data structure"), select({
-    style: {
-      color: 'red'
-    }
-  }, _.map(data_structs_list, function(item, idx) {
-    return option({
-      value: item
-    }, item);
-  }))), div({
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      padding: 10
+      paddingLeft: 6 + '%'
     }
   }, h6(null, "select data source"), select({
     style: {
@@ -47928,7 +47911,57 @@ pane_0 = function(props, state, setState) {
     return option({
       value: dctn.filename
     }, dctn.filename);
-  }))));
+  })), div({
+    style: {
+      height: '100%',
+      width: '100%',
+      marginTop: 6 + '%',
+      paddingLeft: 6 + '%',
+      backgroundColor: 'grey'
+    }
+  }, h6(null, "browse data source raw"))), div({
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      paddingLeft: 6 + '%'
+    }
+  }, h6(null, "select data structure"), select({
+    style: {
+      color: 'red'
+    }
+  }, _.map(data_structs_list, function(item, idx) {
+    return option({
+      value: item
+    }, item);
+  })), div({
+    style: {
+      display: 'flex',
+      marginTop: 10 + '%',
+      backgroundColor: 'lightblue'
+    }
+  }, h6(null, "status:"))), div({
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: 'ivory',
+      width: 20 + '%',
+      marginLeft: 4 + '%'
+    }
+  }, h6(null, 'search entry'), input({
+    type: 'text',
+    placeholder: 'search text',
+    onChange: (function(_this) {
+      return function(e) {
+        return c(e.currentTarget.value);
+      };
+    })(this)
+  }), div({
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: 'orange'
+    }
+  }, p(null, 'hello'))));
 };
 
 comp = rr({
