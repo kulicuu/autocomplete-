@@ -4,52 +4,21 @@
 
 
 
-data_structs_list = [
-    "BK-tree"
-    "prefix-tree"
-]
+
 
 
 pane_0 = (props, state, setState) ->
     div
         style:
-            position: 'absolute'
-            backgroundColor: 'lightgreen'
-            display: 'flex'
-            top: 4 + '%'
-            left: 4 + '%'
-            width: '24%'
+            width: '40%'
             height: '40%'
-            # marginRight: 10
-        div
+
+        select
             style:
-                display: 'flex'
-                flexDirection: 'column'
-                padding: 10
-            h6 null, "select data structure"
-            select
-                style:
-                    color: 'red'
-                _.map data_structs_list, (item, idx) ->
-                    option
-                        value: item
-                        item
-
-        div
-            style:
-                display: 'flex'
-                flexDirection: 'column'
-                padding: 10
-            h6 null, "select data source"
-            select
-                style:
-                    color: 'blue'
-                _.map props.raw_dctns_list, (dctn, idx) ->
-                    option
-                        value: dctn.filename
-                        dctn.filename
-
-
+                color: 'blue'
+            option
+                value: 'gold'
+                value: 'silver'
 
 
 

@@ -47885,94 +47885,50 @@ exports["default"] = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 253 */
 /***/ (function(module, exports) {
 
-var attributes, column, column_index, comp, header, index, map_dispatch_to_props, map_state_to_props, pane_0, pane_0_svg_000, table_row, table_row_header, wrapper, wrapper_attributes;
+var comp, data_structs_list, map_dispatch_to_props, map_state_to_props, pane_0;
 
-table_row = {
-  display: 'flex',
-  flexDirection: 'row',
-  flexWrap: 'no-wrap',
-  width: '100%',
-  paddingLeft: 15,
-  paddingRight: 15
-};
-
-header = {
-  backgroundColor: '#FFEEDB',
-  fontWeight: 'bold',
-  paddingTop: 6,
-  paddingBottom: 6
-};
-
-table_row_header = _.assign(table_row, header);
-
-column = {
-  flexGrow: 0,
-  flexShrink: 0,
-  verticalAlign: 'top'
-};
-
-index = {
-  textAlign: 'center'
-};
-
-column_index = _.assign(column, index);
-
-wrapper = {
-  display: 'flex',
-  flexDirection: 'row'
-};
-
-attributes = {
-  flexGrow: 1
-};
-
-wrapper_attributes = _.assign(wrapper, attributes);
-
-pane_0_svg_000 = function(props, state, setState) {
-  return div({
-    style: {
-      position: 'absolute',
-      top: '20%',
-      left: '20%'
-    }
-  }, svg({
-    x: '10%',
-    y: '10%',
-    width: '60%',
-    height: '80%',
-    background: 'white'
-  }, rect({
-    x: '0%',
-    y: '0%',
-    width: '100%',
-    height: '100%',
-    fill: 'magenta'
-  }), rect({
-    x: '10%',
-    y: '10%',
-    width: '80%',
-    height: '80%',
-    fill: 'chartreuse'
-  })));
-};
+data_structs_list = ["BK-tree", "prefix-tree"];
 
 pane_0 = function(props, state, setState) {
   return div({
     style: {
-      width: '40%',
+      position: 'absolute',
+      backgroundColor: 'lightgreen',
+      display: 'flex',
+      top: 4 + '%',
+      left: 4 + '%',
+      width: '24%',
       height: '40%'
     }
   }, div({
-    style: table_row_header
-  }, div({
-    style: column_index
-  }, '#'), div({
-    style: wrapper_attributes
-  }, div({
-    style: _.assign(column, {
-      paddingLeft: 6
-    })
-  }, "something"))));
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      padding: 10
+    }
+  }, h6(null, "select data structure"), select({
+    style: {
+      color: 'red'
+    }
+  }, _.map(data_structs_list, function(item, idx) {
+    return option({
+      value: item
+    }, item);
+  }))), div({
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      padding: 10
+    }
+  }, h6(null, "select data source"), select({
+    style: {
+      color: 'blue'
+    }
+  }, _.map(props.raw_dctns_list, function(dctn, idx) {
+    return option({
+      value: dctn.filename
+    }, dctn.filename);
+  }))));
 };
 
 comp = rr({
@@ -47994,7 +47950,7 @@ comp = rr({
         height: '100%',
         width: '100%'
       }
-    }, this.props['get_dctns_list_state'] === 'received_it' ? pane_0_svg_000() : void 0);
+    }, this.props['get_dctns_list_state'] === 'received_it' ? pane_0(this.props, this.state, this.setState.bind(this)) : void 0);
   }
 });
 
