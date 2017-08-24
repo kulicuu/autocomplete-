@@ -11,6 +11,11 @@ data_structs_list = [
 
 
 pane_0 = (props, state, setState) ->
+
+    if (state.data_struct_type_select isnt 'null') and (state.data_src_select isnt 'null')
+        ready_to_build = true
+    else
+        ready_to_build = false
     div
         style:
             # position: 'absolute'
@@ -31,8 +36,17 @@ pane_0 = (props, state, setState) ->
             select
                 style:
                     color: 'blue'
+                onChange: (e) =>
+                    setState
+                        data_src_select: e.currentTarget.value
+                option
+                    disabled: true
+                    selected: true
+                    value: true
+                    "select an option"
                 _.map props.raw_dctns_list, (dctn, idx) ->
                     option
+                        key: "option1:#{idx}"
                         value: dctn.filename
                         dctn.filename
             div
@@ -55,16 +69,42 @@ pane_0 = (props, state, setState) ->
             select
                 style:
                     color: 'red'
+                onChange: (e) =>
+                    setState
+                        data_struct_type_select: e.currentTarget.value
+
+                option
+                    disabled: true
+                    selected: true
+                    value: true
+                    "select an option"
                 _.map data_structs_list, (item, idx) ->
                     option
+                        key: "option2:#{idx}"
                         value: item
                         item
             div
                 style:
                     display: 'flex'
+                    flexDirection: 'column'
                     marginTop: 10 + '%'
                     backgroundColor: 'lightblue'
                 h6 null, "status:"
+                button
+                    style:
+                        backgroundColor: 'yellow'
+                        color: 'purple'
+                    disabled: if ready_to_build then false else true
+                    onClick: =>
+                        # c 'go build', state
+                        if ready_to_build
+                            props.build_selection
+                                data_src_select: state.data_src_select
+                                data_struct_type_select: state.data_struct_type_select
+                    "Build it"
+                    # this call will trigger build and cache, bacause it assumes wasn't cached already
+
+
 
         div
             style:
@@ -104,11 +144,12 @@ pane_0 = (props, state, setState) ->
 comp = rr
 
     getInitialState: ->
-        dctn_selected: 'null'
-        algo_selected: 'null'
+        data_src_select: 'null'
+        data_struct_type_select: 'null'
 
     componentWillMount: ->
         @props.get_raw_dctns_list()
+        @props.get_initial_stati()
 
     render: ->
         c @props
@@ -139,12 +180,23 @@ map_state_to_props = (state) ->
 
 map_dispatch_to_props = (dispatch) ->
 
-    apply_parse_build_data_structure: (filename, algo_name) ->
+    build_selection: ({ data_struct_type_select, data_src_select })->
         dispatch
-            type: 'apply_parse_build_data_structure'
-            payload:
-                filename: filename
-                algo_name: algo_name
+            type: 'build_selection'
+            payload: { data_struct_type_select, data_src_select }
+
+
+    get_initial_stati: ->
+        dispatch
+            type: 'get_initial_stati'
+
+
+    # apply_parse_build_data_structure: (filename, algo_name) ->
+    #     dispatch
+    #         type: 'apply_parse_build_data_structure'
+    #         payload:
+    #             filename: filename
+    #             algo_name: algo_name
 
     browse_dctn: (filename) ->
         dispatch

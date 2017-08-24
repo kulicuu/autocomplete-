@@ -69,6 +69,12 @@ arq['primus:data'] = ({ state, action }) ->
         state
 
 
+arq['build_selection'] = ({ state, action }) ->
+    state.setIn ['desires', shortid()],
+        type: 'build_selection'
+        payload: action.payload
+
+
 arq['apply_parse_build_data_structure'] = ({ state, action }) ->
     state.setIn ['desires', shortid()],
         type: 'apply_parse_build_data_structure'
@@ -79,6 +85,12 @@ arq['browse_dctn'] = ({ state, action }) ->
     state.setIn ['desires', shortid()],
         type: 'browse_dctn'
         payload: action.payload
+
+
+arq['get_initial_stati'] = ({ state, action }) ->
+    state = state.setIn ['desires', shortid()],
+        type: 'get_initial_stati'
+    state.setIn ['get_initial_stati_req_status'], 'sent_request'
 
 
 arq['get_raw_dctns_list'] = ({ state, action }) ->

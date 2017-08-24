@@ -18,11 +18,24 @@ arq = {}
 #         payload: desire.payload
 
 
+
+
+
+arq['build_selection'] = ({ desire, state }) ->
+    primus.write
+        type: 'build_selection'
+        payload: desire.payload
+
+
 arq['apply_parse_build_data_structure'] = ({ desire, state }) ->
     primus.write
         type: 'apply_parse_build_data_structure'
         payload: desire.payload
 
+
+arq['get_initial_stati'] = ({ desire, state }) ->
+    primus.write
+        type: 'get_initial_stati'
 
 arq['browse_dctn'] = ({ desire, state }) ->
     primus.write

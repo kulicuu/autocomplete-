@@ -9,18 +9,53 @@
 
 cache_redis_api = require('../cache_redis/index').default
 
+nodemem_api = require('../lookup_nodejsmem/index').default
 
 
 brujo_api = {}
 
 
+
+brujo_api['build_selection'] = ({ type, payload, spark }) ->
+    { data_src_select, data_struct_type_select } = payload
+    cache_redis_api
+        type: 'get_raw_dctn'
+        payload: { data_src_select }
+    .then ({ raw_dctn_arq }) -> # contains arq plus some meta info
+        nodemem_api
+            type: 'build_selection'
+            payload: { raw_dctn_arq, data_struct_type_select }
+        .then ({ payload }) ->
+            spark.write
+                type: 'res_build_selection'
+                payload: payload
+
+
+brujo_api['get_initial_stati'] = ({ type, spark }) ->
+    # get also built and cached data structures
+    # and also maybe those in m
+        #     type: 'build_selection'
+        #     payload: { raw_dctn_arq, data_struct_type_select }
+        # .then ({ payload }) ->
+        #     spark.write
+        #         type: 'res_build_selection'
+        #         payload: payload
+
+
+brujo_api['get_initial_stati'] = ({ type, spark }) ->
+    # get also built and cached data structures
+    # and also maybe those in memory.
+    cache_redis_api { type }
+    .then ({ payload }) ->
+        spark.write
+            type: 'res_get_initial_stati'
+            payload: payload
+
+
 brujo_api["get_raw_dctns_list"] = ({ type, spark }) ->
     cache_redis_api { type }
     .then ({ payload }) ->
-        c payload, 'payload'
         { ret_rayy } = payload
-        c 'goit i', ret_rayy
-
         spark.write
             type: 'res_get_raw_dctns_list'
             payload: ret_rayy

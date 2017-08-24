@@ -42,6 +42,21 @@ get_dictionaries_raw = Bluebird.promisify (cb) ->
 #         cb null
 
 
+cache_redis_api['get_raw_dctn'] = Bluebird.promisify ({ payload }, cb) ->
+    { data_src_select } = payload
+    redis.hgetAsync 'raw_dctns_lookup_table', data_src_select
+    .then (dctn_id) ->
+        redis.hgetallAsync dctn_id
+        .then (dctn_hash) ->
+            c dctn_hash
+
+
+
+cache_redis_api['get_initial_stati'] = Bluebird.promisify ({ payload }, cb) ->
+    # c "#{color.red('!!!!!!!!!!!!!!!!!!!atneuthasentouhsanethusanteohusnthas', on)}"
+    cb null, { payload: null }
+
+
 cache_redis_api['get_raw_dctns_list'] = Bluebird.promisify ({payload}, cb) ->
     # c 'cb', cb
     get_dictionaries_raw()
@@ -93,9 +108,9 @@ redis_base_cache_cons_200 = (cb) ->
                 dictionaries_raw: []
                 data_sets_parsed: []
 
-            c members, 'members'
+            # c members, 'members'
             control_flow.each members, (member_id, cb) ->
-                c member_id, "#{color.cyan('9999', on)}"
+                # c member_id, "#{color.cyan('9999', on)}"
                 redis.hgetallAsync member_id
                 .then (re) ->
                     c _.keys(re)

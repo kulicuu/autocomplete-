@@ -82,7 +82,6 @@ exports.tree_add_word = tree_add_word = ({ bktree, word }) ->
         node: cur_node
         key: delta
         word: word
-
     { bktree }
 
 
@@ -155,9 +154,7 @@ load_func = ->
     blob_2 = fs.readFileSync '../dictionaries/rdc_003.txt', 'utf8'
     blob_3 = fs.readFileSync '../dictionaries/d1.txt', 'utf8'
     blob_4 = fs.readFileSync '../dictionaries/reduced_a_.txt', 'utf8'
-
     d1 = blob_4.split '\n'
-
     bktree = { root: null }
 
     d1 = _.map d1, (word, idx) ->
@@ -169,8 +166,6 @@ load_func = ->
             { bktree } = tree_add_word
                 bktree: bktree
                 word: word
-
-
     { bktree }
 
     # c bktree.root

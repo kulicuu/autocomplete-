@@ -47670,6 +47670,15 @@ arq['primus:data'] = function(arg) {
   }
 };
 
+arq['build_selection'] = function(arg) {
+  var action, state;
+  state = arg.state, action = arg.action;
+  return state.setIn(['desires', shortid()], {
+    type: 'build_selection',
+    payload: action.payload
+  });
+};
+
 arq['apply_parse_build_data_structure'] = function(arg) {
   var action, state;
   state = arg.state, action = arg.action;
@@ -47686,6 +47695,15 @@ arq['browse_dctn'] = function(arg) {
     type: 'browse_dctn',
     payload: action.payload
   });
+};
+
+arq['get_initial_stati'] = function(arg) {
+  var action, state;
+  state = arg.state, action = arg.action;
+  state = state.setIn(['desires', shortid()], {
+    type: 'get_initial_stati'
+  });
+  return state.setIn(['get_initial_stati_req_status'], 'sent_request');
 };
 
 arq['get_raw_dctns_list'] = function(arg) {
@@ -47794,12 +47812,29 @@ var arq;
 
 arq = {};
 
+arq['build_selection'] = function(arg) {
+  var desire, state;
+  desire = arg.desire, state = arg.state;
+  return primus.write({
+    type: 'build_selection',
+    payload: desire.payload
+  });
+};
+
 arq['apply_parse_build_data_structure'] = function(arg) {
   var desire, state;
   desire = arg.desire, state = arg.state;
   return primus.write({
     type: 'apply_parse_build_data_structure',
     payload: desire.payload
+  });
+};
+
+arq['get_initial_stati'] = function(arg) {
+  var desire, state;
+  desire = arg.desire, state = arg.state;
+  return primus.write({
+    type: 'get_initial_stati'
   });
 };
 
@@ -47890,6 +47925,12 @@ var comp, data_structs_list, map_dispatch_to_props, map_state_to_props, pane_0;
 data_structs_list = ["BK-tree", "prefix-tree"];
 
 pane_0 = function(props, state, setState) {
+  var ready_to_build;
+  if ((state.data_struct_type_select !== 'null') && (state.data_src_select !== 'null')) {
+    ready_to_build = true;
+  } else {
+    ready_to_build = false;
+  }
   return div({
     style: {
       backgroundColor: 'lightgreen',
@@ -47906,9 +47947,21 @@ pane_0 = function(props, state, setState) {
   }, h6(null, "select data source"), select({
     style: {
       color: 'blue'
-    }
-  }, _.map(props.raw_dctns_list, function(dctn, idx) {
+    },
+    onChange: (function(_this) {
+      return function(e) {
+        return setState({
+          data_src_select: e.currentTarget.value
+        });
+      };
+    })(this)
+  }, option({
+    disabled: true,
+    selected: true,
+    value: true
+  }, "select an option"), _.map(props.raw_dctns_list, function(dctn, idx) {
     return option({
+      key: "option1:" + idx,
       value: dctn.filename
     }, dctn.filename);
   })), div({
@@ -47928,18 +47981,47 @@ pane_0 = function(props, state, setState) {
   }, h6(null, "select data structure"), select({
     style: {
       color: 'red'
-    }
-  }, _.map(data_structs_list, function(item, idx) {
+    },
+    onChange: (function(_this) {
+      return function(e) {
+        return setState({
+          data_struct_type_select: e.currentTarget.value
+        });
+      };
+    })(this)
+  }, option({
+    disabled: true,
+    selected: true,
+    value: true
+  }, "select an option"), _.map(data_structs_list, function(item, idx) {
     return option({
+      key: "option2:" + idx,
       value: item
     }, item);
   })), div({
     style: {
       display: 'flex',
+      flexDirection: 'column',
       marginTop: 10 + '%',
       backgroundColor: 'lightblue'
     }
-  }, h6(null, "status:"))), div({
+  }, h6(null, "status:"), button({
+    style: {
+      backgroundColor: 'yellow',
+      color: 'purple'
+    },
+    disabled: ready_to_build ? false : true,
+    onClick: (function(_this) {
+      return function() {
+        if (ready_to_build) {
+          return props.build_selection({
+            data_src_select: state.data_src_select,
+            data_struct_type_select: state.data_struct_type_select
+          });
+        }
+      };
+    })(this)
+  }, "Build it"))), div({
     style: {
       display: 'flex',
       flexDirection: 'column',
@@ -47967,12 +48049,13 @@ pane_0 = function(props, state, setState) {
 comp = rr({
   getInitialState: function() {
     return {
-      dctn_selected: 'null',
-      algo_selected: 'null'
+      data_src_select: 'null',
+      data_struct_type_select: 'null'
     };
   },
   componentWillMount: function() {
-    return this.props.get_raw_dctns_list();
+    this.props.get_raw_dctns_list();
+    return this.props.get_initial_stati();
   },
   render: function() {
     c(this.props);
@@ -47993,13 +48076,20 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
-    apply_parse_build_data_structure: function(filename, algo_name) {
+    build_selection: function(arg) {
+      var data_src_select, data_struct_type_select;
+      data_struct_type_select = arg.data_struct_type_select, data_src_select = arg.data_src_select;
       return dispatch({
-        type: 'apply_parse_build_data_structure',
+        type: 'build_selection',
         payload: {
-          filename: filename,
-          algo_name: algo_name
+          data_struct_type_select: data_struct_type_select,
+          data_src_select: data_src_select
         }
+      });
+    },
+    get_initial_stati: function() {
+      return dispatch({
+        type: 'get_initial_stati'
       });
     },
     browse_dctn: function(filename) {
