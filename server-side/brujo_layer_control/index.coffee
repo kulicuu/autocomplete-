@@ -21,10 +21,12 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
     cache_redis_api
         type: 'get_raw_dctn'
         payload: { data_src_select }
-    .then ({ raw_dctn_arq }) -> # contains arq plus some meta info
+    .then ({ payload }) -> # contains arq plus some meta info
+        { dctn_hash } = payload
+        c '883838'
         nodemem_api
             type: 'build_selection'
-            payload: { raw_dctn_arq, data_struct_type_select }
+            payload: { dctn_hash, data_struct_type_select }
         .then ({ payload }) ->
             spark.write
                 type: 'res_build_selection'

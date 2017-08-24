@@ -48,7 +48,7 @@ cache_redis_api['get_raw_dctn'] = Bluebird.promisify ({ payload }, cb) ->
     .then (dctn_id) ->
         redis.hgetallAsync dctn_id
         .then (dctn_hash) ->
-            c dctn_hash
+            cb null, { payload: { dctn_hash } }
 
 
 

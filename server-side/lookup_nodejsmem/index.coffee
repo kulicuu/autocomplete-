@@ -18,10 +18,11 @@ nodemem_api = {}
 
 nodemem_api['build_selection'] = Bluebird.promisify ({ type, payload }) ->
     c "#{color.purple('888888888883738', on)}"
-    c payload
-    { data_struct_type_select, data_src_select } = payload
+    c _.keys payload
+    { data_struct_type_select, dctn_hash } = payload
+    # c _.keys dctn_hash
     if _.includes(keys_build_selection, data_struct_type_select)
-        build_selection[data_struct_type_select] { data_src_select }
+        build_selection[data_struct_type_select] { blob: dctn_hash.blob }
         .then ({ payload }) ->
             cb null, { payload }
 
