@@ -16,6 +16,9 @@ brujo_api = {}
 
 
 
+
+
+
 brujo_api['build_selection'] = ({ type, payload, spark }) ->
     { data_src_select, data_struct_type_select } = payload
     cache_redis_api
@@ -23,25 +26,29 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
         payload: { data_src_select }
     .then ({ payload }) -> # contains arq plus some meta info
         { dctn_hash } = payload
-        c '883838'
         nodemem_api
             type: 'build_selection'
             payload: { dctn_hash, data_struct_type_select }
         .then ({ payload }) ->
+            cache_redis_api
+                type: 'cache_data_struct'
+                payload:
+                    data_struct_type_select: data_struct_type_select
             spark.write
                 type: 'res_build_selection'
                 payload: payload
 
 
-brujo_api['get_initial_stati'] = ({ type, spark }) ->
-    # get also built and cached data structures
-    # and also maybe those in m
-        #     type: 'build_selection'
-        #     payload: { raw_dctn_arq, data_struct_type_select }
-        # .then ({ payload }) ->
-        #     spark.write
-        #         type: 'res_build_selection'
-        #         payload: payload
+brujo_api['browse_raw_dctn'] = ({ type, payload, spark }) ->
+    cache_redis_api
+        type: type
+        payload: payload
+    .then ({ payload }) ->
+        # { the_blob } = payload
+        spark.write
+            type: 'res_browse_raw_dctn'
+            payload: payload
+
 
 
 brujo_api['get_initial_stati'] = ({ type, spark }) ->

@@ -75,7 +75,9 @@ build_it = Bluebird.promisify ({ blob }, cb) ->
             { bktree } = tree_add_word
                 bktree: bktree
                 word: word
-    { bktree }
+    cb null,
+        payload:
+            built_struct: bktree
 
 
 

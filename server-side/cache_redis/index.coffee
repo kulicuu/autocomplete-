@@ -8,8 +8,8 @@ initiate_redis_base_hash = Bluebird.promisify (cb) ->
     redis.hmsetAsync 'base_cache_hash',
         base_cache_created: Date.now()
         base_cache_updated: Date.now()
-        dictionaries_raw: v4()
-        data_sets_parsed: v4()
+        dictionaries_raw: v4() # could rename to raw_data_srcs
+        data_sets_parsed: v4() # could rename to data_structs
     .then (re) ->
         cb null
 
@@ -42,6 +42,22 @@ get_dictionaries_raw = Bluebird.promisify (cb) ->
 #         cb null
 
 
+
+
+cache_redis_api['browse_raw_dctn'] = ({ type, payload }) ->
+    { upper_bound, lower_bound, dctn_name } = payload
+    # NOTE this indicates should use a different data structure for caching.  probably a list.
+    redis.hgetAsync 'raw_dctns_list_lu_table', dctn_name
+    .then (dctn_list_id) ->
+        redis.lrange dctn_list_id, lower_bound, upper_bound
+
+
+cache_redis_api
+
+
+
+cache_redis_api['get_raw_dctn'] = Bluebird.promisify ({ payload }, cb) ->
+
 cache_redis_api['get_raw_dctn'] = Bluebird.promisify ({ payload }, cb) ->
     { data_src_select } = payload
     redis.hgetAsync 'raw_dctns_lookup_table', data_src_select
@@ -53,7 +69,11 @@ cache_redis_api['get_raw_dctn'] = Bluebird.promisify ({ payload }, cb) ->
 
 
 cache_redis_api['get_initial_stati'] = Bluebird.promisify ({ payload }, cb) ->
-    # c "#{color.red('!!!!!!!!!!!!!!!!!!!atneuthasentouhsanethusanteohusnthas', on)}"
+    c "#{color.cyan('!has', on)}"
+
+    # all the dictionaries minus the blobs
+    # all the data structs
+
     cb null, { payload: null }
 
 
@@ -141,6 +161,37 @@ redis_base_cache_cons_200 = (cb) ->
 
 
 
+add_raw_dctn_103 = Bluebird.promisify ({ filename }, cb) ->
+    redis.hgetAsync 'base_cache_hash', 'dictionaries_raw'
+    .then (dctn_bskt_id) ->
+        the_path = path.resolve(__dirname, '..', '..', 'dictionaries')
+        fs.readFileAsync path.resolve(the_path, filename), 'utf8'
+        .then (blob) ->
+            word_rayy = blob.split '\n'
+            dctn_hash_id = v4()
+            dctn_list_id = v4()
+
+            control_flow.parallel [
+                (cb) ->
+                    redis.hmsetAsync dctn_hash_id,
+                        filename: filename
+                        date_created: Date.now()
+                        blob: dctn_list_id
+                    .then (re) ->
+                        cb null
+                ,(cb) ->
+                    redis.lpushAsync dctn_list_id, word_rayy
+                    .then (re) ->
+                        cb null
+                ,(cb) ->
+                    redis.hsetAsync 'raw_dctns_list_lu_table', filename, dctn_list_id
+                    .then (re) ->
+                        cb null
+                ,(cb) ->
+                    redis.hsetAsync 'raw_dctns_hash_lu_tbl', filename, dctn_list_id
+            ], (err, results) ->
+                cb null
+
 
 add_raw_dictionary = Bluebird.promisify ({ filename }, cb) ->
     redis.hgetAsync 'base_cache_hash', 'dictionaries_raw'
@@ -196,7 +247,7 @@ setup_and_background_tasks = ->
             _.map local_dir_results, (filename, idx) ->
                 name = filename.split('.')[0]
                 if red_rs_names.indexOf(name) is -1
-                    add_raw_dictionary { filename }
+                    add_raw_dctn_103 { filename }
                     .then ->
                         c "added dictionary raw"
                 else
