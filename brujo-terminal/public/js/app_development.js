@@ -47633,6 +47633,13 @@ arq = {};
 
 concord_channel = {};
 
+concord_channel['res_browse_raw_dctn'] = function(arg) {
+  var action, browse_rayy, data, state;
+  state = arg.state, action = arg.action, data = arg.data;
+  browse_rayy = data.payload.browse_rayy;
+  return state.setIn(['browse_rayy'], browse_rayy);
+};
+
 concord_channel['dctn_initial_blob'] = function(arg) {
   var action, data, state;
   state = arg.state, action = arg.action, data = arg.data;
@@ -47956,7 +47963,7 @@ pane_0 = function(props, state, setState) {
         });
         return props.browse_dctn({
           filename: e.currentTarget.value,
-          upper_bound: 13,
+          upper_bound: 43,
           lower_bound: 0
         });
       };
@@ -47972,13 +47979,17 @@ pane_0 = function(props, state, setState) {
     }, dctn.filename);
   })), div({
     style: {
-      height: '100%',
+      height: '50%',
       width: '100%',
+      overflow: 'auto',
       marginTop: 6 + '%',
       paddingLeft: 6 + '%',
       backgroundColor: 'grey'
     }
-  }, h6(null, "browse data source raw"))), div({
+  }, h6(null, "browse data source raw"), _.map(props['browse_rayy'], function(v, k) {
+    c(v, 'v');
+    return p(null, v);
+  }))), div({
     style: {
       display: 'flex',
       flexDirection: 'column',

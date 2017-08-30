@@ -41,7 +41,7 @@ pane_0 = (props, state, setState) ->
                         data_src_select: e.currentTarget.value
                     props.browse_dctn
                         filename: e.currentTarget.value
-                        upper_bound: 13
+                        upper_bound: 43
                         lower_bound: 0
                 option
                     disabled: true
@@ -55,13 +55,19 @@ pane_0 = (props, state, setState) ->
                         dctn.filename
             div
                 style:
-                    height: '100%'
+                    height: '50%'
                     width: '100%'
                     # paddingTop: 6 + '%'
+                    overflow: 'auto'
+                    # scroll: 'auto'
                     marginTop: 6 + '%'
                     paddingLeft: 6 + '%'
                     backgroundColor: 'grey'
                 h6 null, "browse data source raw"
+                _.map props['browse_rayy'], (v, k) ->
+                    c v, 'v'
+                    p null, v
+
 
 
         div

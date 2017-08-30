@@ -43,7 +43,9 @@ arq = {}
 concord_channel = {}
 
 
-
+concord_channel['res_browse_raw_dctn'] = ({ state, action, data }) ->
+    { browse_rayy } = data.payload
+    state.setIn ['browse_rayy'], browse_rayy
 
 concord_channel['dctn_initial_blob'] = ({ state, action, data }) ->
     state.setIn ['dctn_blob'], data.payload.blob
