@@ -47951,8 +47951,13 @@ pane_0 = function(props, state, setState) {
     },
     onChange: (function(_this) {
       return function(e) {
-        return setState({
+        setState({
           data_src_select: e.currentTarget.value
+        });
+        return props.browse_dctn({
+          filename: e.currentTarget.value,
+          upper_bound: 13,
+          lower_bound: 0
         });
       };
     })(this)
@@ -48093,11 +48098,16 @@ map_dispatch_to_props = function(dispatch) {
         type: 'get_initial_stati'
       });
     },
-    browse_dctn: function(filename) {
+    browse_dctn: function(arg) {
+      var dctn_name, filename, lower_bound, upper_bound;
+      filename = arg.filename, upper_bound = arg.upper_bound, lower_bound = arg.lower_bound;
+      dctn_name = filename;
       return dispatch({
         type: 'browse_dctn',
         payload: {
-          filename: filename
+          dctn_name: dctn_name,
+          upper_bound: upper_bound,
+          lower_bound: lower_bound
         }
       });
     },

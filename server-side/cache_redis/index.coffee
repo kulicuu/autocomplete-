@@ -17,7 +17,7 @@ cache_redis_api_fn = Bluebird.promisify ({ type, payload }, cb) ->
         .then (payload) ->
             cb null, { payload }
     else
-        c "#{color.yellow('no op in cache-redis-api.', on)}"
+        c "#{color.yellow('no op in cache-redis-api.', on)}", "#{color.cyan(type, on)}"
 
 
 

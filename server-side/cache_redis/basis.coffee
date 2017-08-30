@@ -117,6 +117,10 @@ add_raw_dctn = Bluebird.promisify ({ filename }, cb) ->
                     redis.saddAsync dctns_set_id, dctn_basis.id
                     .then (re) ->
                         cb null
+                , (cb) ->
+                    redis.hsetAsync 'dctns_id_lookup_by_name', dctn_basis.filename, dctn_basis.id
+                    .then (re) ->
+                        cb null
                 # , (cb) ->
                 #     redis.hsetAsync
 

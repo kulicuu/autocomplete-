@@ -39,6 +39,10 @@ pane_0 = (props, state, setState) ->
                 onChange: (e) =>
                     setState
                         data_src_select: e.currentTarget.value
+                    props.browse_dctn
+                        filename: e.currentTarget.value
+                        upper_bound: 13
+                        lower_bound: 0
                 option
                     disabled: true
                     selected: true
@@ -193,18 +197,12 @@ map_dispatch_to_props = (dispatch) ->
             type: 'get_initial_stati'
 
 
-    # apply_parse_build_data_structure: (filename, algo_name) ->
-    #     dispatch
-    #         type: 'apply_parse_build_data_structure'
-    #         payload:
-    #             filename: filename
-    #             algo_name: algo_name
 
-    browse_dctn: (filename) ->
+    browse_dctn: ({ filename, upper_bound, lower_bound }) ->
+        dctn_name = filename
         dispatch
             type: 'browse_dctn'
-            payload:
-                filename: filename
+            payload: { dctn_name, upper_bound, lower_bound }
 
     get_raw_dctns_list: ->
         dispatch

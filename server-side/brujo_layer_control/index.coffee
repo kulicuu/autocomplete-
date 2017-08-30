@@ -36,7 +36,10 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
                 payload: payload
 
 
-brujo_api['browse_raw_dctn'] = ({ type, payload, spark }) ->
+
+
+brujo_api['browse_dctn'] = ({ type, payload, spark }) ->
+    c payload, 'payload at brujo layer'
     cache_redis_api
         type: type
         payload: payload
@@ -105,7 +108,7 @@ brujo_api_fncn = ({ type, payload, spark }) ->
     if _.includes(keys_brujo_api, type)
         brujo_api[type] { type, payload, spark }
     else
-        c "No-op in nexus_api."
+        c "#{color.yellow('no op in brujo layer controller:', on)}", "#{color.cyan(type, on)}"
 
 
 exports.default = brujo_api_fncn
