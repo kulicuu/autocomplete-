@@ -47648,6 +47648,7 @@ concord_channel['lookup_resp'] = function(arg) {
 concord_channel['res_get_raw_dctns_list'] = function(arg) {
   var action, data, state;
   state = arg.state, action = arg.action, data = arg.data;
+  c(data.payload, 'data.payload in res_get_raw_dctns_list');
   state = state.setIn(['get_dctns_list_state'], 'received_it');
   return state.setIn(['raw_dctns_list'], data.payload);
 };
