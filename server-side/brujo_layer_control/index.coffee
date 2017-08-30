@@ -9,14 +9,11 @@
 
 cache_redis_api = require('../cache_redis/index').default
 
+
 nodemem_api = require('../lookup_nodejsmem/index').default
 
 
 brujo_api = {}
-
-
-
-
 
 
 brujo_api['build_selection'] = ({ type, payload, spark }) ->
@@ -50,7 +47,6 @@ brujo_api['browse_raw_dctn'] = ({ type, payload, spark }) ->
             payload: payload
 
 
-
 brujo_api['get_initial_stati'] = ({ type, spark }) ->
     # get also built and cached data structures
     # and also maybe those in memory.
@@ -62,6 +58,7 @@ brujo_api['get_initial_stati'] = ({ type, spark }) ->
 
 
 brujo_api["get_raw_dctns_list"] = ({ type, spark }) ->
+
     cache_redis_api { type }
     .then ({ payload }) ->
         { ret_rayy } = payload
@@ -99,10 +96,6 @@ brujo_api["search_data_structure_in_nodejsmem"] = ({
     } = payload
 
 
-
-
-
-
 keys_brujo_api = _.keys brujo_api
 
 
@@ -111,18 +104,6 @@ brujo_api_fncn = ({ type, payload, spark }) ->
         brujo_api[type] { type, payload, spark }
     else
         c "No-op in nexus_api."
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 exports.default = brujo_api_fncn

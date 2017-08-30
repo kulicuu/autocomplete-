@@ -1,8 +1,33 @@
 
 
 
+# 0. if redis basis structure isn't present build it.
+# 1. get filename list from dctn dir hardcoded
+# 2. get redis cached dctn list; any filename in dir that isn't in the cache should be imported
+# 3. we want the dctn raw to be in multiple forms.  we had initially the pure string blob, now we have also a list, and may add more, r&d style
+# 4. we have 2 data types now:   redis-base-hash  or in context of redis
+# gr-base-hash  graph-radar, and dctn-base-hash
+# 5. won't use classes for this just a factory function.
 
 
+
+
+
+
+gr_basis_factory = ->
+    base_cache_created: Date.now()
+    base_cache_updated: Date.now()
+    # dctns_lists: v4()
+    dctns: v4() # could rename to raw_data_srcs
+    graphs: v4() # could rename to data_structs
+
+
+dctn_basis_factory = ({ filename, blob }) ->
+    id: v4()
+    filename: filename
+    date_created: Date.now()
+    blob: blob
+    list_000: v4()
 
 
 
@@ -12,24 +37,47 @@
 cache_redis_api = {}
 
 
-# initiate_redis_base_hash = Bluebird.promisify (cb) ->
-#     redis.hmsetAsync 'base_cache_hash',
-#         base_cache_created: Date.now()
-#         base_cache_updated: Date.now()
-#         # dctns_lists: v4()
-#         dictionaries_raw: v4() # could rename to raw_data_srcs
-#         data_sets_parsed: v4() # could rename to data_structs
-#     .then (re) ->
-#         cb null
-#
-#
-# initiate_redis_base_hash()
-# .then ->
-#     c 'gogogogoogoo'
+init_gr_basis_000 = Bluebird.promisify (cb) ->
+    gr_basis = gr_basis_factory()
+    redis.hmsetAsync 'gr_basis_hash',
+        gr_basis
+    .then (re) ->
+        cb null
 
 
-get_dctns_list_207 = Bluebird.promisify (cb) ->
-    # redis.
+init_gr_basis_wrap = Bluebird.promisify (cb) ->
+    build_payload = (the_hash) ->
+        redis.smembersAsync the_hash.dctns
+        .then (dctns_ids) ->
+            payload = _.assign {},
+                base_cache_created: the_hash.base_cache_created
+                base_cache_updated: the_hash.base_cache_updated
+                dctns: []
+                graphs: []
+            control_flow.each dctns_ids, (dctn_id, cb2) ->
+                redis.hgetallAsync dctn_id,
+                .then (re) ->
+                    payload.dctns.push re
+                    cb2 null
+            , (err) ->
+                cb null, { payload }
+
+    redis.hgetallAsync 'gr_basis_hash'
+    .then (the_hash) ->
+        if the_hash is null
+            init_gr_basis_000()
+            .then ->
+                redis.hgetallAsync 'gr_basis_hash'
+                .then (the_hash) ->
+                    build_payload the_hash
+        else
+            build_payload the_hash
+
+
+
+
+
+
 
 
 get_dictionaries_raw = Bluebird.promisify (cb) ->
@@ -218,6 +266,11 @@ local_dctns_file_get_dir = (cb) ->
         # _.map list, (filename, idx) ->
         cb null,
             local_dir_results: list
+
+
+setup_script = ->
+    c "#{color.green('--------------------------------->', on)}"
+
 
 
 setup_and_background_tasks = ->

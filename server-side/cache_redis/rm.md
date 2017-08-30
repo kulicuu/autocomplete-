@@ -13,3 +13,14 @@ this could include building data structures, keeping track of library, etc.  thi
 - take nodejs mem graphs and move them into redis caching
 
 - retrieve these.
+
+
+
+
+
+
+
+
+
+
+#### `get_dctns_list`
