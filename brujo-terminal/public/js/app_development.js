@@ -47978,6 +47978,12 @@ pane_0 = function(props, state, setState) {
       value: dctn.filename
     }, dctn.filename);
   })), div({
+    onScroll: (function(_this) {
+      return function(e) {
+        c(e.target.scrollTop);
+        return c(e.target.scrollHeight);
+      };
+    })(this),
     style: {
       height: '50%',
       width: '100%',

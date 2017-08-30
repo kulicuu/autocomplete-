@@ -54,11 +54,15 @@ pane_0 = (props, state, setState) ->
                         value: dctn.filename
                         dctn.filename
             div
+                onScroll: (e) =>
+                    c e.target.scrollTop
+                    c e.target.scrollHeight
                 style:
                     height: '50%'
                     width: '100%'
                     # paddingTop: 6 + '%'
                     overflow: 'auto'
+
                     # scroll: 'auto'
                     marginTop: 6 + '%'
                     paddingLeft: 6 + '%'
