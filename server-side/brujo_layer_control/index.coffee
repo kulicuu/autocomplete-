@@ -52,6 +52,7 @@ brujo_api['get_initial_stati'] = ({ type, spark }) ->
     # and also maybe those in memory.
     cache_redis_api { type }
     .then ({ payload }) ->
+
         spark.write
             type: 'res_get_initial_stati'
             payload: payload
@@ -61,7 +62,8 @@ brujo_api["get_raw_dctns_list"] = ({ type, spark }) ->
 
     cache_redis_api { type }
     .then ({ payload }) ->
-
+        c payload, '494949494'
+        # { ret_rayy } = payload
         spark.write
             type: 'res_get_raw_dctns_list'
             payload: payload.payload
