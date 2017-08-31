@@ -74,7 +74,7 @@ pane_0 = (props, state, setState, scroll_func) ->
                     p
                         key: "word_item#{k}"
                         style:
-                            margin: '10%'
+                            margin: '2%'
                             fontSize: '70%'
                             color: 'orange'
                         word

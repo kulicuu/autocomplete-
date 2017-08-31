@@ -48047,7 +48047,7 @@ pane_0 = function(props, state, setState, scroll_func) {
     return p({
       key: "word_item" + k,
       style: {
-        margin: '10%',
+        margin: '2%',
         fontSize: '70%',
         color: 'orange'
       }

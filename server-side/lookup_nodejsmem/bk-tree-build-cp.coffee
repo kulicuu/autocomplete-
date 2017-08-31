@@ -78,10 +78,47 @@ build_it = Bluebird.promisify ({ blob }, cb) ->
 
 
 
-process.on 'message', (msg) ->
-    c 'have a message', msg
-    process.send 'okay'
+the_api = {}
 
-    # setTimeout =>
-    #     process.send 'okay 2'
-    # , 1000
+
+the_api['test2'] = ->
+    c 'satheaustha'
+    process.send
+        type: 'test3'
+        payload:
+            nothing: 'yet'
+
+
+the_api['build_it'] = ({ dctn_hash, job_id }) ->
+    c "\n \n  \n \n"
+    c dctn_hash
+    c '\n \n'
+    c job_id, 'job_ref'
+    blob = dctn_hash.as_blob
+    d1 = blob.split '\n'
+    bktree = { root: null }
+    d1 = _.map d1, (word, idx) ->
+        word.toLowerCase()
+    for word, idx in d1
+        unless word.length is 0
+            c 'word loading', word
+            { bktree } = tree_add_word
+                bktree: bktree
+                word: word
+    process.send
+        type: 'res_build_it'
+        payload:
+            built_struct: bktree
+            job_id: job_id
+
+
+
+keys_the_api = _.keys the_api
+
+
+process.on 'message', ({ type, payload }) ->
+    if _.includes(keys_the_api, type)
+        c 'bk-tree-build-cp gogo with', type
+        the_api[type] payload
+    else
+        c "#{color.yellow('no op in bk-tree-build-cp', on)}", "#{color.white(type, off)}"

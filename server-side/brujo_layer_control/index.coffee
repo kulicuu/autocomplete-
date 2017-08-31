@@ -15,6 +15,8 @@ nodemem_api = require('../lookup_nodejsmem/index').default
 
 brujo_api = {}
 
+spark_icebox = {}
+
 
 
 brujo_api['search_struct_nodemem'] = ({ type, payload, spark }) ->
@@ -36,9 +38,11 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
         payload: { data_src_select }
     .then ({ payload }) -> # contains arq plus some meta info
         { dctn_hash } = payload
+        spark_ref = v4()
+        spark_icebox[spark_ref] = spark
         nodemem_api
             type: 'build_selection'
-            payload: { dctn_hash, data_struct_type_select }
+            payload: { dctn_hash, data_struct_type_select, spark_ref }
         .then ( payload ) ->
             cache_redis_api
                 type: 'cache_data_struct'
