@@ -20,6 +20,11 @@ arq = {}
 
 
 
+arq['primus_hotwire'] = ({ desire, state }) ->
+    { type, payload } = desire.payload
+    primus.write { type, payload }
+
+
 
 arq['build_selection'] = ({ desire, state }) ->
     primus.write

@@ -17,6 +17,20 @@ dctn_lookup_id_by_name = Bluebird.promisify ({ dctn_name }, cb) ->
         cb null, { dctn_id }
 
 
+
+cache_redis_api['get_raw_dctn'] = Bluebird.promisify ({ type, payload }, cb) ->
+    c 'payload', payload
+    { data_src_select } = payload
+    redis.hgetAsync 'dctns_id_lookup_by_name', data_src_select
+    .then (dctn_id) ->
+        redis.hgetallAsync dctn_id
+        .then (dctn_hash) ->
+            cb null,
+
+                dctn_hash: dctn_hash
+
+
+
 # browse the list structure
 cache_redis_api['browse_dctn'] = Bluebird.promisify ({ type, payload }, cb) ->
     { upper_bound, lower_bound, dctn_name } = payload

@@ -47687,6 +47687,24 @@ arq['primus:data'] = function(arg) {
   }
 };
 
+arq['primus_hotwire'] = function(arg) {
+  var action, state;
+  state = arg.state, action = arg.action;
+  return state.setIn(['desires', shortid()], {
+    type: 'primus_hotwire',
+    payload: action.payload
+  });
+};
+
+arq['search_struct'] = function(arg) {
+  var action, state;
+  state = arg.state, action = arg.action;
+  return state.setIn(['desires', shortid()], {
+    type: 'search_struct_nodemem',
+    payload: action.payload
+  });
+};
+
 arq['build_selection'] = function(arg) {
   var action, state;
   state = arg.state, action = arg.action;
@@ -47708,6 +47726,10 @@ arq['apply_parse_build_data_structure'] = function(arg) {
 arq['browse_dctn'] = function(arg) {
   var action, state;
   state = arg.state, action = arg.action;
+  if (state.getIn(['dctn_browse_src']) !== action.payload.dctn_name) {
+    state = state.setIn(['dctn_browse_src'], action.payload.dctn_name);
+    state = state.setIn(['browse_rayy'], []);
+  }
   return state.setIn(['desires', shortid()], {
     type: 'browse_dctn',
     payload: action.payload
@@ -47828,6 +47850,16 @@ exports["default"] = side_effects_f;
 var arq;
 
 arq = {};
+
+arq['primus_hotwire'] = function(arg) {
+  var desire, payload, ref, state, type;
+  desire = arg.desire, state = arg.state;
+  ref = desire.payload, type = ref.type, payload = ref.payload;
+  return primus.write({
+    type: type,
+    payload: payload
+  });
+};
 
 arq['build_selection'] = function(arg) {
   var desire, state;
@@ -47972,8 +48004,8 @@ pane_0 = function(props, state, setState, scroll_func) {
         });
         return props.browse_dctn({
           filename: e.currentTarget.value,
-          upper_bound: 43,
-          lower_bound: 0
+          upper_bound: state.upper_bound,
+          lower_bound: state.lower_bound
         });
       };
     })(this)
@@ -48074,7 +48106,10 @@ pane_0 = function(props, state, setState, scroll_func) {
     placeholder: 'search text',
     onChange: (function(_this) {
       return function(e) {
-        return c(e.currentTarget.value);
+        c(e.currentTarget.value);
+        return props.search_struct_001({
+          query_expr: e.currentTarget.value
+        });
       };
     })(this)
   }), div({
@@ -48083,7 +48118,7 @@ pane_0 = function(props, state, setState, scroll_func) {
       flexDirection: 'column',
       backgroundColor: 'orange'
     }
-  }, p(null, 'hello'))));
+  })));
 };
 
 comp = rr({
@@ -48129,6 +48164,29 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
+    search_struct_001: function(arg) {
+      var query_expr;
+      query_expr = arg.query_expr;
+      return dispatch({
+        type: 'primus_hotwire',
+        payload: {
+          type: 'search_struct_nodemem',
+          payload: {
+            query_expr: query_expr
+          }
+        }
+      });
+    },
+    search_struct_000: function(arg) {
+      var query_expr;
+      query_expr = arg.query_expr;
+      return dispatch({
+        type: 'search_struct',
+        payload: {
+          query_expr: query_expr
+        }
+      });
+    },
     build_selection: function(arg) {
       var data_src_select, data_struct_type_select;
       data_struct_type_select = arg.data_struct_type_select, data_src_select = arg.data_src_select;

@@ -16,6 +16,19 @@ nodemem_api = require('../lookup_nodejsmem/index').default
 brujo_api = {}
 
 
+
+brujo_api['search_struct_nodemem'] = ({ type, payload, spark }) ->
+    nodemem_api
+        type: 'search_struct'
+        payload: payload
+    .then ({ results }) ->
+        spark.write
+            type: 'res_search_struct_nodemem'
+            payload:
+                results: results
+
+
+
 brujo_api['build_selection'] = ({ type, payload, spark }) ->
     { data_src_select, data_struct_type_select } = payload
     cache_redis_api
@@ -39,12 +52,10 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
 
 
 brujo_api['browse_dctn'] = ({ type, payload, spark }) ->
-    c payload, 'payload at brujo layer'
     cache_redis_api
         type: type
         payload: payload
     .then ({ payload }) ->
-        # { the_blob } = payload
         spark.write
             type: 'res_browse_raw_dctn'
             payload: payload

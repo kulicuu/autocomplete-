@@ -20,13 +20,29 @@ keys_build_selection = _.keys build_selection
 nodemem_api = {}
 
 
+
+# TODO :
+# 0. Implement this into another thread childprocess
+# 1. signals to abort, results saved refs in some data structure
+#
+
+
+nodemem_api['search_struct'] = Bluebird.promisify ({ payload }, cb) ->
+    c payload, 'payload'
+    { struct_key, query_expr } = payload
+
+    c "#{color.green('here', on)}"
+
+
+
+    cb null, { nothing_yet: 42 }
+
+
+
 nodemem_api['build_selection'] = Bluebird.promisify ({ type, payload }, cb) ->
-    c "#{color.purple('888888888883738', on)}"
-    c _.keys payload
     { data_struct_type_select, dctn_hash } = payload
-    # c _.keys dctn_hash
     if _.includes(keys_build_selection, data_struct_type_select)
-        build_selection[data_struct_type_select] { blob: dctn_hash.blob }
+        build_selection[data_struct_type_select] { blob: dctn_hash.as_blob }
         .then ({ payload }) ->
             node_mem_arq[data_struct_type_select] = payload.built_struct
             cb null, { payload }

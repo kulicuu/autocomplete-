@@ -41,8 +41,8 @@ pane_0 = (props, state, setState, scroll_func) ->
                         data_src_select: e.currentTarget.value
                     props.browse_dctn
                         filename: e.currentTarget.value
-                        upper_bound: 43
-                        lower_bound: 0
+                        upper_bound: state.upper_bound
+                        lower_bound: state.lower_bound
                 option
                     disabled: true
                     selected: true
@@ -140,12 +140,14 @@ pane_0 = (props, state, setState, scroll_func) ->
                 placeholder: 'search text'
                 onChange: (e) =>
                     c e.currentTarget.value
+                    props.search_struct_001
+                        query_expr: e.currentTarget.value
             div
                 style:
                     display: 'flex'
                     flexDirection: 'column'
                     backgroundColor: 'orange'
-                p null, 'hello'
+                # p null, 'hello'
 
 
 
@@ -216,6 +218,22 @@ map_state_to_props = (state) ->
     state.get('lookup').toJS()
 
 map_dispatch_to_props = (dispatch) ->
+
+
+    search_struct_001: ({ query_expr }) ->
+        dispatch
+            type: 'primus_hotwire'
+            payload:
+                type: 'search_struct_nodemem'
+                payload:
+                    query_expr: query_expr
+
+
+    search_struct_000: ({ query_expr }) ->
+        dispatch
+            type: 'search_struct'
+            payload:
+                query_expr: query_expr
 
     build_selection: ({ data_struct_type_select, data_src_select })->
         dispatch

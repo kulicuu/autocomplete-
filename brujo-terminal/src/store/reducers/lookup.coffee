@@ -87,6 +87,21 @@ arq['primus:data'] = ({ state, action }) ->
         state
 
 
+# these that require primus write sideeffects can be
+# handled by a single function from now on so additions
+# should require code edits in fewer places.
+arq['primus_hotwire'] = ({ state, action }) ->
+    state.setIn ['desires', shortid()],
+        type: 'primus_hotwire'
+        payload: action.payload
+
+
+arq['search_struct'] = ({ state, action }) ->
+    state.setIn ['desires', shortid()],
+        type: 'search_struct_nodemem'
+        payload: action.payload
+
+
 arq['build_selection'] = ({ state, action }) ->
     state.setIn ['desires', shortid()],
         type: 'build_selection'
@@ -100,6 +115,14 @@ arq['apply_parse_build_data_structure'] = ({ state, action }) ->
 
 
 arq['browse_dctn'] = ({ state, action }) ->
+    # c action.payload, 'action'
+    # c state.toJS()
+    # c state.getIn(['dctn_browse_src']), 'dctn_browse_src'
+    # c action.payload.dctn_name, 'action.dctn_name'
+    if state.getIn(['dctn_browse_src']) isnt action.payload.dctn_name
+        state = state.setIn ['dctn_browse_src'], action.payload.dctn_name
+        state = state.setIn ['browse_rayy'], []
+
     state.setIn ['desires', shortid()],
         type: 'browse_dctn'
         payload: action.payload
