@@ -17,7 +17,6 @@ go_err = (err) ->
 # LIBRARY  # private, payload should be redacted for return to client.
 get_library_contents_100 = Bluebird.promisify (cb) ->
     rayy = []
-
     iter = (lib_id, cb) ->
         redis.hgetallAsync lib_id
         .then (lib_hash) ->

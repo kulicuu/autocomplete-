@@ -48045,8 +48045,9 @@ pane_0 = function(props, state, setState, scroll_func) {
     }
   }, h6(null, "browse data source raw"), _.map(props['browse_rayy'], function(word, k) {
     return p({
+      key: "word_item" + k,
       style: {
-        margin: 0,
+        margin: '10%',
         fontSize: '70%',
         color: 'orange'
       }
@@ -48121,20 +48122,19 @@ pane_0 = function(props, state, setState, scroll_func) {
     })(this)
   }), div({
     style: {
+      margin: '2%',
       display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: 'orange'
+      flexDirection: 'column'
     }
   }, _.map(props.search_results, function(candide, idx) {
-    p({
-      key: "search_results:",
+    return p({
+      key: "search_results:" + idx,
       style: {
         margin: 0,
-        fontColor: 'chartreuse',
+        color: 'chartreuse',
         fontSize: '70%'
       }
-    });
-    return candide;
+    }, candide);
   }))));
 };
 

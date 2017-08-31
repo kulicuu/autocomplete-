@@ -1,6 +1,13 @@
 
 
+{ fork } = require 'child_process'
 
+bktree_build = fork(path.resolve(__dirname, 'bk-tree-build-cp.coffee'))
+
+bktree_build.on 'message', (msg) ->
+    c 'parent has msg', msg
+
+bktree_build.send 'high there'
 
 
 node_mem_arq = {}
@@ -30,21 +37,12 @@ nodemem_api = {}
 
 
 nodemem_api['search_struct'] = Bluebird.promisify ({ payload }, cb) ->
-    c payload, 'payload'
     { struct_key, query_expr } = payload
-
-    c "#{color.green('here', on)}"
-
-
     bktree = node_mem_arq[_.keys(node_mem_arq)[0]]
-
     rtn = bktree_search
         bktree: bktree
         word: query_expr
         delta: null
-
-    c rtn, 'rtn'
-
     cb null,
         payload:
             search_results: rtn

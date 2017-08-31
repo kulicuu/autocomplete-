@@ -72,13 +72,12 @@ pane_0 = (props, state, setState, scroll_func) ->
                 h6 null, "browse data source raw"
                 _.map props['browse_rayy'], (word, k) ->
                     p
+                        key: "word_item#{k}"
                         style:
-                            margin: 0
+                            margin: '10%'
                             fontSize: '70%'
                             color: 'orange'
                         word
-
-
 
         div
             style:
@@ -144,17 +143,19 @@ pane_0 = (props, state, setState, scroll_func) ->
                         query_expr: e.currentTarget.value
             div
                 style:
+                    margin: '2%'
                     display: 'flex'
                     flexDirection: 'column'
-                    backgroundColor: 'orange'
+                    # backgroundColor: 'orange'
+
                 _.map props.search_results, (candide, idx) ->
                     p
-                        key: "search_results:#{}"
+                        key: "search_results:#{idx}"
                         style:
                             margin: 0
-                            fontColor: 'chartreuse'
+                            color: 'chartreuse'
                             fontSize: '70%'
-                    candide
+                        candide
                 # p null, 'hello'
 
 
