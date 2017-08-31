@@ -43,6 +43,11 @@ arq = {}
 concord_channel = {}
 
 
+concord_channel['res_search_struct_nodemem'] = ({ state, action, data }) ->
+    state.setIn ['search_results'], data.payload.search_results
+
+
+
 concord_channel['res_browse_raw_dctn'] = ({ state, action, data }) ->
     { browse_rayy } = data.payload
     # c browse_rayy

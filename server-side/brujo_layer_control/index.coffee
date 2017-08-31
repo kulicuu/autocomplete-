@@ -21,11 +21,11 @@ brujo_api['search_struct_nodemem'] = ({ type, payload, spark }) ->
     nodemem_api
         type: 'search_struct'
         payload: payload
-    .then ({ results }) ->
+    .then ({ search_results }) ->
         spark.write
             type: 'res_search_struct_nodemem'
             payload:
-                results: results
+                search_results: search_results
 
 
 
@@ -39,7 +39,7 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
         nodemem_api
             type: 'build_selection'
             payload: { dctn_hash, data_struct_type_select }
-        .then ({ payload }) ->
+        .then ( payload ) ->
             cache_redis_api
                 type: 'cache_data_struct'
                 payload:

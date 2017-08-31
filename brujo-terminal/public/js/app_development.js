@@ -47633,6 +47633,12 @@ arq = {};
 
 concord_channel = {};
 
+concord_channel['res_search_struct_nodemem'] = function(arg) {
+  var action, data, state;
+  state = arg.state, action = arg.action, data = arg.data;
+  return state.setIn(['search_results'], data.payload.search_results);
+};
+
 concord_channel['res_browse_raw_dctn'] = function(arg) {
   var action, browse_rayy, data, mid_rayy, old_rayy, state;
   state = arg.state, action = arg.action, data = arg.data;
@@ -47789,6 +47795,7 @@ var obj;
 
 exports["default"] = {
   lookup: {
+    search_results: [],
     get_dctns_list_state: null,
     desires: Imm.Map((
       obj = {},
@@ -48118,7 +48125,17 @@ pane_0 = function(props, state, setState, scroll_func) {
       flexDirection: 'column',
       backgroundColor: 'orange'
     }
-  })));
+  }, _.map(props.search_results, function(candide, idx) {
+    p({
+      key: "search_results:",
+      style: {
+        margin: 0,
+        fontColor: 'chartreuse',
+        fontSize: '70%'
+      }
+    });
+    return candide;
+  }))));
 };
 
 comp = rr({

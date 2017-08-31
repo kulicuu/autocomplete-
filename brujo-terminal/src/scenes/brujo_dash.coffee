@@ -147,6 +147,14 @@ pane_0 = (props, state, setState, scroll_func) ->
                     display: 'flex'
                     flexDirection: 'column'
                     backgroundColor: 'orange'
+                _.map props.search_results, (candide, idx) ->
+                    p
+                        key: "search_results:#{}"
+                        style:
+                            margin: 0
+                            fontColor: 'chartreuse'
+                            fontSize: '70%'
+                    candide
                 # p null, 'hello'
 
 

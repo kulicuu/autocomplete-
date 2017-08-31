@@ -80,5 +80,36 @@ build_it = Bluebird.promisify ({ blob }, cb) ->
             built_struct: bktree
 
 
+cursive_search_001 = (node, rayy, word, delta) ->
+    cur_delta = lev_d_wrap node.word, word
+    min_delta = cur_delta - delta
+    max_delta = cur_delta + delta
+
+    if cur_delta <= delta
+        rayy.push node.word
+
+    c node, '\n'
+    c cur_delta, 'cur'
+    the_keys = _.keys(node.chd_nodes)
+    # c the_keys
+    # c _.includes(the_keys, '' + cur_delta)
+    if (the_keys.length > 0) and (_.includes(the_keys, '' + cur_delta))
+        delta_node = node.chd_nodes[cur_delta]
+        # c delta_node, '111'
+            # add_node({bktree})
+
+        rayy.push delta_node.word
+        _.forEach delta_node.chd_nodes, (node2, key) ->
+            cursive_search_001 node2, rayy, word, delta
+    return rayy
+
+
+exports.search = search = ({ bktree, word, delta }) ->
+    word = word.toLowerCase()
+    rtn = cursive_search_001 bktree.root, [], word, 1
+    # c rtn, 'rtn'
+    rtn
+
+
 
 exports.default = build_it

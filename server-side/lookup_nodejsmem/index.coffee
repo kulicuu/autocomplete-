@@ -11,6 +11,8 @@ build_selection = {}
 
 build_selection['BK-tree'] = require('./bk-tree.coffee').default
 
+bktree_search = require('./bk-tree.coffee').search
+
 build_selection['prefix-tree'] = Bluebird.promisify ({ payload }, cb) ->
     c '222'
 
@@ -34,8 +36,18 @@ nodemem_api['search_struct'] = Bluebird.promisify ({ payload }, cb) ->
     c "#{color.green('here', on)}"
 
 
+    bktree = node_mem_arq[_.keys(node_mem_arq)[0]]
 
-    cb null, { nothing_yet: 42 }
+    rtn = bktree_search
+        bktree: bktree
+        word: query_expr
+        delta: null
+
+    c rtn, 'rtn'
+
+    cb null,
+        payload:
+            search_results: rtn
 
 
 
@@ -59,7 +71,7 @@ nodemem_api_fncn = Bluebird.promisify ({ type, payload }, cb) ->
         .then ({ payload }) -> # is this a code smell ?  two payloads one overwriting the other ?
         # i think it is but it would be worse to have awkward names for the response, ...
             c '88888888'
-            cb null, { payload }
+            cb null, payload
     else
         c "#{color.yellow('no-op in nodemem_apip.', on)}"
 
