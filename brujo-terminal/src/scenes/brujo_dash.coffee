@@ -10,7 +10,7 @@ data_structs_list = [
 ]
 
 
-pane_0 = (props, state, setState) ->
+pane_0 = (props, state, setState, scroll_func) ->
 
     if (state.data_struct_type_select isnt 'null') and (state.data_src_select isnt 'null')
         ready_to_build = true
@@ -57,6 +57,8 @@ pane_0 = (props, state, setState) ->
                 onScroll: (e) =>
                     c e.target.scrollTop
                     c e.target.scrollHeight
+                    if (e.target.scrollTop / e.target.scrollHeight) > .4
+                        scroll_func()
                 style:
                     height: '50%'
                     width: '100%'
@@ -68,9 +70,13 @@ pane_0 = (props, state, setState) ->
                     paddingLeft: 6 + '%'
                     backgroundColor: 'grey'
                 h6 null, "browse data source raw"
-                _.map props['browse_rayy'], (v, k) ->
-                    c v, 'v'
-                    p null, v
+                _.map props['browse_rayy'], (word, k) ->
+                    p
+                        style:
+                            margin: 0
+                            fontSize: '70%'
+                            color: 'orange'
+                        word
 
 
 
@@ -157,7 +163,22 @@ pane_0 = (props, state, setState) ->
 
 comp = rr
 
+    scroll_func: ->
+        @setState
+            upper_bound: @state.upper_bound + 40
+            lower_bound: @state.lower_bound + 40
+        @props.browse_dctn
+            filename: @state.data_src_select
+            upper_bound: @state.upper_bound
+            lower_bound: @state.lower_bound
+
+    componentDidMount: ->
+
+        # setInterval @scroll_func, 3000
+
     getInitialState: ->
+        upper_bound: 50
+        lower_bound: 10
         data_src_select: 'null'
         data_struct_type_select: 'null'
 
@@ -166,7 +187,7 @@ comp = rr
         @props.get_initial_stati()
 
     render: ->
-        c @props
+        # c @props
         div
             style:
                 display: 'flex'
@@ -176,7 +197,7 @@ comp = rr
 
             if @props['get_dctns_list_state'] is 'received_it'
                 # h1 null, 'received_it'
-                pane_0 @props, @state, @setState.bind(@)
+                pane_0 @props, @state, @setState.bind(@), @scroll_func
 
 
 

@@ -22,7 +22,7 @@ gr_basis_factory = ->
     base_cache_updated: Date.now()
     # dctns_lists: v4()
     dctns: v4() # could rename to raw_data_srcs
-    graphs: v4() # could rename to data_structs
+    graphs: v4() # could rename to data_structss
     initialised: 0 # set to 1 when successfully initialised the system
 
 
@@ -110,7 +110,7 @@ add_raw_dctn = Bluebird.promisify ({ filename }, cb) ->
                     .then (re) ->
                         cb null
                 , (cb) ->
-                    redis.lpushAsync dctn_basis.as_list, word_rayy
+                    redis.rpushAsync dctn_basis.as_list, word_rayy
                     .then (re) ->
                         cb null
                 , (cb) ->

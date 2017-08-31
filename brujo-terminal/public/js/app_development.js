@@ -47634,10 +47634,19 @@ arq = {};
 concord_channel = {};
 
 concord_channel['res_browse_raw_dctn'] = function(arg) {
-  var action, browse_rayy, data, state;
+  var action, browse_rayy, data, mid_rayy, old_rayy, state;
   state = arg.state, action = arg.action, data = arg.data;
   browse_rayy = data.payload.browse_rayy;
-  return state.setIn(['browse_rayy'], browse_rayy);
+  old_rayy = state.getIn(['browse_rayy']);
+  if (old_rayy !== void 0) {
+    mid_rayy = [].concat(old_rayy);
+    mid_rayy = mid_rayy.concat(browse_rayy);
+    state = state.setIn(['browse_rayy'], mid_rayy);
+    return state;
+  } else {
+    state = state.setIn(['browse_rayy'], browse_rayy);
+    return state;
+  }
 };
 
 concord_channel['dctn_initial_blob'] = function(arg) {
@@ -47932,7 +47941,7 @@ var comp, data_structs_list, map_dispatch_to_props, map_state_to_props, pane_0;
 
 data_structs_list = ["BK-tree", "prefix-tree"];
 
-pane_0 = function(props, state, setState) {
+pane_0 = function(props, state, setState, scroll_func) {
   var ready_to_build;
   if ((state.data_struct_type_select !== 'null') && (state.data_src_select !== 'null')) {
     ready_to_build = true;
@@ -47981,7 +47990,10 @@ pane_0 = function(props, state, setState) {
     onScroll: (function(_this) {
       return function(e) {
         c(e.target.scrollTop);
-        return c(e.target.scrollHeight);
+        c(e.target.scrollHeight);
+        if ((e.target.scrollTop / e.target.scrollHeight) > .4) {
+          return scroll_func();
+        }
       };
     })(this),
     style: {
@@ -47992,9 +48004,14 @@ pane_0 = function(props, state, setState) {
       paddingLeft: 6 + '%',
       backgroundColor: 'grey'
     }
-  }, h6(null, "browse data source raw"), _.map(props['browse_rayy'], function(v, k) {
-    c(v, 'v');
-    return p(null, v);
+  }, h6(null, "browse data source raw"), _.map(props['browse_rayy'], function(word, k) {
+    return p({
+      style: {
+        margin: 0,
+        fontSize: '70%',
+        color: 'orange'
+      }
+    }, word);
   }))), div({
     style: {
       display: 'flex',
@@ -48070,8 +48087,22 @@ pane_0 = function(props, state, setState) {
 };
 
 comp = rr({
+  scroll_func: function() {
+    this.setState({
+      upper_bound: this.state.upper_bound + 40,
+      lower_bound: this.state.lower_bound + 40
+    });
+    return this.props.browse_dctn({
+      filename: this.state.data_src_select,
+      upper_bound: this.state.upper_bound,
+      lower_bound: this.state.lower_bound
+    });
+  },
+  componentDidMount: function() {},
   getInitialState: function() {
     return {
+      upper_bound: 50,
+      lower_bound: 10,
       data_src_select: 'null',
       data_struct_type_select: 'null'
     };
@@ -48081,7 +48112,6 @@ comp = rr({
     return this.props.get_initial_stati();
   },
   render: function() {
-    c(this.props);
     return div({
       style: {
         display: 'flex',
@@ -48089,7 +48119,7 @@ comp = rr({
         height: '100%',
         width: '100%'
       }
-    }, this.props['get_dctns_list_state'] === 'received_it' ? pane_0(this.props, this.state, this.setState.bind(this)) : void 0);
+    }, this.props['get_dctns_list_state'] === 'received_it' ? pane_0(this.props, this.state, this.setState.bind(this), this.scroll_func) : void 0);
   }
 });
 

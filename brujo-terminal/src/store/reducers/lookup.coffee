@@ -45,7 +45,22 @@ concord_channel = {}
 
 concord_channel['res_browse_raw_dctn'] = ({ state, action, data }) ->
     { browse_rayy } = data.payload
-    state.setIn ['browse_rayy'], browse_rayy
+    # c browse_rayy
+    # c state.toJS(), '11111111111111111'
+    # c old_rayy, 'old rayy'
+    old_rayy = state.getIn ['browse_rayy']
+    if old_rayy isnt undefined
+        # c 'green'
+        mid_rayy = [].concat old_rayy
+        mid_rayy = mid_rayy.concat browse_rayy
+        # c mid_rayy, 'mid_rayy'
+        state = state.setIn ['browse_rayy'], mid_rayy
+        state
+    else
+        # c 'red'
+        state = state.setIn ['browse_rayy'], browse_rayy
+        state
+
 
 concord_channel['dctn_initial_blob'] = ({ state, action, data }) ->
     state.setIn ['dctn_blob'], data.payload.blob
