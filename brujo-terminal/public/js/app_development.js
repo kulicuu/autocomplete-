@@ -47976,9 +47976,39 @@ exports["default"] = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 253 */
 /***/ (function(module, exports) {
 
-var comp, data_structs_list, map_dispatch_to_props, map_state_to_props, pane_0;
+var comp, data_structs_list, map_dispatch_to_props, map_state_to_props, mock_data_build_structs, pane_0;
 
 data_structs_list = ["BK-tree", "prefix-tree"];
+
+mock_data_build_structs = {
+  aaa: {
+    struct_id: shortid(),
+    struct_name: 'my_struct_030',
+    date_created: Date.now(),
+    raw_src: 'somedctn3',
+    data_struct_type: 'bktree',
+    build_status: "building",
+    percentage_built: 53
+  },
+  bbb: {
+    struct_id: shortid(),
+    struct_name: 'my_struct_030',
+    date_created: Date.now(),
+    raw_src: 'somedctn3',
+    data_struct_type: 'bktree',
+    build_status: "building",
+    percentage_built: 53
+  },
+  ccc: {
+    struct_id: shortid(),
+    struct_name: 'my_struct_030',
+    date_created: Date.now(),
+    raw_src: 'somedctn3',
+    data_struct_type: 'bktree',
+    build_status: "building",
+    percentage_built: 53
+  }
+};
 
 pane_0 = function(props, state, setState, scroll_func) {
   var ready_to_build;
@@ -48000,7 +48030,7 @@ pane_0 = function(props, state, setState, scroll_func) {
       flexDirection: 'column',
       paddingLeft: 6 + '%'
     }
-  }, h6(null, "select data source"), select({
+  }, h6(null, "data source"), select({
     style: {
       color: 'blue'
     },
@@ -48020,7 +48050,7 @@ pane_0 = function(props, state, setState, scroll_func) {
     disabled: true,
     selected: true,
     value: true
-  }, "select an option"), _.map(props.raw_dctns_list, function(dctn, idx) {
+  }, "select data source"), _.map(props.raw_dctns_list, function(dctn, idx) {
     return option({
       key: "option1:" + idx,
       value: dctn.filename
@@ -48054,12 +48084,16 @@ pane_0 = function(props, state, setState, scroll_func) {
     }, word);
   }))), div({
     style: {
+      margin: 20,
+      backgroundColor: 'tomato',
+      width: '40%',
       display: 'flex',
       flexDirection: 'column',
       paddingLeft: 6 + '%'
     }
-  }, h6(null, "select data structure"), select({
+  }, h6(null, "data-structure type"), select({
     style: {
+      maxWidth: '35%',
       color: 'red'
     },
     onChange: (function(_this) {
@@ -48073,20 +48107,15 @@ pane_0 = function(props, state, setState, scroll_func) {
     disabled: true,
     selected: true,
     value: true
-  }, "select an option"), _.map(data_structs_list, function(item, idx) {
+  }, "select a data-structure type"), _.map(data_structs_list, function(item, idx) {
     return option({
       key: "option2:" + idx,
       value: item
     }, item);
-  })), div({
+  })), button({
     style: {
-      display: 'flex',
-      flexDirection: 'column',
-      marginTop: 10 + '%',
-      backgroundColor: 'lightblue'
-    }
-  }, h6(null, "status:"), button({
-    style: {
+      margin: '4%',
+      maxWidth: '20%',
       backgroundColor: 'yellow',
       color: 'purple'
     },
@@ -48101,7 +48130,46 @@ pane_0 = function(props, state, setState, scroll_func) {
         }
       };
     })(this)
-  }, "Build it"))), div({
+  }, "Build it"), div({
+    style: {
+      margin: 10,
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  }, _.map(mock_data_build_structs, function(v, k) {
+    (function(v, k) {})(v, k);
+    return div({
+      style: {
+        margin: '2%',
+        display: 'flex'
+      }
+    }, span({
+      style: {
+        fontSize: '65%',
+        padding: '4%',
+        border: '1px solid black'
+      }
+    }, v.struct_name), span({
+      style: {
+        fontSize: '65%',
+        padding: '4%',
+        border: '1px solid blue'
+      }
+    }, v.build_status), v.build_status === 'building' ? span({
+      style: {
+        fontSize: '65%',
+        padding: '4%',
+        border: '1px solid grey'
+      }
+    }, v.percentage_built + '%') : void 0, button({
+      onClick: function() {
+        return c(props);
+      },
+      style: {
+        color: 'magenta'
+      }
+    }, "select me"));
+  }))), div({
     style: {
       display: 'flex',
       flexDirection: 'column',

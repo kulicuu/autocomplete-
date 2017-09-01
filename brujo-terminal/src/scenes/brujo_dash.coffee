@@ -10,6 +10,33 @@ data_structs_list = [
 ]
 
 
+mock_data_build_structs =
+    aaa:
+        struct_id: shortid()
+        struct_name: 'my_struct_030'
+        date_created: Date.now()
+        raw_src: 'somedctn3'
+        data_struct_type: 'bktree'
+        build_status: "building"  # 'aborted', 'building', 'done'
+        percentage_built: 53   # 0 to 100 # relevant if build_status is 'building'
+    bbb:
+        struct_id: shortid()
+        struct_name: 'my_struct_030'
+        date_created: Date.now()
+        raw_src: 'somedctn3'
+        data_struct_type: 'bktree'
+        build_status: "building"  # 'aborted', 'building', 'done'
+        percentage_built: 53   # 0 to 100 # relevant if build_status is 'building'
+    ccc:
+        struct_id: shortid()
+        struct_name: 'my_struct_030'
+        date_created: Date.now()
+        raw_src: 'somedctn3'
+        data_struct_type: 'bktree'
+        build_status: "building"  # 'aborted', 'building', 'done'
+        percentage_built: 53   # 0 to 100 # relevant if build_status is 'building'
+
+
 pane_0 = (props, state, setState, scroll_func) ->
 
     if (state.data_struct_type_select isnt 'null') and (state.data_src_select isnt 'null')
@@ -32,7 +59,7 @@ pane_0 = (props, state, setState, scroll_func) ->
                 display: 'flex'
                 flexDirection: 'column'
                 paddingLeft: 6 + '%'
-            h6 null, "select data source"
+            h6 null, "data source"
             select
                 style:
                     color: 'blue'
@@ -47,7 +74,7 @@ pane_0 = (props, state, setState, scroll_func) ->
                     disabled: true
                     selected: true
                     value: true
-                    "select an option"
+                    "select data source"
                 _.map props.raw_dctns_list, (dctn, idx) ->
                     option
                         key: "option1:#{idx}"
@@ -81,12 +108,16 @@ pane_0 = (props, state, setState, scroll_func) ->
 
         div
             style:
+                margin: 20
+                backgroundColor: 'tomato'
+                width: '40%'
                 display: 'flex'
                 flexDirection: 'column'
                 paddingLeft: 6 + '%'
-            h6 null, "select data structure"
+            h6 null, "data-structure type"
             select
                 style:
+                    maxWidth: '35%'
                     color: 'red'
                 onChange: (e) =>
                     setState
@@ -96,32 +127,74 @@ pane_0 = (props, state, setState, scroll_func) ->
                     disabled: true
                     selected: true
                     value: true
-                    "select an option"
+                    "select a data-structure type"
                 _.map data_structs_list, (item, idx) ->
                     option
                         key: "option2:#{idx}"
                         value: item
                         item
+            # div
+            #     style:
+            #         display: 'flex'
+            #         flexDirection: 'column'
+            #         margin: '4%'
+            #         backgroundColor: 'lightblue'
+            #     # h6 null, "status:"
+            button
+                style:
+                    margin: '4%'
+                    maxWidth: '20%'
+                    backgroundColor: 'yellow'
+                    color: 'purple'
+                disabled: if ready_to_build then false else true
+                onClick: =>
+                    # c 'go build', state
+                    if ready_to_build
+                        props.build_selection
+                            data_src_select: state.data_src_select
+                            data_struct_type_select: state.data_struct_type_select
+                "Build it"
+                # this call will trigger build and cache, bacause it assumes wasn't cached already
+
             div
                 style:
+                    margin: 10
                     display: 'flex'
                     flexDirection: 'column'
-                    marginTop: 10 + '%'
-                    backgroundColor: 'lightblue'
-                h6 null, "status:"
-                button
-                    style:
-                        backgroundColor: 'yellow'
-                        color: 'purple'
-                    disabled: if ready_to_build then false else true
-                    onClick: =>
-                        # c 'go build', state
-                        if ready_to_build
-                            props.build_selection
-                                data_src_select: state.data_src_select
-                                data_struct_type_select: state.data_struct_type_select
-                    "Build it"
-                    # this call will trigger build and cache, bacause it assumes wasn't cached already
+
+                _.map mock_data_build_structs, (v, k) ->
+                        do (v, k) ->
+                        div
+                            style:
+                                margin: '2%'
+                                display: 'flex'
+                            span
+                                style:
+                                    # display: 'flex'
+                                    fontSize: '65%'
+                                    padding: '4%'
+                                    border: '1px solid black'
+                                v.struct_name
+                            span
+                                style:
+                                    fontSize: '65%'
+                                    padding: '4%'
+                                    border: '1px solid blue'
+                                v.build_status
+                            if v.build_status is 'building'
+                                span
+                                    style:
+                                        fontSize: '65%'
+                                        padding: '4%'
+                                        border: '1px solid grey'
+                                    v.percentage_built + '%'
+                            button
+                                onClick: ->
+                                    c props
+                                style:
+                                    color: 'magenta'
+                                "select me"
+
 
 
 

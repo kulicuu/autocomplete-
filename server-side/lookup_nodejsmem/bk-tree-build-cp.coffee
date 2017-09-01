@@ -90,10 +90,6 @@ the_api['test2'] = ->
 
 
 the_api['build_it'] = ({ dctn_hash, job_id }) ->
-    c "\n \n  \n \n"
-    c dctn_hash
-    c '\n \n'
-    c job_id, 'job_ref'
     blob = dctn_hash.as_blob
     d1 = blob.split '\n'
     bktree = { root: null }
@@ -101,7 +97,7 @@ the_api['build_it'] = ({ dctn_hash, job_id }) ->
         word.toLowerCase()
     for word, idx in d1
         unless word.length is 0
-            c 'word loading', word
+            c 'word', word
             { bktree } = tree_add_word
                 bktree: bktree
                 word: word
@@ -110,7 +106,6 @@ the_api['build_it'] = ({ dctn_hash, job_id }) ->
         payload:
             built_struct: bktree
             job_id: job_id
-
 
 
 keys_the_api = _.keys the_api

@@ -18,6 +18,7 @@
         "react": "latest",
         "redis": "latest",
         "react-dom": "latest",
+        "react-dom-factories": "latest",
         "react-redux": "latest",
         "redux": "latest",
         "redux-immutable": "latest",
