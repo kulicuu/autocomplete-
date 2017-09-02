@@ -5,6 +5,9 @@
 bktree_build = fork(path.resolve(__dirname, 'bk-tree-build-cp.coffee'))
 
 
+msgr_func = null
+
+
 node_mem_arq = {}
 
 spark_job_ref = {}
@@ -19,6 +22,15 @@ bktree_build_res_api = {}
 bktree_build_res_api['test3'] = ({ payload }) ->
     c 'payload', payload
 
+
+bktree_build_res_api['progress_update'] = ({ payload }) ->
+    c 'progr'
+    { perc_count, job_id } = payload
+    { spark_ref, client_job_id } = spark_job_ref[job_id]
+    c spark_ref, 'spark_ref'
+    msgr_func { spark_ref, perc_count, client_job_id }
+    # spark.write
+    #     type: 'golan giladi'
 
 
 bktree_build_res_api['res_build_it'] = ({ payload }) ->
@@ -95,9 +107,10 @@ nodemem_api['search_struct'] = Bluebird.promisify ({ payload }, cb) ->
 
 
 build_selection_001 = Bluebird.promisify ({ type, payload}, cb) ->
-    { data_struct_type_select, dctn_hash, spark_ref } = payload
+    { data_struct_type_select, dctn_hash, spark_ref, client_job_id } = payload
+    # msgr_func = progress_update_msgr
     job_id = v4()
-    spark_job_ref[job_id] = { cb, spark_ref }
+    spark_job_ref[job_id] = { cb, spark_ref, data_struct_type_select, client_job_id }
     c payload, 'payload \n'
     bktree_build.send
         type: 'build_it'
@@ -137,4 +150,6 @@ nodemem_api_fncn = Bluebird.promisify ({ type, payload }, cb) ->
 
 
 
-exports.default = nodemem_api_fncn
+exports.default = ({ the_msgr_func }) ->
+    msgr_func = the_msgr_func
+    nodemem_api_fncn

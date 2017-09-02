@@ -105,6 +105,8 @@ arq['search_struct'] = ({ state, action }) ->
 
 
 arq['build_selection'] = ({ state, action }) ->
+    { data_src_select, data_struct_type_select, client_job_id } = action.payload
+    state = state.setIn ['jobs', client_job_id], { data_src_select, data_struct_type_select, client_job_id }
     state.setIn ['desires', shortid()],
         type: 'build_selection'
         payload: action.payload

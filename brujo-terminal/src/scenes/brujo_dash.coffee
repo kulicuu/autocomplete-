@@ -82,8 +82,9 @@ pane_0 = (props, state, setState, scroll_func) ->
                         dctn.filename
             div
                 onScroll: (e) =>
-                    c e.target.scrollTop
-                    c e.target.scrollHeight
+                    # c e.target.scrollTop
+                    # c e.target.scrollHeight
+                    # TODO improve this logic along with UI
                     if (e.target.scrollTop / e.target.scrollHeight) > .4
                         scroll_func()
                 style:
@@ -162,7 +163,40 @@ pane_0 = (props, state, setState, scroll_func) ->
                     display: 'flex'
                     flexDirection: 'column'
 
-                _.map mock_data_build_structs, (v, k) ->
+                # _.map mock_data_build_structs, (v, k) ->
+                #         do (v, k) ->
+                #         div
+                #             style:
+                #                 margin: '2%'
+                #                 display: 'flex'
+                #             span
+                #                 style:
+                #                     # display: 'flex'
+                #                     fontSize: '65%'
+                #                     padding: '4%'
+                #                     border: '1px solid black'
+                #                 v.struct_name
+                #             span
+                #                 style:
+                #                     fontSize: '65%'
+                #                     padding: '4%'
+                #                     border: '1px solid blue'
+                #                 v.build_status
+                #             if v.build_status is 'building'
+                #                 span
+                #                     style:
+                #                         fontSize: '65%'
+                #                         padding: '4%'
+                #                         border: '1px solid grey'
+                #                     v.percentage_built + '%'
+                #             button
+                #                 onClick: ->
+                #                     c props
+                #                 style:
+                #                     color: 'magenta'
+                #                 "select me"
+
+                _.map props.jobs, (v, k) ->
                         do (v, k) ->
                         div
                             style:
@@ -174,20 +208,20 @@ pane_0 = (props, state, setState, scroll_func) ->
                                     fontSize: '65%'
                                     padding: '4%'
                                     border: '1px solid black'
-                                v.struct_name
+                                v.client_job_id
                             span
                                 style:
                                     fontSize: '65%'
                                     padding: '4%'
                                     border: '1px solid blue'
-                                v.build_status
+                                "v.build_status"
                             if v.build_status is 'building'
                                 span
                                     style:
                                         fontSize: '65%'
                                         padding: '4%'
                                         border: '1px solid grey'
-                                    v.percentage_built + '%'
+                                    "v.percentage_built" + '%'
                             button
                                 onClick: ->
                                     c props
@@ -318,9 +352,10 @@ map_dispatch_to_props = (dispatch) ->
                 query_expr: query_expr
 
     build_selection: ({ data_struct_type_select, data_src_select })->
+        client_job_id = shortid()
         dispatch
             type: 'build_selection'
-            payload: { data_struct_type_select, data_src_select }
+            payload: { data_struct_type_select, data_src_select, client_job_id }
 
 
     get_initial_stati: ->

@@ -2,6 +2,8 @@ exports.default =
 
     lookup:
 
+        jobs: Imm.Map({})
+
         search_results: []
 
         get_dctns_list_state: null

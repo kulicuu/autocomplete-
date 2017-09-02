@@ -47712,8 +47712,14 @@ arq['search_struct'] = function(arg) {
 };
 
 arq['build_selection'] = function(arg) {
-  var action, state;
+  var action, client_job_id, data_src_select, data_struct_type_select, ref, state;
   state = arg.state, action = arg.action;
+  ref = action.payload, data_src_select = ref.data_src_select, data_struct_type_select = ref.data_struct_type_select, client_job_id = ref.client_job_id;
+  state = state.setIn(['jobs', client_job_id], {
+    data_src_select: data_src_select,
+    data_struct_type_select: data_struct_type_select,
+    client_job_id: client_job_id
+  });
   return state.setIn(['desires', shortid()], {
     type: 'build_selection',
     payload: action.payload
@@ -47795,6 +47801,7 @@ var obj;
 
 exports["default"] = {
   lookup: {
+    jobs: Imm.Map({}),
     search_results: [],
     get_dctns_list_state: null,
     desires: Imm.Map((
@@ -48058,8 +48065,6 @@ pane_0 = function(props, state, setState, scroll_func) {
   })), div({
     onScroll: (function(_this) {
       return function(e) {
-        c(e.target.scrollTop);
-        c(e.target.scrollHeight);
         if ((e.target.scrollTop / e.target.scrollHeight) > .4) {
           return scroll_func();
         }
@@ -48136,7 +48141,7 @@ pane_0 = function(props, state, setState, scroll_func) {
       display: 'flex',
       flexDirection: 'column'
     }
-  }, _.map(mock_data_build_structs, function(v, k) {
+  }, _.map(props.jobs, function(v, k) {
     (function(v, k) {})(v, k);
     return div({
       style: {
@@ -48149,19 +48154,19 @@ pane_0 = function(props, state, setState, scroll_func) {
         padding: '4%',
         border: '1px solid black'
       }
-    }, v.struct_name), span({
+    }, v.client_job_id), span({
       style: {
         fontSize: '65%',
         padding: '4%',
         border: '1px solid blue'
       }
-    }, v.build_status), v.build_status === 'building' ? span({
+    }, "v.build_status"), v.build_status === 'building' ? span({
       style: {
         fontSize: '65%',
         padding: '4%',
         border: '1px solid grey'
       }
-    }, v.percentage_built + '%') : void 0, button({
+    }, "v.percentage_built" + '%') : void 0, button({
       onClick: function() {
         return c(props);
       },
@@ -48273,13 +48278,15 @@ map_dispatch_to_props = function(dispatch) {
       });
     },
     build_selection: function(arg) {
-      var data_src_select, data_struct_type_select;
+      var client_job_id, data_src_select, data_struct_type_select;
       data_struct_type_select = arg.data_struct_type_select, data_src_select = arg.data_src_select;
+      client_job_id = shortid();
       return dispatch({
         type: 'build_selection',
         payload: {
           data_struct_type_select: data_struct_type_select,
-          data_src_select: data_src_select
+          data_src_select: data_src_select,
+          client_job_id: client_job_id
         }
       });
     },

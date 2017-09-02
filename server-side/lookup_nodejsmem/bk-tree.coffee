@@ -116,7 +116,7 @@ exports.search = search = ({ bktree, word, delta }) ->
 
 
 
-build_it_child_process = "spawn"
+# build_it_child_process = "spawn"
 
 
 exports.default = build_it

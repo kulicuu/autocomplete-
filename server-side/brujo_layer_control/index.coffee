@@ -10,12 +10,30 @@
 cache_redis_api = require('../cache_redis/index').default
 
 
+progress_update_msgr = ({ spark_ref, perc_count }) ->
+    c spark_ref, 'spark_ref'
+    c spark_icebox[spark_ref]
+    { spark } = spark_icebox[spark_ref]
+
+    spark.write
+        type: 'build_progress_update'
+        payload:
+            perc_count: perc_count
+            # data_src_select: data_src_select
+            # data_struct_type_select: data_struct_type_select
+
+
 nodemem_api = require('../lookup_nodejsmem/index').default
+    the_msgr_func: progress_update_msgr
 
 
 brujo_api = {}
 
 spark_icebox = {}
+
+
+
+
 
 
 
@@ -39,10 +57,15 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
     .then ({ payload }) -> # contains arq plus some meta info
         { dctn_hash } = payload
         spark_ref = v4()
-        spark_icebox[spark_ref] = spark
+        c "#{color.green('spark', on)}"
+        c spark
+        spark_icebox[spark_ref] =
+            spark: spark
+            # data_src_select: data_src_select
+            # data_struct_type_select: data_struct_type_select
         nodemem_api
             type: 'build_selection'
-            payload: { dctn_hash, data_struct_type_select, spark_ref }
+            payload: { dctn_hash, data_struct_type_select, spark_ref, progress_update_msgr }
         .then ( payload ) ->
             cache_redis_api
                 type: 'cache_data_struct'
@@ -77,7 +100,6 @@ brujo_api['get_initial_stati'] = ({ type, spark }) ->
 
 
 brujo_api["get_raw_dctns_list"] = ({ type, spark }) ->
-
     cache_redis_api { type }
     .then ({ payload }) ->
         c payload, '494949494'

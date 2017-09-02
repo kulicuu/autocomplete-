@@ -91,13 +91,28 @@ the_api['test2'] = ->
 
 the_api['build_it'] = ({ dctn_hash, job_id }) ->
     blob = dctn_hash.as_blob
+
     d1 = blob.split '\n'
+    len_d1 = d1.length
+    counter = 0
+    perc_count = len_d1 / 100
     bktree = { root: null }
     d1 = _.map d1, (word, idx) ->
         word.toLowerCase()
     for word, idx in d1
         unless word.length is 0
+            counter++
+            perc = counter / perc_count
+            c 'perc', perc
+            c counter % perc_count
+            if Math.floor(counter % perc_count) is 0
+                process.send
+                    type: 'progress_update'
+                    payload:
+                        perc_count: Math.floor(perc)
+                        job_id: job_id
             c 'word', word
+
             { bktree } = tree_add_word
                 bktree: bktree
                 word: word
