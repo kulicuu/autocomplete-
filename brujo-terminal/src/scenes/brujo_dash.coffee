@@ -10,31 +10,6 @@ data_structs_list = [
 ]
 
 
-mock_data_build_structs =
-    aaa:
-        struct_id: shortid()
-        struct_name: 'my_struct_030'
-        date_created: Date.now()
-        raw_src: 'somedctn3'
-        data_struct_type: 'bktree'
-        build_status: "building"  # 'aborted', 'building', 'done'
-        percentage_built: 53   # 0 to 100 # relevant if build_status is 'building'
-    bbb:
-        struct_id: shortid()
-        struct_name: 'my_struct_030'
-        date_created: Date.now()
-        raw_src: 'somedctn3'
-        data_struct_type: 'bktree'
-        build_status: "building"  # 'aborted', 'building', 'done'
-        percentage_built: 53   # 0 to 100 # relevant if build_status is 'building'
-    ccc:
-        struct_id: shortid()
-        struct_name: 'my_struct_030'
-        date_created: Date.now()
-        raw_src: 'somedctn3'
-        data_struct_type: 'bktree'
-        build_status: "building"  # 'aborted', 'building', 'done'
-        percentage_built: 53   # 0 to 100 # relevant if build_status is 'building'
 
 
 pane_0 = (props, state, setState, scroll_func) ->
@@ -166,7 +141,8 @@ pane_0 = (props, state, setState, scroll_func) ->
 
 
                 _.map props.jobs, (v, k) ->
-                        do (v, k) ->
+                    do (v, k) ->
+                        time_elapsed = state.the_now - v.commence_time
                         div
                             style:
                                 margin: '2%'
@@ -185,12 +161,19 @@ pane_0 = (props, state, setState, scroll_func) ->
                                     border: '1px solid blue'
                                 v.data_struct_type_select
                             if v.build_status is 'building'
-                                span
-                                    style:
-                                        fontSize: '65%'
-                                        padding: '4%'
-                                        border: '1px solid grey'
-                                    v.perc_count + '% complete'
+                                div null,
+                                    span
+                                        style:
+                                            fontSize: '65%'
+                                            padding: '4%'
+                                            border: '1px solid grey'
+                                        v.perc_count + '% complete'
+                                    span
+                                        style:
+                                            fontSize: '58%'
+                                            padding: '2%'
+                                            border: '1px solid grey'
+                                        Math.floor(time_elapsed / 1000) + 'seconds'
                             button
                                 onClick: ->
                                     c props
@@ -244,6 +227,26 @@ comp = rr
             filename: @state.data_src_select
             upper_bound: @state.upper_bound
             lower_bound: @state.lower_bound
+
+    componentWillReceiveProps: (nextProps) ->
+        stopwatch = null
+        c nextProps, 'nextProps'
+        have_building_job = _.reduce nextProps.jobs, (acc, job, job_id) ->
+            if (acc is true) or (job.build_status is 'building')
+                acc = true
+            else
+                acc = false
+        , false
+
+        if have_building_job
+            stopwatch = setInterval =>
+                @setState
+                    the_now: Date.now()
+            , 1000
+        else
+            clearInterval stopwatch
+            stopwatch = null
+
     componentDidMount: ->
         # setInterval @scroll_func, 3000
     getInitialState: ->

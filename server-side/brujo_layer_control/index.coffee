@@ -11,8 +11,8 @@ cache_redis_api = require('../cache_redis/index').default
 
 
 progress_update_msgr = ({ spark_ref, perc_count }) ->
-    c spark_ref, 'spark_ref'
-    c spark_icebox[spark_ref]
+    # c spark_ref, 'spark_ref'
+    # c spark_icebox[spark_ref]
     { spark, client_job_id } = spark_icebox[spark_ref]
 
     spark.write
@@ -20,8 +20,7 @@ progress_update_msgr = ({ spark_ref, perc_count }) ->
         payload:
             perc_count: perc_count
             client_job_id: client_job_id
-            # data_src_select: data_src_select
-            # data_struct_type_select: data_struct_type_select
+
 
 
 nodemem_api = require('../lookup_nodejsmem/index').default
@@ -68,14 +67,15 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
         nodemem_api
             type: 'build_selection'
             payload: { dctn_hash, data_struct_type_select, spark_ref, progress_update_msgr }
-        .then ( payload ) ->
-            cache_redis_api
-                type: 'cache_data_struct'
-                payload:
-                    data_struct_type_select: data_struct_type_select
+        .then ->
+            c "#{color.green('33333', on )}"
+            c 'cecece'
             spark.write
                 type: 'res_build_selection'
-                payload: payload
+                payload:
+                    job_id: client_job_id
+        .error (e) ->
+            c 'e', e
 
 
 

@@ -81,13 +81,8 @@ build_it = Bluebird.promisify ({ blob }, cb) ->
 the_api = {}
 
 
-the_api['test2'] = ->
-    c 'satheaustha'
-    process.send
-        type: 'test3'
-        payload:
-            nothing: 'yet'
-
+# NOTE emergency : had forgotten can't send back actual node mem objects between threads
+# only strings.  so can put the search into this thread also rather than sending it back.
 
 the_api['build_it'] = ({ dctn_hash, job_id }) ->
     blob = dctn_hash.as_blob
@@ -116,10 +111,14 @@ the_api['build_it'] = ({ dctn_hash, job_id }) ->
             { bktree } = tree_add_word
                 bktree: bktree
                 word: word
+    # c "\n \n #{color.green('built_struct')}"
+    # c _.keys(bktree), 'bktree'
+    # c bktree['root']
+    # c '\n \n'
     process.send
-        type: 'res_build_it'
+        type: 'progress_update'
         payload:
-            built_struct: bktree
+            perc_count: 100
             job_id: job_id
 
 

@@ -8,13 +8,20 @@ arq = {}
 concord_channel = {}
 
 
+concord_channel['res_build_selection'] = ({ state, action, data }) ->
+    c data
+    c data.payload, 'data.payload'
+    { job_id } = data.payload
+    state.setIn ['jobs', job_id, 'build_status'], 'completed_build'
+    # state
+
+
 concord_channel['build_progress_update'] = ({ state, action, data }) ->
-    c '938838383829929292'
-    c data.payload
     { client_job_id, perc_count } = data.payload
-    c state.get('jobs').toJS()
-    state = state.setIn ['jobs', client_job_id, 'perc_count'], perc_count
-    state
+    if perc_count is 100
+        state = state.setIn ['jobs', client_job_id, 'build_status'], 'completed_build'
+    state.setIn ['jobs', client_job_id, 'perc_count'], perc_count
+
 
 
 concord_channel['res_search_struct_nodemem'] = ({ state, action, data }) ->
@@ -83,6 +90,7 @@ arq['build_selection'] = ({ state, action }) ->
         client_job_id: client_job_id
         perc_count: 0
         build_status: 'building'
+        commence_time: Date.now()
     state.setIn ['desires', shortid()],
         type: 'build_selection'
         payload: action.payload

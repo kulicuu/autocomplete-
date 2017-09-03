@@ -47633,15 +47633,23 @@ arq = {};
 
 concord_channel = {};
 
+concord_channel['res_build_selection'] = function(arg) {
+  var action, data, job_id, state;
+  state = arg.state, action = arg.action, data = arg.data;
+  c(data);
+  c(data.payload, 'data.payload');
+  job_id = data.payload.job_id;
+  return state.setIn(['jobs', job_id, 'build_status'], 'completed_build');
+};
+
 concord_channel['build_progress_update'] = function(arg) {
   var action, client_job_id, data, perc_count, ref, state;
   state = arg.state, action = arg.action, data = arg.data;
-  c('938838383829929292');
-  c(data.payload);
   ref = data.payload, client_job_id = ref.client_job_id, perc_count = ref.perc_count;
-  c(state.get('jobs').toJS());
-  state = state.setIn(['jobs', client_job_id, 'perc_count'], perc_count);
-  return state;
+  if (perc_count === 100) {
+    state = state.setIn(['jobs', client_job_id, 'build_status'], 'completed_build');
+  }
+  return state.setIn(['jobs', client_job_id, 'perc_count'], perc_count);
 };
 
 concord_channel['res_search_struct_nodemem'] = function(arg) {
@@ -47731,7 +47739,8 @@ arq['build_selection'] = function(arg) {
     data_struct_type_select: data_struct_type_select,
     client_job_id: client_job_id,
     perc_count: 0,
-    build_status: 'building'
+    build_status: 'building',
+    commence_time: Date.now()
   }));
   return state.setIn(['desires', shortid()], {
     type: 'build_selection',
@@ -47987,39 +47996,9 @@ exports["default"] = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 253 */
 /***/ (function(module, exports) {
 
-var comp, data_structs_list, map_dispatch_to_props, map_state_to_props, mock_data_build_structs, pane_0;
+var comp, data_structs_list, map_dispatch_to_props, map_state_to_props, pane_0;
 
 data_structs_list = ["Burkhard-Keller-tree", "prefix-tree"];
-
-mock_data_build_structs = {
-  aaa: {
-    struct_id: shortid(),
-    struct_name: 'my_struct_030',
-    date_created: Date.now(),
-    raw_src: 'somedctn3',
-    data_struct_type: 'bktree',
-    build_status: "building",
-    percentage_built: 53
-  },
-  bbb: {
-    struct_id: shortid(),
-    struct_name: 'my_struct_030',
-    date_created: Date.now(),
-    raw_src: 'somedctn3',
-    data_struct_type: 'bktree',
-    build_status: "building",
-    percentage_built: 53
-  },
-  ccc: {
-    struct_id: shortid(),
-    struct_name: 'my_struct_030',
-    date_created: Date.now(),
-    raw_src: 'somedctn3',
-    data_struct_type: 'bktree',
-    build_status: "building",
-    percentage_built: 53
-  }
-};
 
 pane_0 = function(props, state, setState, scroll_func) {
   var ready_to_build;
@@ -48146,38 +48125,47 @@ pane_0 = function(props, state, setState, scroll_func) {
       flexDirection: 'column'
     }
   }, _.map(props.jobs, function(v, k) {
-    (function(v, k) {})(v, k);
-    return div({
-      style: {
-        margin: '2%',
-        display: 'flex'
-      }
-    }, span({
-      style: {
-        fontSize: '65%',
-        padding: '4%',
-        border: '1px solid black'
-      }
-    }, v.data_src_select), span({
-      style: {
-        fontSize: '65%',
-        padding: '4%',
-        border: '1px solid blue'
-      }
-    }, v.data_struct_type_select), v.build_status === 'building' ? span({
-      style: {
-        fontSize: '65%',
-        padding: '4%',
-        border: '1px solid grey'
-      }
-    }, v.perc_count + '% complete') : void 0, button({
-      onClick: function() {
-        return c(props);
-      },
-      style: {
-        color: 'magenta'
-      }
-    }, "select"));
+    return (function(v, k) {
+      var time_elapsed;
+      time_elapsed = state.the_now - v.commence_time;
+      return div({
+        style: {
+          margin: '2%',
+          display: 'flex'
+        }
+      }, span({
+        style: {
+          fontSize: '65%',
+          padding: '4%',
+          border: '1px solid black'
+        }
+      }, v.data_src_select), span({
+        style: {
+          fontSize: '65%',
+          padding: '4%',
+          border: '1px solid blue'
+        }
+      }, v.data_struct_type_select), v.build_status === 'building' ? div(null, span({
+        style: {
+          fontSize: '65%',
+          padding: '4%',
+          border: '1px solid grey'
+        }
+      }, v.perc_count + '% complete'), span({
+        style: {
+          fontSize: '58%',
+          padding: '2%',
+          border: '1px solid grey'
+        }
+      }, Math.floor(time_elapsed / 1000) + 'seconds')) : void 0, button({
+        onClick: function() {
+          return c(props);
+        },
+        style: {
+          color: 'magenta'
+        }
+      }, "select"));
+    })(v, k);
   }))), div({
     style: {
       display: 'flex',
@@ -48226,6 +48214,30 @@ comp = rr({
       upper_bound: this.state.upper_bound,
       lower_bound: this.state.lower_bound
     });
+  },
+  componentWillReceiveProps: function(nextProps) {
+    var have_building_job, stopwatch;
+    stopwatch = null;
+    c(nextProps, 'nextProps');
+    have_building_job = _.reduce(nextProps.jobs, function(acc, job, job_id) {
+      if ((acc === true) || (job.build_status === 'building')) {
+        return acc = true;
+      } else {
+        return acc = false;
+      }
+    }, false);
+    if (have_building_job) {
+      return stopwatch = setInterval((function(_this) {
+        return function() {
+          return _this.setState({
+            the_now: Date.now()
+          });
+        };
+      })(this), 1000);
+    } else {
+      clearInterval(stopwatch);
+      return stopwatch = null;
+    }
   },
   componentDidMount: function() {},
   getInitialState: function() {

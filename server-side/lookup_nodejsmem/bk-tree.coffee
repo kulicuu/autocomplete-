@@ -110,7 +110,7 @@ cursive_search_001 = (node, rayy, word, delta) ->
 
 exports.search = search = ({ bktree, word, delta }) ->
     word = word.toLowerCase()
-    rtn = cursive_search_001 bktree.root, [], word, 1
+    rtn = cursive_search_001 bktree.root, [], word, 2
     # c rtn, 'rtn'
     rtn
 

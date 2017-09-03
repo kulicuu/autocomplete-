@@ -8,7 +8,7 @@ bktree_build = fork(path.resolve(__dirname, 'bk-tree-build-cp.coffee'))
 msgr_func = null
 
 
-node_mem_arq = {}
+# node_mem_arq = {}
 
 spark_job_ref = {}
 
@@ -19,27 +19,28 @@ bktree_build_res_api = {}
 # otherwise won't know where to send the updates.
 
 
-bktree_build_res_api['test3'] = ({ payload }) ->
-    c 'payload', payload
+
 
 
 bktree_build_res_api['progress_update'] = ({ payload }) ->
-    c 'progr'
     { perc_count, job_id } = payload
     { spark_ref, client_job_id } = spark_job_ref[job_id]
-    c spark_ref, 'spark_ref'
     msgr_func { spark_ref, perc_count, client_job_id }
-    # spark.write
-    #     type: 'golan giladi'
 
 
-bktree_build_res_api['res_build_it'] = ({ payload }) ->
-    c "#{color.blue('in res_build_it', on)}"
-    c payload, 'payload'
-    { job_id, built_struct } = payload
-    { cb, spark_ref } = spark_job_ref[job_id]
-    node_mem_arq['bktree_struct'] = payload.built_struct
-    cb null, { built_struct, spark_ref }
+
+# bktree_build_res_api['res_build_it'] = ({ payload }) ->
+#     # c 'ressing'
+#     { job_id } = payload
+#
+#     { cb, spark_ref } = spark_job_ref[job_id]
+#     c cb
+#     # node_mem_arq[job_id] = payload.built_struct
+#     c cb.length
+#     # c (cb(null))
+#     c typeof cb
+#     cb null, 'done'
+#     # cb null, 'hello'
 
 
 
@@ -106,7 +107,7 @@ nodemem_api['search_struct'] = Bluebird.promisify ({ payload }, cb) ->
 
 
 
-build_selection_001 = Bluebird.promisify ({ type, payload}, cb) ->
+build_selection_001 = Bluebird.promisify ({ type, payload }, cb) ->
     { data_struct_type_select, dctn_hash, spark_ref, client_job_id } = payload
     # msgr_func = progress_update_msgr
     job_id = v4()
@@ -121,15 +122,6 @@ build_selection_001 = Bluebird.promisify ({ type, payload}, cb) ->
 
 nodemem_api['build_selection'] = build_selection_001
 
-# nodemem_api['build_selection'] = Bluebird.promisify ({ type, payload }, cb) ->
-    # { data_struct_type_select, dctn_hash } = payload
-    # if _.includes(keys_build_selection, data_struct_type_select)
-    #     build_selection[data_struct_type_select] { blob: dctn_hash.as_blob }
-    #     .then ({ payload }) ->
-    #         node_mem_arq[data_struct_type_select] = payload.built_struct
-    #         cb null, { payload }
-
-
 
 
 keys_nodemem_api = _.keys nodemem_api
@@ -137,17 +129,9 @@ keys_nodemem_api = _.keys nodemem_api
 
 nodemem_api_fncn = Bluebird.promisify ({ type, payload }, cb) ->
     if _.includes(keys_nodemem_api, type)
-        nodemem_api[type] { payload }
-        .then ({ payload }) -> # is this a code smell ?  two payloads one overwriting the other ?
-        # i think it is but it would be worse to have awkward names for the response, ...
-            c '88888888'
-            cb null, payload
+        nodemem_api[type] { type, payload }
     else
         c "#{color.yellow('no-op in nodemem_apip.', on)}"
-
-
-
-
 
 
 exports.default = ({ the_msgr_func }) ->
