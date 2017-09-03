@@ -13,12 +13,13 @@ cache_redis_api = require('../cache_redis/index').default
 progress_update_msgr = ({ spark_ref, perc_count }) ->
     c spark_ref, 'spark_ref'
     c spark_icebox[spark_ref]
-    { spark } = spark_icebox[spark_ref]
+    { spark, client_job_id } = spark_icebox[spark_ref]
 
     spark.write
         type: 'build_progress_update'
         payload:
             perc_count: perc_count
+            client_job_id: client_job_id
             # data_src_select: data_src_select
             # data_struct_type_select: data_struct_type_select
 
@@ -50,7 +51,7 @@ brujo_api['search_struct_nodemem'] = ({ type, payload, spark }) ->
 
 
 brujo_api['build_selection'] = ({ type, payload, spark }) ->
-    { data_src_select, data_struct_type_select } = payload
+    { data_src_select, data_struct_type_select, client_job_id } = payload
     cache_redis_api
         type: 'get_raw_dctn'
         payload: { data_src_select }
@@ -61,6 +62,7 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
         c spark
         spark_icebox[spark_ref] =
             spark: spark
+            client_job_id: client_job_id
             # data_src_select: data_src_select
             # data_struct_type_select: data_struct_type_select
         nodemem_api

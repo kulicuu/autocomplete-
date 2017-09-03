@@ -5,7 +5,7 @@
 
 
 data_structs_list = [
-    "BK-tree"
+    "Burkhard-Keller-tree"
     "prefix-tree"
 ]
 
@@ -163,38 +163,7 @@ pane_0 = (props, state, setState, scroll_func) ->
                     display: 'flex'
                     flexDirection: 'column'
 
-                # _.map mock_data_build_structs, (v, k) ->
-                #         do (v, k) ->
-                #         div
-                #             style:
-                #                 margin: '2%'
-                #                 display: 'flex'
-                #             span
-                #                 style:
-                #                     # display: 'flex'
-                #                     fontSize: '65%'
-                #                     padding: '4%'
-                #                     border: '1px solid black'
-                #                 v.struct_name
-                #             span
-                #                 style:
-                #                     fontSize: '65%'
-                #                     padding: '4%'
-                #                     border: '1px solid blue'
-                #                 v.build_status
-                #             if v.build_status is 'building'
-                #                 span
-                #                     style:
-                #                         fontSize: '65%'
-                #                         padding: '4%'
-                #                         border: '1px solid grey'
-                #                     v.percentage_built + '%'
-                #             button
-                #                 onClick: ->
-                #                     c props
-                #                 style:
-                #                     color: 'magenta'
-                #                 "select me"
+
 
                 _.map props.jobs, (v, k) ->
                         do (v, k) ->
@@ -208,28 +177,26 @@ pane_0 = (props, state, setState, scroll_func) ->
                                     fontSize: '65%'
                                     padding: '4%'
                                     border: '1px solid black'
-                                v.client_job_id
+                                v.data_src_select
                             span
                                 style:
                                     fontSize: '65%'
                                     padding: '4%'
                                     border: '1px solid blue'
-                                "v.build_status"
+                                v.data_struct_type_select
                             if v.build_status is 'building'
                                 span
                                     style:
                                         fontSize: '65%'
                                         padding: '4%'
                                         border: '1px solid grey'
-                                    "v.percentage_built" + '%'
+                                    v.perc_count + '% complete'
                             button
                                 onClick: ->
                                     c props
                                 style:
                                     color: 'magenta'
-                                "select me"
-
-
+                                "select"
 
 
         div
@@ -239,7 +206,6 @@ pane_0 = (props, state, setState, scroll_func) ->
                 backgroundColor: 'ivory'
                 width: 20 + '%'
                 marginLeft: 4 + '%'
-
             h6 null, 'search entry'
             input
                 type: 'text'
@@ -269,18 +235,7 @@ pane_0 = (props, state, setState, scroll_func) ->
 
 
 
-
-
-
-
-
-
-
-
-
-
 comp = rr
-
     scroll_func: ->
         @setState
             upper_bound: @state.upper_bound + 40
@@ -289,21 +244,16 @@ comp = rr
             filename: @state.data_src_select
             upper_bound: @state.upper_bound
             lower_bound: @state.lower_bound
-
     componentDidMount: ->
-
         # setInterval @scroll_func, 3000
-
     getInitialState: ->
         upper_bound: 50
         lower_bound: 10
         data_src_select: 'null'
         data_struct_type_select: 'null'
-
     componentWillMount: ->
         @props.get_raw_dctns_list()
         @props.get_initial_stati()
-
     render: ->
         # c @props
         div
@@ -318,24 +268,10 @@ comp = rr
                 pane_0 @props, @state, @setState.bind(@), @scroll_func
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 map_state_to_props = (state) ->
     state.get('lookup').toJS()
 
 map_dispatch_to_props = (dispatch) ->
-
-
     search_struct_001: ({ query_expr }) ->
         dispatch
             type: 'primus_hotwire'
@@ -343,7 +279,6 @@ map_dispatch_to_props = (dispatch) ->
                 type: 'search_struct_nodemem'
                 payload:
                     query_expr: query_expr
-
 
     search_struct_000: ({ query_expr }) ->
         dispatch
@@ -357,12 +292,9 @@ map_dispatch_to_props = (dispatch) ->
             type: 'build_selection'
             payload: { data_struct_type_select, data_src_select, client_job_id }
 
-
     get_initial_stati: ->
         dispatch
             type: 'get_initial_stati'
-
-
 
     browse_dctn: ({ filename, upper_bound, lower_bound }) ->
         dctn_name = filename

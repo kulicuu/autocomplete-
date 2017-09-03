@@ -5,58 +5,28 @@
 arq = {}
 
 
-# arq['send_edited_message'] = ({ state, action }) ->
-#     c 'action in editing message', action
-#     state = state.setIn ['desires', shortid()],
-#         type: 'send_edited_message'
-#         payload: action.payload
-#     state
-#
-# arq['change_username'] = ({ state, action }) ->
-#     state.setIn ['desires', shortid()],
-#         type: 'change_username'
-#         payload: action.payload
-#
-# arq['send_message'] = ({ state, action }) ->
-#     state.setIn ['desires', shortid()],
-#         type: 'send_message'
-#         payload: action.payload
-#
-#
-#
-# arq['init:primus'] = ({ state, action }) ->
-#     state.setIn ['desires', shortid()],
-#         type: 'init:primus'
-#         payload: null
-#
-#
-#
-# arq['request_orient'] = ({ state, action }) ->
-#     state.setIn ['desires', shortid()],
-#         type: 'request_orient'
-#         payload: null
-
-
-# concord_channel = require('./lounger/concorde_channel.coffee').default
-
-
 concord_channel = {}
+
+
+concord_channel['build_progress_update'] = ({ state, action, data }) ->
+    c '938838383829929292'
+    c data.payload
+    { client_job_id, perc_count } = data.payload
+    c state.get('jobs').toJS()
+    state = state.setIn ['jobs', client_job_id, 'perc_count'], perc_count
+    state
 
 
 concord_channel['res_search_struct_nodemem'] = ({ state, action, data }) ->
     state.setIn ['search_results'], data.payload.search_results
 
 
-
 concord_channel['res_browse_raw_dctn'] = ({ state, action, data }) ->
     { browse_rayy } = data.payload
-
     old_rayy = state.getIn ['browse_rayy']
     if old_rayy isnt undefined
-
         mid_rayy = [].concat old_rayy
         mid_rayy = mid_rayy.concat browse_rayy
-
         state = state.setIn ['browse_rayy'], mid_rayy
         state
     else
@@ -66,6 +36,7 @@ concord_channel['res_browse_raw_dctn'] = ({ state, action, data }) ->
 
 concord_channel['dctn_initial_blob'] = ({ state, action, data }) ->
     state.setIn ['dctn_blob'], data.payload.blob
+
 
 concord_channel['lookup_resp'] = ({ state, action, data }) ->
     state.setIn ['match'], data.payload
@@ -106,27 +77,21 @@ arq['search_struct'] = ({ state, action }) ->
 
 arq['build_selection'] = ({ state, action }) ->
     { data_src_select, data_struct_type_select, client_job_id } = action.payload
-    state = state.setIn ['jobs', client_job_id], { data_src_select, data_struct_type_select, client_job_id }
+    state = state.setIn ['jobs', client_job_id], Imm.Map
+        data_src_select: data_src_select
+        data_struct_type_select: data_struct_type_select
+        client_job_id: client_job_id
+        perc_count: 0
+        build_status: 'building'
     state.setIn ['desires', shortid()],
         type: 'build_selection'
         payload: action.payload
 
 
-arq['apply_parse_build_data_structure'] = ({ state, action }) ->
-    state.setIn ['desires', shortid()],
-        type: 'apply_parse_build_data_structure'
-        payload: action.payload
-
-
 arq['browse_dctn'] = ({ state, action }) ->
-    # c action.payload, 'action'
-    # c state.toJS()
-    # c state.getIn(['dctn_browse_src']), 'dctn_browse_src'
-    # c action.payload.dctn_name, 'action.dctn_name'
     if state.getIn(['dctn_browse_src']) isnt action.payload.dctn_name
         state = state.setIn ['dctn_browse_src'], action.payload.dctn_name
         state = state.setIn ['browse_rayy'], []
-
     state.setIn ['desires', shortid()],
         type: 'browse_dctn'
         payload: action.payload

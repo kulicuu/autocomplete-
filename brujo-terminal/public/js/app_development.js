@@ -47633,6 +47633,17 @@ arq = {};
 
 concord_channel = {};
 
+concord_channel['build_progress_update'] = function(arg) {
+  var action, client_job_id, data, perc_count, ref, state;
+  state = arg.state, action = arg.action, data = arg.data;
+  c('938838383829929292');
+  c(data.payload);
+  ref = data.payload, client_job_id = ref.client_job_id, perc_count = ref.perc_count;
+  c(state.get('jobs').toJS());
+  state = state.setIn(['jobs', client_job_id, 'perc_count'], perc_count);
+  return state;
+};
+
 concord_channel['res_search_struct_nodemem'] = function(arg) {
   var action, data, state;
   state = arg.state, action = arg.action, data = arg.data;
@@ -47715,22 +47726,15 @@ arq['build_selection'] = function(arg) {
   var action, client_job_id, data_src_select, data_struct_type_select, ref, state;
   state = arg.state, action = arg.action;
   ref = action.payload, data_src_select = ref.data_src_select, data_struct_type_select = ref.data_struct_type_select, client_job_id = ref.client_job_id;
-  state = state.setIn(['jobs', client_job_id], {
+  state = state.setIn(['jobs', client_job_id], Imm.Map({
     data_src_select: data_src_select,
     data_struct_type_select: data_struct_type_select,
-    client_job_id: client_job_id
-  });
+    client_job_id: client_job_id,
+    perc_count: 0,
+    build_status: 'building'
+  }));
   return state.setIn(['desires', shortid()], {
     type: 'build_selection',
-    payload: action.payload
-  });
-};
-
-arq['apply_parse_build_data_structure'] = function(arg) {
-  var action, state;
-  state = arg.state, action = arg.action;
-  return state.setIn(['desires', shortid()], {
-    type: 'apply_parse_build_data_structure',
     payload: action.payload
   });
 };
@@ -47985,7 +47989,7 @@ exports["default"] = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 var comp, data_structs_list, map_dispatch_to_props, map_state_to_props, mock_data_build_structs, pane_0;
 
-data_structs_list = ["BK-tree", "prefix-tree"];
+data_structs_list = ["Burkhard-Keller-tree", "prefix-tree"];
 
 mock_data_build_structs = {
   aaa: {
@@ -48154,26 +48158,26 @@ pane_0 = function(props, state, setState, scroll_func) {
         padding: '4%',
         border: '1px solid black'
       }
-    }, v.client_job_id), span({
+    }, v.data_src_select), span({
       style: {
         fontSize: '65%',
         padding: '4%',
         border: '1px solid blue'
       }
-    }, "v.build_status"), v.build_status === 'building' ? span({
+    }, v.data_struct_type_select), v.build_status === 'building' ? span({
       style: {
         fontSize: '65%',
         padding: '4%',
         border: '1px solid grey'
       }
-    }, "v.percentage_built" + '%') : void 0, button({
+    }, v.perc_count + '% complete') : void 0, button({
       onClick: function() {
         return c(props);
       },
       style: {
         color: 'magenta'
       }
-    }, "select me"));
+    }, "select"));
   }))), div({
     style: {
       display: 'flex',
