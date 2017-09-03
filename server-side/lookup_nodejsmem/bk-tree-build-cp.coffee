@@ -9,6 +9,8 @@ Bluebird = require 'bluebird'
 
 
 
+bktree_arq = {}
+
 
 
 counter = 0
@@ -84,6 +86,53 @@ the_api = {}
 # NOTE emergency : had forgotten can't send back actual node mem objects between threads
 # only strings.  so can put the search into this thread also rather than sending it back.
 
+
+cursive_search_001 = (node, rayy, word, delta) ->
+    cur_delta = lev_d_wrap node.word, word
+    min_delta = cur_delta - delta
+    max_delta = cur_delta + delta
+
+    if cur_delta <= delta
+        rayy.push node.word
+
+    c node, '\n'
+    c cur_delta, 'cur'
+    the_keys = _.keys(node.chd_nodes)
+    # c the_keys
+    # c _.includes(the_keys, '' + cur_delta)
+    if (the_keys.length > 0) and (_.includes(the_keys, '' + cur_delta))
+        delta_node = node.chd_nodes[cur_delta]
+        # c delta_node, '111'
+            # add_node({bktree})
+
+        rayy.push delta_node.word
+        _.forEach delta_node.chd_nodes, (node2, key) ->
+            cursive_search_001 node2, rayy, word, delta
+    return rayy
+
+
+search = ({ bktree, word, delta }) ->
+    word = word.toLowerCase()
+    rtn = cursive_search_001 bktree.root, [], word, 2
+    # c rtn, 'rtn'
+    rtn
+
+
+
+
+the_api['search_it'] = ({ client_job_id, word, delta }) ->
+    bktree = bktree_arq[client_job_id]
+    results = search { bktree, word, delta }
+    process.send
+        type: 'res_search_it'
+        payload:
+            client_job_id: client_job_id
+            results: results
+            word: word
+            delta: delta
+
+
+
 the_api['build_it'] = ({ dctn_hash, job_id }) ->
     blob = dctn_hash.as_blob
 
@@ -115,6 +164,8 @@ the_api['build_it'] = ({ dctn_hash, job_id }) ->
     # c _.keys(bktree), 'bktree'
     # c bktree['root']
     # c '\n \n'
+    bktree_arq[job_id] = bktree
+
     process.send
         type: 'progress_update'
         payload:

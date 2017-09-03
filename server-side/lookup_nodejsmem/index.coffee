@@ -12,12 +12,17 @@ msgr_func = null
 
 spark_job_ref = {}
 
+search_job_arq = {}
+
 
 bktree_build_res_api = {}
 
 # we need to register a callback by id to the spark we need to reference
 # otherwise won't know where to send the updates.
 
+
+
+bktree_build_res_api['res_search_it'] = ({ payload }) ->
 
 
 
@@ -28,19 +33,6 @@ bktree_build_res_api['progress_update'] = ({ payload }) ->
     msgr_func { spark_ref, perc_count, client_job_id }
 
 
-
-# bktree_build_res_api['res_build_it'] = ({ payload }) ->
-#     # c 'ressing'
-#     { job_id } = payload
-#
-#     { cb, spark_ref } = spark_job_ref[job_id]
-#     c cb
-#     # node_mem_arq[job_id] = payload.built_struct
-#     c cb.length
-#     # c (cb(null))
-#     c typeof cb
-#     cb null, 'done'
-#     # cb null, 'hello'
 
 
 
@@ -88,30 +80,32 @@ nodemem_api = {}
 
 
 
-# TODO :
-# 0. Implement this into another thread childprocess
-# 1. signals to abort, results saved refs in some data structure
-#
 
 
-nodemem_api['search_struct'] = Bluebird.promisify ({ payload }, cb) ->
-    { struct_key, query_expr } = payload
-    bktree = node_mem_arq[_.keys(node_mem_arq)[0]]
-    rtn = bktree_search
-        bktree: bktree
-        word: query_expr
-        delta: null
-    cb null,
+
+
+
+nodemem_api['search_struct'] = ({ payload }) ->
+    { struct_key, query_expr, spark_ref } = payload
+    search_job_id = v4()
+    search_job_arq[search_job_id] = { spark_ref }
+
+    bktree_build.send
+        type: 'search_it'
         payload:
-            search_results: rtn
+            client_job_id: struct_key
+            word: query_expr
+            delta: 1
 
 
 
-build_selection_001 = Bluebird.promisify ({ type, payload }, cb) ->
+
+
+
+build_selection_001 = ({ type, payload }) ->
     { data_struct_type_select, dctn_hash, spark_ref, client_job_id } = payload
-    # msgr_func = progress_update_msgr
     job_id = v4()
-    spark_job_ref[job_id] = { cb, spark_ref, data_struct_type_select, client_job_id }
+    spark_job_ref[job_id] = { spark_ref, data_struct_type_select, client_job_id }
     c payload, 'payload \n'
     bktree_build.send
         type: 'build_it'
@@ -127,7 +121,7 @@ nodemem_api['build_selection'] = build_selection_001
 keys_nodemem_api = _.keys nodemem_api
 
 
-nodemem_api_fncn = Bluebird.promisify ({ type, payload }, cb) ->
+nodemem_api_fncn = ({ type, payload }) ->
     if _.includes(keys_nodemem_api, type)
         nodemem_api[type] { type, payload }
     else
