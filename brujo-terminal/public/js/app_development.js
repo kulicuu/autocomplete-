@@ -48120,6 +48120,19 @@ pane_0 = function(props, state, setState, scroll_func) {
     })(this)
   }, "Build it"), div({
     style: {
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  }, div({
+    style: {
+      display: 'flex'
+    }
+  }, button(null, "x1"), button(null, "x2"), button(null, "x3"), button(null, "x4")), div({
+    style: {
+      display: 'flex'
+    }
+  }, button(null, "y1"), button(null, "y2"), button(null, "y3"), button(null, "y4"))), div({
+    style: {
       margin: 10,
       display: 'flex',
       flexDirection: 'column'

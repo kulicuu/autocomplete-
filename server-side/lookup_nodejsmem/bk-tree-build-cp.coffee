@@ -1,19 +1,27 @@
 
 
-
-
 c = console.log.bind console
 color = require 'bash-color'
 _ = require 'lodash'
 Bluebird = require 'bluebird'
 
+Redis = require 'redis'
+Bluebird.promisifyAll(Redis.RedisClient.prototype)
+Bluebird.promisifyAll(Redis.Multi.prototype)
+redis = Redis.createClient()
 
 
 bktree_arq = {}
 
 
-
 counter = 0
+
+
+naive_cache_it = ({ bktree, job_id }) ->
+    the_str = JSON.stringify bktree
+    redis.hsetAsync 'naive_cache' ,job_id, the_str
+    .then (re) ->
+        c "#{color.green('re on naive_cache_it redis call', on)} #{re}"
 
 
 add_chd_to_node = ({ node, key, word }) ->
@@ -83,8 +91,6 @@ build_it = Bluebird.promisify ({ blob }, cb) ->
 the_api = {}
 
 
-# NOTE emergency : had forgotten can't send back actual node mem objects between threads
-# only strings.  so can put the search into this thread also rather than sending it back.
 
 
 cursive_search_001 = (node, rayy, word, delta) ->
@@ -118,9 +124,22 @@ search = ({ bktree, word, delta }) ->
     rtn
 
 
+the_api['startup_recover_naive_cache'] = ->
+    redis.hgetallAsync 'naive_cache'
+    .then (bktree_arq_str) ->
+        c "#{color.green('startup recovering naive cache', on)}"
+        c bktree_arq_str
+        _.map bktree_arq_str, (bktree_str, job_id) ->
+            bktree_arq[job_id] = JSON.parse bktree_str
+    .error (e) ->
+        c "#{color.red('there was an error')}"
 
-
-the_api['search_it'] = ({ client_job_id, word, delta }) ->
+the_api['search_it'] = (payload) ->
+    c payload, 'payload'
+    { client_job_id, word, delta } = payload
+    client_job_id = _.keys(bktree_arq)[0]
+    c "keys bktree", _.keys(bktree_arq)
+    c client_job_id, word, delta
     bktree = bktree_arq[client_job_id]
     results = search { bktree, word, delta }
     process.send
@@ -134,6 +153,7 @@ the_api['search_it'] = ({ client_job_id, word, delta }) ->
 
 
 the_api['build_it'] = ({ dctn_hash, job_id }) ->
+    c "#{color.red(job_id)} #{job_id}"
     blob = dctn_hash.as_blob
 
     d1 = blob.split '\n'
@@ -147,23 +167,18 @@ the_api['build_it'] = ({ dctn_hash, job_id }) ->
         unless word.length is 0
             counter++
             perc = counter / perc_count
-            c 'perc', perc
-            c counter % perc_count
             if Math.floor(counter % perc_count) is 0
                 process.send
                     type: 'progress_update'
                     payload:
                         perc_count: Math.floor(perc)
                         job_id: job_id
-            c 'word', word
 
             { bktree } = tree_add_word
                 bktree: bktree
                 word: word
-    # c "\n \n #{color.green('built_struct')}"
-    # c _.keys(bktree), 'bktree'
-    # c bktree['root']
-    # c '\n \n'
+
+    naive_cache_it { bktree, job_id }
     bktree_arq[job_id] = bktree
 
     process.send

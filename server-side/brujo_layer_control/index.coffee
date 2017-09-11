@@ -11,10 +11,7 @@ cache_redis_api = require('../cache_redis/index').default
 
 
 progress_update_msgr = ({ spark_ref, perc_count }) ->
-    # c spark_ref, 'spark_ref'
-    # c spark_icebox[spark_ref]
     { spark, client_job_id } = spark_icebox[spark_ref]
-
     spark.write
         type: 'build_progress_update'
         payload:
@@ -22,9 +19,18 @@ progress_update_msgr = ({ spark_ref, perc_count }) ->
             client_job_id: client_job_id
 
 
+search_responder = ({ spark_ref }) ->
+    { spark, search_results } = spark_icebox[spark_ref]
+    spark.write
+        type: 'res_search_struct_nodemem'
+        payload:
+            search_results: search_results
+
+
 
 nodemem_api = require('../lookup_nodejsmem/index').default
     the_msgr_func: progress_update_msgr
+    search_responder: search_responder
 
 
 brujo_api = {}
@@ -41,11 +47,11 @@ brujo_api['search_struct_nodemem'] = ({ type, payload, spark }) ->
     nodemem_api
         type: 'search_struct'
         payload: payload
-    .then ({ search_results }) ->
-        spark.write
-            type: 'res_search_struct_nodemem'
-            payload:
-                search_results: search_results
+    # .then ({ search_results }) ->
+    #     spark.write
+    #         type: 'res_search_struct_nodemem'
+    #         payload:
+    #             search_results: search_results
 
 
 
@@ -67,15 +73,7 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
         nodemem_api
             type: 'build_selection'
             payload: { dctn_hash, data_struct_type_select, spark_ref, progress_update_msgr }
-        .then ->
-            c "#{color.green('33333', on )}"
-            c 'cecece'
-            spark.write
-                type: 'res_build_selection'
-                payload:
-                    job_id: client_job_id
-        .error (e) ->
-            c 'e', e
+
 
 
 

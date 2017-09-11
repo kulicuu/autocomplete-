@@ -109,13 +109,7 @@ pane_0 = (props, state, setState, scroll_func) ->
                         key: "option2:#{idx}"
                         value: item
                         item
-            # div
-            #     style:
-            #         display: 'flex'
-            #         flexDirection: 'column'
-            #         margin: '4%'
-            #         backgroundColor: 'lightblue'
-            #     # h6 null, "status:"
+
             button
                 style:
                     margin: '4%'
@@ -124,13 +118,30 @@ pane_0 = (props, state, setState, scroll_func) ->
                     color: 'purple'
                 disabled: if ready_to_build then false else true
                 onClick: =>
-                    # c 'go build', state
                     if ready_to_build
                         props.build_selection
                             data_src_select: state.data_src_select
                             data_struct_type_select: state.data_struct_type_select
                 "Build it"
                 # this call will trigger build and cache, bacause it assumes wasn't cached already
+            div
+                style:
+                    display: 'flex'
+                    flexDirection: 'column'
+                div
+                    style:
+                        display: 'flex'
+                    button null, "x1"
+                    button null, "x2"
+                    button null, "x3"
+                    button null, "x4"
+                div
+                    style:
+                        display: 'flex'
+                    button null, "y1"
+                    button null, "y2"
+                    button null, "y3"
+                    button null, "y4"
 
             div
                 style:

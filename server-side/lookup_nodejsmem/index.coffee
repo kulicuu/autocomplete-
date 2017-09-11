@@ -6,6 +6,7 @@ bktree_build = fork(path.resolve(__dirname, 'bk-tree-build-cp.coffee'))
 
 
 msgr_func = null
+search_responder = null
 
 
 # node_mem_arq = {}
@@ -23,6 +24,8 @@ bktree_build_res_api = {}
 
 
 bktree_build_res_api['res_search_it'] = ({ payload }) ->
+    { client_job_id, results, word, delta } = payload
+    # search
 
 
 
@@ -43,7 +46,7 @@ keys_bktree_build_res_api = _.keys bktree_build_res_api
 
 
 bktree_build.on 'message', ({ type, payload }) ->
-    c 'parent has msg w type:', type
+    c 'parent has msg w type:', type, payload
 
     if _.includes(keys_bktree_build_res_api, type)
         bktree_build_res_api[type] { payload }
@@ -128,6 +131,13 @@ nodemem_api_fncn = ({ type, payload }) ->
         c "#{color.yellow('no-op in nodemem_apip.', on)}"
 
 
-exports.default = ({ the_msgr_func }) ->
+exports.default = ({ the_msgr_func, search_responder }) ->
     msgr_func = the_msgr_func
+    search_responder = search_responder
     nodemem_api_fncn
+
+
+setTimeout ->
+    bktree_build.send
+        type: 'startup_recover_naive_cache'
+, 1000
