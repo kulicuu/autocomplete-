@@ -49,31 +49,10 @@ closure_responder = ({ search_responder, msgr_func, bktree_build }) ->
 
 
 
-
-
-build_selection = {}
-
-
-build_selection['BK-tree'] = require('./bk-tree.coffee').default
-
-bktree_search = require('./bk-tree.coffee').search
-
-build_selection['prefix-tree'] = Bluebird.promisify ({ payload }, cb) ->
-    c '222'
-
-keys_build_selection = _.keys build_selection
-
-
 nodemem_api = {}
 
 
-
-
-
-
-
-
-nodemem_api['search_struct'] = ({ payload }) ->
+nodemem_api['search_struct'] = (payload) ->
     { struct_key, query_expr, spark_ref } = payload
     bktree_build.send
         type: 'search_it'
@@ -84,23 +63,49 @@ nodemem_api['search_struct'] = ({ payload }) ->
             spark_ref: spark_ref
 
 
-
-
-
 # bktree build
-build_selection_001 = ({ type, payload }) ->
+
+build_selection_api = {}
+
+build_selection_api['Burkhard-Keller-tree'] = (payload) ->
     { data_struct_type_select, dctn_hash, spark_ref, client_job_id } = payload
     job_id = v4()
     spark_job_ref[job_id] = { spark_ref, data_struct_type_select, client_job_id }
-    c payload, 'payload \n'
     bktree_build.send
         type: 'build_it'
         payload: _.assign payload,
             job_id: job_id
 
+build_selection_api['prefix-tree'] = (payload) ->
+    { data_struct_type_select,
+        dctn_hash, spark_ref, client_job_id
+    } = payload
+    job_id = v4()
+    prefix_tree_build.send
+        type: 'build_it'
+        payload:  _.assign payload,
+            job_id: job_id
 
 
-nodemem_api['build_selection'] = build_selection_001
+
+
+keys_build_selection_api = _.keys build_selection_api
+
+
+# nodemem_api['build_selection'] = build_selection_001
+nodemem_api['build_selection'] = (payload) ->
+    { data_struct_type_select#,
+        # dctn_hash, spark_ref, client_job_id
+    } = payload
+
+    if _.includes(keys_build_selection_api, data_struct_type_select)
+        build_selection_api[data_struct_type_select] payload
+    else
+        c "#{color.yellow('no-op in build_selection_api with', on)}", "#{color.cyan(data_struct_type_select, on)}"
+
+
+
+
 
 
 
@@ -109,7 +114,7 @@ keys_nodemem_api = _.keys nodemem_api
 
 nodemem_api_fncn = ({ type, payload }) ->
     if _.includes(keys_nodemem_api, type)
-        nodemem_api[type] { type, payload }
+        nodemem_api[type] payload
     else
         c "#{color.yellow('no-op in nodemem_apip.', on)}"
 

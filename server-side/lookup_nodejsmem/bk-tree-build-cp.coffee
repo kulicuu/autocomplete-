@@ -19,7 +19,7 @@ counter = 0
 
 naive_cache_it = ({ bktree, job_id }) ->
     the_str = JSON.stringify bktree
-    redis.hsetAsync 'naive_cache' ,job_id, the_str
+    redis.hsetAsync 'bk_tree_naive_cache' ,job_id, the_str
     .then (re) ->
         c "#{color.green('re on naive_cache_it redis call', on)} #{re}"
 
@@ -125,7 +125,7 @@ search = ({ bktree, word, delta }) ->
 
 
 the_api['startup_recover_naive_cache'] = ->
-    redis.hgetallAsync 'naive_cache'
+    redis.hgetallAsync 'bk_tree_naive_cache'
     .then (bktree_arq_str) ->
         c "#{color.green('startup recovering naive cache', on)}"
         c bktree_arq_str
@@ -155,7 +155,7 @@ the_api['search_it'] = (payload) ->
 
 
 the_api['build_it'] = ({ dctn_hash, job_id }) ->
-    c "#{color.red(job_id)} #{job_id}"
+    c "#{color.green('in bk_tree build with job_id:')} #{job_id}"
     blob = dctn_hash.as_blob
 
     d1 = blob.split '\n'
@@ -195,7 +195,6 @@ keys_the_api = _.keys the_api
 
 process.on 'message', ({ type, payload }) ->
     if _.includes(keys_the_api, type)
-        c 'bk-tree-build-cp gogo with', type
         the_api[type] payload
     else
         c "#{color.yellow('no op in bk-tree-build-cp', on)}", "#{color.white(type, off)}"
