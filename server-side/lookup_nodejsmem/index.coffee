@@ -22,31 +22,48 @@ search_job_arq = {}
 
 closure_responder = ({ search_responder, msgr_func, bktree_build }) ->
     bktree_build_res_api = {}
+    prefix_tree_res_api = {}
+
+
+    prefix_tree_res_api['res_search_it'] = (payload) ->
+        {spark_ref, word, results } = payoad
+        search_responder payload
+
+    prefix_tree_res_api['progress_update'] = (payload) ->
+        c "#{color.green('prefix_tree prog update', on)}"
+        { perc_count, job_id } = payload
+        { spark_ref, client_job_id } = spark_job_ref[job_id]
+
 
     bktree_build_res_api['res_search_it'] = (payload) ->
         { client_job_id, results, word, delta, search_job_id, spark_ref } = payload
         search_responder { spark_ref, results }
 
     bktree_build_res_api['progress_update'] = (payload) ->
-        { perc_count, job_id } = payload
+        { perc_count, job_id, spark_ref } = payload
         { spark_ref, client_job_id } = spark_job_ref[job_id]
         msgr_func { spark_ref, perc_count, client_job_id }
 
+
     keys_bktree_build_res_api = _.keys bktree_build_res_api
+    keys_prefix_tree_res_api = _.keys prefix_tree_res_api
+
+
+
+    prefix_tree_build.on 'message', ({ type, payload }) ->
+
+        if _.includes(keys_prefix_tree_res_api, type)
+            prefix_tree_res_api[type] payload
+        else
+            c "#{color.yellow('no-op in prefix-tree-res-api', on)}", "#{color.white(type, on)}"
+
 
 
     bktree_build.on 'message', ({ type, payload }) ->
-        c 'parent has msg w type:', type, payload
-
         if _.includes(keys_bktree_build_res_api, type)
             bktree_build_res_api[type] payload
         else
             c "#{color.yellow('no op in bktree_build_res_api', on)}", "#{color.white(type, off)}"
-
-
-
-
-
 
 
 nodemem_api = {}
@@ -63,8 +80,6 @@ nodemem_api['search_struct'] = (payload) ->
             spark_ref: spark_ref
 
 
-# bktree build
-
 build_selection_api = {}
 
 build_selection_api['Burkhard-Keller-tree'] = (payload) ->
@@ -76,6 +91,7 @@ build_selection_api['Burkhard-Keller-tree'] = (payload) ->
         payload: _.assign payload,
             job_id: job_id
 
+
 build_selection_api['prefix-tree'] = (payload) ->
     { data_struct_type_select,
         dctn_hash, spark_ref, client_job_id
@@ -85,8 +101,6 @@ build_selection_api['prefix-tree'] = (payload) ->
         type: 'build_it'
         payload:  _.assign payload,
             job_id: job_id
-
-
 
 
 keys_build_selection_api = _.keys build_selection_api
@@ -104,11 +118,6 @@ nodemem_api['build_selection'] = (payload) ->
         c "#{color.yellow('no-op in build_selection_api with', on)}", "#{color.cyan(data_struct_type_select, on)}"
 
 
-
-
-
-
-
 keys_nodemem_api = _.keys nodemem_api
 
 
@@ -120,20 +129,18 @@ nodemem_api_fncn = ({ type, payload }) ->
 
 
 exports.default = ({ the_msgr_func, search_responder }) ->
-
     msgr_func = the_msgr_func
     search_responder = search_responder
-
-
     closure_responder
         search_responder: search_responder
         msgr_func: the_msgr_func
         bktree_build: bktree_build
-
     nodemem_api_fncn
 
 
 setTimeout ->
+    prefix_tree_build.send
+        type: 'startup_recover_naive_cache'
     bktree_build.send
         type: 'startup_recover_naive_cache'
 , 1000

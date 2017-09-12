@@ -44,12 +44,9 @@ load_tree_from_redis_to_mem = ->
 delete_tree_from_redis = ->
 
 
-
 cursive_redis_node_load_001 = ( the_node, node_id ) ->
-
     node_arq =
         word: the_node.word
-
 
     _.map the_node.chd_nodes, (chd_node, key) ->
         chd_id = v4()
@@ -57,9 +54,6 @@ cursive_redis_node_load_001 = ( the_node, node_id ) ->
         cursive_redis_node_load_001 chd_node, chd_id
 
     redis.hmset node_id, node_arq
-
-
-
 
 
 

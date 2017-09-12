@@ -42,17 +42,11 @@ map_prefix_to_match = ({ dictionary, prefix }) ->
         return candides.pop()
 
 
-
-
-
-
-
-
 the_api = {}
 
 
-
-the_api['build_it'] = ({ dctn_hash, job_id }) ->
+the_api['build_it'] = (payload) ->
+    { dctn_hash, job_id, spark_ref } = payload
     blob = dctn_hash.as_blob
     raw_rayy = blob.split '\n'
     len_raw_rayy = raw_rayy.length
@@ -63,19 +57,22 @@ the_api['build_it'] = ({ dctn_hash, job_id }) ->
         prefix: ''
 
     for word, idx in raw_rayy
-        c "#{color.green('building word: ', on)}", "#{color.cyan(word, on)}"
         cursor = tree
         prefix = ''
         unless word.length < 1
 
             counter++
             perc = counter / perc_count
+
             if Math.floor(counter % perc_count) is 0
+                c 'have a zero'
                 process.send
                     type: 'progress_update'
                     payload:
                         perc_count: Math.floor(perc)
                         job_id: job_id
+                        spark_ref: spark_ref
+
 
             for char, jdx in word
                 prefix+= char
@@ -98,18 +95,15 @@ the_api['build_it'] = ({ dctn_hash, job_id }) ->
             job_id: job_id
 
 
-
 the_api['startup_recover_naive_cache'] = ->
     redis.hgetallAsync 'prefix_tree_naive_cache'
-    .then (bktree_arq_str) ->
+    .then (prefix_tree_arq_str) ->
         c "#{color.green('startup recovering naive cache', on)}"
-        c bktree_arq_str
-        _.map bktree_arq_str, (bktree_str, job_id) ->
-            bktree_arq[job_id] = JSON.parse bktree_str
+        # c bktree_arq_str
+        _.map prefix_tree_arq_str, (prefix_tree_str, job_id) ->
+            prefix_tree_arq[job_id] = JSON.parse prefix_tree_str
     .error (e) ->
         c "#{color.red('there was an error')}"
-
-
 
 
 keys_the_api = _.keys the_api
