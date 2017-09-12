@@ -136,7 +136,7 @@ the_api['startup_recover_naive_cache'] = ->
 
 the_api['search_it'] = (payload) ->
     c payload, 'payload'
-    { client_job_id, word, delta } = payload
+    { client_job_id, word, delta, search_job_id, spark_ref } = payload
     client_job_id = _.keys(bktree_arq)[0]
     c "keys bktree", _.keys(bktree_arq)
     c client_job_id, word, delta
@@ -149,6 +149,8 @@ the_api['search_it'] = (payload) ->
             results: results
             word: word
             delta: delta
+            search_job_id: search_job_id
+            spark_ref: spark_ref
 
 
 

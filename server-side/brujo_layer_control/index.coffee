@@ -19,12 +19,13 @@ progress_update_msgr = ({ spark_ref, perc_count }) ->
             client_job_id: client_job_id
 
 
-search_responder = ({ spark_ref }) ->
-    { spark, search_results } = spark_icebox[spark_ref]
+search_responder = ({ spark_ref, results }) ->
+
+    { spark } = spark_icebox[spark_ref]
     spark.write
         type: 'res_search_struct_nodemem'
         payload:
-            search_results: search_results
+            search_results: results
 
 
 
@@ -44,9 +45,13 @@ spark_icebox = {}
 
 
 brujo_api['search_struct_nodemem'] = ({ type, payload, spark }) ->
+    spark_ref = v4()
+    spark_icebox[spark_ref] =
+        spark: spark
+
     nodemem_api
         type: 'search_struct'
-        payload: payload
+        payload: _.assign payload, { spark_ref }
     # .then ({ search_results }) ->
     #     spark.write
     #         type: 'res_search_struct_nodemem'
