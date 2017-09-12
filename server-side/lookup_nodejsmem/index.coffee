@@ -2,11 +2,15 @@
 
 { fork } = require 'child_process'
 
+# a misnomer here slightly -- it's not just build, it's search too
 bktree_build = fork(path.resolve(__dirname, 'bk-tree-build-cp.coffee'))
+
+# same
+prefix_tree_build = fork(path.resolve(__dirname, 'prefix_tree_build_cp.coffee'))
 
 
 msgr_func = null
-search_responder = null
+# search_responder = null
 
 
 # node_mem_arq = {}
@@ -16,49 +20,12 @@ spark_job_ref = {}
 search_job_arq = {}
 
 
-# bktree_build_res_api = {}
-
-# we need to register a callback by id to the spark we need to reference
-# otherwise won't know where to send the updates.
-
-
-
-# bktree_build_res_api['res_search_it'] = (payload) ->
-#     { client_job_id, results, word, delta, search_job_id } = payload
-#     c "#{color.green('results:', on)}", results
-#     c search_responder, 'search_responder'
-#
-#     { spark_ref } = search_job_arq[search_job_id]
-#     search_responder { spark_ref, results }
-#
-#
-#
-#
-# bktree_build_res_api['progress_update'] = (payload) ->
-#     { perc_count, job_id } = payload
-#     { spark_ref, client_job_id } = spark_job_ref[job_id]
-#     msgr_func { spark_ref, perc_count, client_job_id }
-#
-#
-#
-#
-#
-#
-#
-# keys_bktree_build_res_api = _.keys bktree_build_res_api
-
-
-
 closure_responder = ({ search_responder, msgr_func, bktree_build }) ->
     bktree_build_res_api = {}
 
     bktree_build_res_api['res_search_it'] = (payload) ->
         { client_job_id, results, word, delta, search_job_id, spark_ref } = payload
-
         search_responder { spark_ref, results }
-
-
-
 
     bktree_build_res_api['progress_update'] = (payload) ->
         { perc_count, job_id } = payload
@@ -79,11 +46,6 @@ closure_responder = ({ search_responder, msgr_func, bktree_build }) ->
 
 
 
-
-bktree_build.send
-    type: 'test2'
-    payload:
-        wacka: "walla"
 
 
 
@@ -113,22 +75,19 @@ nodemem_api = {}
 
 nodemem_api['search_struct'] = ({ payload }) ->
     { struct_key, query_expr, spark_ref } = payload
-    # search_job_id = v4()
-    # search_job_arq[search_job_id] = { spark_ref }
     bktree_build.send
         type: 'search_it'
         payload:
             client_job_id: struct_key
             word: query_expr
             delta: 1
-            # search_job_id: search_job_id
             spark_ref: spark_ref
 
 
 
 
 
-
+# bktree build
 build_selection_001 = ({ type, payload }) ->
     { data_struct_type_select, dctn_hash, spark_ref, client_job_id } = payload
     job_id = v4()
@@ -156,7 +115,7 @@ nodemem_api_fncn = ({ type, payload }) ->
 
 
 exports.default = ({ the_msgr_func, search_responder }) ->
-    # c search_responder, 'search_responder'
+
     msgr_func = the_msgr_func
     search_responder = search_responder
 

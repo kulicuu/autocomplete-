@@ -1,10 +1,6 @@
-# NOTE there will be a ton of functions here which will find broadly some grouping.
+# there will be a ton of functions here which will find broadly some grouping.
 # this is basically a Controller function.
 
-
-
-# { redis_caching_api, redis_lookup_api } = require('../redis_layer/index')
-# this may well contain
 
 
 cache_redis_api = require('../cache_redis/index').default
@@ -20,13 +16,11 @@ progress_update_msgr = ({ spark_ref, perc_count }) ->
 
 
 search_responder = ({ spark_ref, results }) ->
-
     { spark } = spark_icebox[spark_ref]
     spark.write
         type: 'res_search_struct_nodemem'
         payload:
             search_results: results
-
 
 
 nodemem_api = require('../lookup_nodejsmem/index').default
@@ -36,12 +30,8 @@ nodemem_api = require('../lookup_nodejsmem/index').default
 
 brujo_api = {}
 
+
 spark_icebox = {}
-
-
-
-
-
 
 
 brujo_api['search_struct_nodemem'] = ({ type, payload, spark }) ->
@@ -52,11 +42,7 @@ brujo_api['search_struct_nodemem'] = ({ type, payload, spark }) ->
     nodemem_api
         type: 'search_struct'
         payload: _.assign payload, { spark_ref }
-    # .then ({ search_results }) ->
-    #     spark.write
-    #         type: 'res_search_struct_nodemem'
-    #         payload:
-    #             search_results: search_results
+
 
 
 
@@ -107,8 +93,6 @@ brujo_api['get_initial_stati'] = ({ type, spark }) ->
 brujo_api["get_raw_dctns_list"] = ({ type, spark }) ->
     cache_redis_api { type }
     .then ({ payload }) ->
-        c payload, '494949494'
-        # { ret_rayy } = payload
         spark.write
             type: 'res_get_raw_dctns_list'
             payload: payload.payload
