@@ -48231,7 +48231,6 @@ comp = rr({
   componentWillReceiveProps: function(nextProps) {
     var have_building_job, stopwatch;
     stopwatch = null;
-    c(nextProps, 'nextProps');
     have_building_job = _.reduce(nextProps.jobs, function(acc, job, job_id) {
       if ((acc === true) || (job.build_status === 'building')) {
         return acc = true;

@@ -26,14 +26,13 @@ closure_responder = ({ search_responder, msgr_func, bktree_build }) ->
 
 
     prefix_tree_res_api['res_search_it'] = (payload) ->
-        {spark_ref, word, results } = payoad
+        {spark_ref, results } = payload
         search_responder payload
 
     prefix_tree_res_api['progress_update'] = (payload) ->
-        c "#{color.green('prefix_tree prog update', on)}"
-        { perc_count, job_id } = payload
+        { perc_count, job_id, spark_ref } = payload
         { spark_ref, client_job_id } = spark_job_ref[job_id]
-
+        msgr_func { spark_ref, perc_count, client_job_id }
 
     bktree_build_res_api['res_search_it'] = (payload) ->
         { client_job_id, results, word, delta, search_job_id, spark_ref } = payload
@@ -51,7 +50,7 @@ closure_responder = ({ search_responder, msgr_func, bktree_build }) ->
 
 
     prefix_tree_build.on 'message', ({ type, payload }) ->
-
+        c "#{color.green('nodemem api index with type from prefx_tree', on)}", "#{color.cyan(type, on)}"
         if _.includes(keys_prefix_tree_res_api, type)
             prefix_tree_res_api[type] payload
         else
@@ -97,6 +96,7 @@ build_selection_api['prefix-tree'] = (payload) ->
         dctn_hash, spark_ref, client_job_id
     } = payload
     job_id = v4()
+    spark_job_ref[job_id] = { spark_ref, data_struct_type_select, client_job_id }
     prefix_tree_build.send
         type: 'build_it'
         payload:  _.assign payload,

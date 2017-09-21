@@ -87,10 +87,11 @@ the_api['build_it'] = (payload) ->
 
     naive_cache_it { prefix_tree: tree, job_id: job_id }
     prefix_tree_arq[job_id] = tree
-
+    c "#{color.yellow('should be done now', on)}"
     process.send
         type: 'progress_update'
         payload:
+            spark_ref: spark_ref
             perc_count: 100
             job_id: job_id
 

@@ -226,9 +226,6 @@ pane_0 = (props, state, setState, scroll_func) ->
                 # p null, 'hello'
 
 
-
-
-
 comp = rr
     scroll_func: ->
         @setState
@@ -241,7 +238,6 @@ comp = rr
 
     componentWillReceiveProps: (nextProps) ->
         stopwatch = null
-        c nextProps, 'nextProps'
         have_building_job = _.reduce nextProps.jobs, (acc, job, job_id) ->
             if (acc is true) or (job.build_status is 'building')
                 acc = true
@@ -265,11 +261,12 @@ comp = rr
         lower_bound: 10
         data_src_select: 'null'
         data_struct_type_select: 'null'
+
     componentWillMount: ->
         @props.get_raw_dctns_list()
         @props.get_initial_stati()
+
     render: ->
-        # c @props
         div
             style:
                 display: 'flex'
