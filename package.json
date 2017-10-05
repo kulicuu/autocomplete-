@@ -9,9 +9,11 @@
         "connect-redis": "latest",
         "cookie-parser": "latest",
         "clear": "latest",
+        "create-react-class": "v15",
         "dateformat": "latest",
         "express": "latest",
         "express-session": "latest",
+        "extract-text-webpack-plugin": "latest",
         "gulp": "latest",
         "gulp-util": "latest",
         "immutable": "latest",
@@ -20,9 +22,9 @@
         "node-uuid": "latest",
         "primus": "latest",
         "react": "latest",
+        "react-dom-factories": "latest",
         "redis": "latest",
         "react-dom": "latest",
-        "react-dom-factories": "latest",
         "react-redux": "latest",
         "redux": "latest",
         "redux-immutable": "latest",
@@ -30,6 +32,7 @@
         "rx": "latest",
         "shortid": "latest",
         "st": "latest",
+        "webpack": "latest",
         "ws": "latest"
     }
 }

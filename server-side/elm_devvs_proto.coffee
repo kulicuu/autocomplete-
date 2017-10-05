@@ -24,7 +24,7 @@ server.on 'connection', (ws) ->
         .timeInterval()
         .map (x) -> new Date
         .map (now) -> dateFormat(now, "h:MM:ss TT")
-        .pausible pauser
+        .pausable pauser
         .subscribe (time) ->
             if (ws.readyState is ws.OPEN)
                 ws.send JSON.stringify({ time })
