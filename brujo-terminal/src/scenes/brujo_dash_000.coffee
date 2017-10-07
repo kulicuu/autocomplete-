@@ -131,8 +131,12 @@ pane_0 = (props, state, setState, scroll_func) ->
                 div
                     style:
                         display: 'flex'
-                    button null, "x1"
-                    button null, "x2"
+                    button
+                        onClick: props.test_redis_lua_001
+                        "x1"
+                    button
+                        onClick: props.test_redis_lua_002
+                        "x2"
                     button null, "x3"
                     button null, "x4"
                 div
@@ -283,6 +287,23 @@ map_state_to_props = (state) ->
     state.get('lookup').toJS()
 
 map_dispatch_to_props = (dispatch) ->
+
+    test_redis_lua_002 : ->
+        dispatch
+            type: 'primus_hotwire'
+            payload:
+                type: 'test_redis_lua_002'
+                payload: null
+
+    test_redis_lua_001 : ->
+        dispatch
+            type: 'primus_hotwire'
+            payload:
+                type: 'test_redis_lua_001'
+                payload: null
+
+
+
     search_struct_001: ({ query_expr }) ->
         dispatch
             type: 'primus_hotwire'

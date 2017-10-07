@@ -2,6 +2,7 @@
 
 window.c = console.log.bind console
 window._ = require 'lodash'
+window.fp = require 'lodash/fp'
 window.React = require 'react'
 c "React.version:", React.version
 window.create_react_class = require 'create-react-class'
@@ -61,3 +62,6 @@ window.get_abs_val_open = (fig_raw) ->
     { ww , wh } = @props
     ratio_zzz = fig_raw / 1366
     ratio_zzz * ww
+
+
+require './styles/main_dash_styles.coffee'

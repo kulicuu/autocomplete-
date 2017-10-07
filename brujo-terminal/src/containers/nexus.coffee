@@ -1,8 +1,14 @@
-brujo_dash = rc require('../scenes/brujo_dash.coffee').default
+
+
+brujo_dash_000 = rc require('../scenes/brujo_dash_000.coffee').default
+
+brujo_dash_002 = rc require('../scenes/brujo_dash_002.coffee').default
+
+
 
 render = ->
     { ww, wh } = @props
-    brujo_dash { ww, wh }
+    brujo_dash_002 { ww, wh }
 
 comp = rr
     render: render

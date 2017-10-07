@@ -12,7 +12,6 @@ renew_cache = true
 
 
 startup_routine = ->
-
     "read_redis_cache"
     " read dictionaries directory"
     " if there are some raw dictionary filenames not seen in the redis library of raw dictionaries, we can add them as well."
@@ -22,9 +21,6 @@ startup_routine = ->
         .then ->
             "read dictionaries into lists"
     else
-
-
-
 
 
 redis_base_cache_get = (cb) ->
@@ -60,9 +56,7 @@ redis_base_cache_cons_200 = (cb) ->
 
     redis.hgetallAsync 'base_cache_hash'
     .then (the_hash) ->
-        # c the_hash, 'the_hash'
         if the_hash is null
-            # c 'is null'
             initiate_redis_base_hash()
             .then ->
                 redis.hgetallAsync 'base_cache_hash'
@@ -185,18 +179,9 @@ algo_api['char-tree-autocomplete'] = Bluebird.promisify ({ blob }, cb) ->
 algo_api['burkhard-keller_tree'] = require('./bktree_spellcheck_api/index').parse_blob_to_mem
 
 
-
-
-
 "redis_cache_parsed_blob"
 
 redis_cache_parsed_blob = Bluebird.promisify
-
-
-
-
-
-
 
 
 apply_parse_build_data_structure = Bluebird.promisify ({ blob, algo_name }, cb) ->

@@ -1,6 +1,3 @@
-# there will be a ton of functions here which will find broadly some grouping.
-# this is basically a Controller function.
-
 
 
 cache_redis_api = require('../cache_redis/index').default
@@ -30,8 +27,14 @@ nodemem_api = require('../lookup_nodejsmem/index').default
 
 brujo_api = {}
 
+redis_lua_api = require('../lookup_redis/index.coffee').default
+brujo_api = _.assign brujo_api, redis_lua_api
+
 
 spark_icebox = {}
+
+
+
 
 
 brujo_api['search_struct_nodemem'] = ({ type, payload, spark }) ->

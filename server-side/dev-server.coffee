@@ -1,5 +1,7 @@
 
 
+# TODO tokenised sessions
+
 
 require './globals.coffee'
 
