@@ -27,6 +27,7 @@ nodemem_api = require('../lookup_nodejsmem/index').default
 
 brujo_api = {}
 
+
 redis_lua_api = require('../lookup_redis/index.coffee').default
 brujo_api = _.assign brujo_api, redis_lua_api
 
@@ -77,7 +78,6 @@ brujo_api['get_initial_stati'] = ({ type, spark }) ->
     # and also maybe those in memory.
     cache_redis_api { type }
     .then ({ payload }) ->
-
         spark.write
             type: 'res_get_initial_stati'
             payload: payload

@@ -49009,27 +49009,20 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 // TODO : pass the ww, wh thing maybe globally instead of through the whole component chain,
 // it's just so much repetitive typing for one thing.
-var comp, dash_button_000, dash_button_002, map_dispatch_to_props, map_state_to_props;
 
-dash_button_000 = rc(__webpack_require__(127).default);
+// dash_button_000 = rc require('./dash_button_000.coffee').default
+var comp, map_dispatch_to_props, map_state_to_props, nav_button_002;
 
-dash_button_002 = rc(__webpack_require__(128).default);
+nav_button_002 = rc(__webpack_require__(131).default);
 
 comp = rr({
   render: function() {
     return div({
-      style: {
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: 'gainsboro',
-        width: '100%',
-        height: '10%'
-      }
-    }, dash_button_002({
+      style: styles.nav_bar()
+    }, nav_button_002({
       action_msg: 'nav_dash_444',
       button_text: 'dash-444'
-    }), dash_button_002({
+    }), nav_button_002({
       action_msg: 'nav_dash_555',
       button_text: 'dash-555'
     }));
@@ -49052,6 +49045,37 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /***/ (function(module, exports) {
 
 window.styles = {};
+
+styles.dctn_word_scroll = function() {
+  return {
+    overflow: 'auto'
+  };
+};
+
+styles.dctn_browser = function() {
+  return {
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: 'lightsteelblue',
+    minHeight: .5 * wh,
+    minWidth: .12 * ww,
+    maxHeight: .5 * wh,
+    maxWidth: .12 * ww,
+    alignItems: 'center',
+    margin: .02 * ww
+  };
+};
+
+// justifyContent: 'center'
+styles.select = function() {
+  return {
+    minHeight: .04 * wh,
+    maxHeight: .04 * wh,
+    fontFamily: 'sans',
+    fontSize: .02 * wh,
+    color: 'grey'
+  };
+};
 
 styles.dash_button_002 = {
   display: 'flex',
@@ -49088,6 +49112,17 @@ styles.dash_button_text_002_mouseover = function() {
     color: 'white',
     alignText: 'center',
     fontWeight: 'bold'
+  };
+};
+
+styles.nav_bar = function() {
+  return {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'gainsboro',
+    width: '100%',
+    height: .06 * wh
   };
 };
 
@@ -50225,123 +50260,8 @@ module.exports = {};
 
 
 /***/ }),
-/* 127 */
-/***/ (function(module, exports) {
-
-// More customizable button that takes colors as parameters.  Will favor usage of the 002 version which favors
-// style classes
-var comp, map_dispatch_to_props, map_state_to_props;
-
-comp = rr({
-  getInitialState: function() {
-    return {
-      background_color: this.props.base_color,
-      text_color: this.props.text_color
-    };
-  },
-  render: function() {
-    var wh, ww;
-    ({ww, wh} = this.props);
-    return div({
-      style: fp.assign(styles.dash_button, {
-        backgroundColor: this.state.background_color
-      }),
-      onMouseOver: () => {
-        return this.setState({
-          background_color: this.props.mouseover_color,
-          text_color: this.props.mouseover_text_color
-        });
-      },
-      onMouseOut: () => {
-        return this.setState({
-          background_color: this.props.base_color,
-          text_color: this.props.text_color
-        });
-      },
-      onClick: () => {
-        return this.props.click_action(this.props.action_msg);
-      }
-    }, span({
-      style: fp.assign(styles.dash_button_text({ww, wh}), {
-        color: this.state.text_color
-      })
-    }, this.props.button_text));
-  }
-});
-
-map_state_to_props = function(state) {
-  return state.get('lookup').toJS();
-};
-
-map_dispatch_to_props = function(dispatch) {
-  return {
-    click_action: function(action_msg) {
-      return dispatch({
-        type: action_msg,
-        payload: null
-      });
-    }
-  };
-};
-
-exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
-
-
-/***/ }),
-/* 128 */
-/***/ (function(module, exports) {
-
-// not so customizable class using version of dash button.
-// doesn't take styles as args, just takes the dispatch msg, and button text
-var comp, map_dispatch_to_props, map_state_to_props;
-
-comp = rr({
-  getInitialState: function() {
-    return {
-      hovering: false
-    };
-  },
-  render: function() {
-    return div({
-      style: this.state.hovering === true ? styles.dash_button_002_mouseover : styles.dash_button_002,
-      onMouseOver: () => {
-        return this.setState({
-          hovering: true
-        });
-      },
-      onMouseOut: () => {
-        return this.setState({
-          hovering: false
-        });
-      },
-      onClick: () => {
-        return this.props.click_action(this.props.action_msg);
-      }
-    }, span({
-      style: this.state.hovering === true ? styles.dash_button_text_002_mouseover() : styles.dash_button_text_002()
-    }, this.props.button_text));
-  }
-});
-
-map_state_to_props = function(state) {
-  return state.get('lookup').toJS();
-};
-
-map_dispatch_to_props = function(dispatch) {
-  return {
-    click_action: function(action_msg) {
-      return dispatch({
-        type: action_msg,
-        payload: null
-      });
-    }
-  };
-};
-
-exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
-
-
-/***/ }),
+/* 127 */,
+/* 128 */,
 /* 129 */
 /***/ (function(module, exports) {
 
@@ -50730,13 +50650,15 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var comp, map_dispatch_to_props, map_state_to_props, nav_bar;
+var comp, dctn_browser, map_dispatch_to_props, map_state_to_props, nav_bar;
 
 nav_bar = rc(__webpack_require__(119).default);
 
+dctn_browser = rc(__webpack_require__(132).default);
+
 comp = rr({
   render: function() {
-    return nav_bar();
+    return div(null, nav_bar(), dctn_browser());
   }
 });
 
@@ -50746,6 +50668,156 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {};
+};
+
+exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
+
+
+/***/ }),
+/* 131 */
+/***/ (function(module, exports) {
+
+// not so customizable class using version of dash button.
+// doesn't take styles as args, just takes the dispatch msg, and button text
+var comp, map_dispatch_to_props, map_state_to_props;
+
+comp = rr({
+  getInitialState: function() {
+    return {
+      hovering: false
+    };
+  },
+  render: function() {
+    return div({
+      style: this.state.hovering === true ? styles.dash_button_002_mouseover : styles.dash_button_002,
+      onMouseOver: () => {
+        return this.setState({
+          hovering: true
+        });
+      },
+      onMouseOut: () => {
+        return this.setState({
+          hovering: false
+        });
+      },
+      onClick: () => {
+        return this.props.click_action(this.props.action_msg);
+      }
+    }, span({
+      style: this.state.hovering === true ? styles.dash_button_text_002_mouseover() : styles.dash_button_text_002()
+    }, this.props.button_text));
+  }
+});
+
+map_state_to_props = function(state) {
+  return state.get('lookup').toJS();
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {
+    click_action: function(action_msg) {
+      return dispatch({
+        type: action_msg,
+        payload: null
+      });
+    }
+  };
+};
+
+exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
+
+
+/***/ }),
+/* 132 */
+/***/ (function(module, exports) {
+
+// TODO: make a custom select element, the default is not
+// so customisable
+var comp, map_dispatch_to_props, map_state_to_props;
+
+comp = rr({
+  scroll_func: function() {
+    this.setState({
+      upper_bound: this.state.upper_bound + 40,
+      lower_bound: this.state.lower_bound + 40
+    });
+    return this.props.browse_dctn({
+      filename: this.state.data_src_select,
+      upper_bound: this.state.upper_bound,
+      lower_bound: this.state.lower_bound
+    });
+  },
+  getInitialState: function() {
+    return {
+      data_src_select: 'null',
+      upper_bound: 50,
+      lower_bound: 10
+    };
+  },
+  componentWillMount: function() {
+    return this.props.get_raw_dctns_list();
+  },
+  render: function() {
+    return div({
+      style: styles.dctn_browser()
+    }, select({
+      style: styles.select(),
+      onChange: (e) => {
+        this.setState({
+          data_src_select: e.currentTarget.value
+        });
+        return this.props.browse_dctn({
+          filename: e.currentTarget.value,
+          upper_bound: this.state.upper_bound,
+          lower_bound: this.state.lower_bound
+        });
+      }
+    }, option({
+      disabled: true,
+      selected: true,
+      value: true
+    }, "select data source"), _.map(this.props.raw_dctns_list, function(dctn, idx) {
+      return option({
+        key: `option1:${idx}`,
+        value: dctn.filename
+      }, dctn.filename);
+    })), div({
+      style: styles.dctn_word_scroll(),
+      onScroll: (e) => {
+        // TODO: improve scroll handling logic
+        if ((e.target.scrollTop / e.target.scrollHeight) > .4) {
+          return this.scroll_func();
+        }
+      }
+    }, _.map(this.props['browse_rayy'], function(word, k) {
+      return p({
+        key: `word_item:${k}`,
+        style: {}
+      }, word);
+    })));
+  }
+});
+
+map_state_to_props = function(state) {
+  return state.get('lookup').toJS();
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {
+    get_raw_dctns_list: function() {
+      return dispatch({
+        type: 'get_raw_dctns_list'
+      });
+    },
+    browse_dctn: function({filename, upper_bound, lower_bound}) {
+      var dctn_name;
+      dctn_name = filename;
+      return dispatch({
+        type: 'browse_dctn',
+        payload: {dctn_name, upper_bound, lower_bound}
+      });
+    }
+  };
 };
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);

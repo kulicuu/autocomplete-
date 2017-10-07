@@ -75,7 +75,6 @@ pane_0 = (props, state, setState, scroll_func) ->
                             fontSize: '70%'
                             color: 'orange'
                         word
-
         div
             style:
                 margin: 20

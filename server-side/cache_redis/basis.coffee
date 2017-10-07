@@ -1,7 +1,5 @@
 
 
-
-
 # 0. get gr-basis structure; if isn't present build it.
 # 1. get filename list from dctn dir hardcoded
 # 2. get redis cached dctn list; any filename in dir that isn't in the cache should be imported
@@ -12,9 +10,7 @@
 #
 
 
-
 cache_redis_api = {}
-
 
 
 gr_basis_factory = ->
@@ -63,6 +59,7 @@ init_gr_basis_wrap = (cb) ->
                     cb2 null
             , (err) ->
                 cb null, { payload }
+
     redis.hgetallAsync 'gr_basis_hash'
     .then (the_hash) ->
         if the_hash is null
@@ -84,7 +81,6 @@ check_local_dctn_dir = (cb) ->
             local_dir_results: list
 
 
-
 set_initialised = ->
     redis.hsetAsync 'gr_basis_hash', 'initialised', '1'
     .then ->
@@ -93,7 +89,6 @@ set_initialised = ->
 
 
 exports.default = cache_redis_api
-
 
 
 add_raw_dctn = Bluebird.promisify ({ filename }, cb) ->
@@ -123,10 +118,9 @@ add_raw_dctn = Bluebird.promisify ({ filename }, cb) ->
                         cb null
                 # , (cb) ->
                 #     redis.hsetAsync
-
-
             ], (err, results) ->
                 cb null
+
 
 control_flow.parallel [
     init_gr_basis_wrap
