@@ -49408,9 +49408,11 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var comp, dash_button, map_dispatch_to_props, map_state_to_props;
+var comp, dash_button_000, dash_button_002, map_dispatch_to_props, map_state_to_props;
 
-dash_button = rc(__webpack_require__(121).default);
+dash_button_000 = rc(__webpack_require__(127).default);
+
+dash_button_002 = rc(__webpack_require__(128).default);
 
 comp = rr({
   render: function() {
@@ -49419,18 +49421,34 @@ comp = rr({
     return div({
       style: {
         display: 'flex',
-        backgroundColor: 'lightgreen',
+        backgroundColor: 'gainsboro',
         width: '100%',
         height: '10%'
       }
-    }, div({
-      style: fp.assign(styles.dash_button, {
-        backgroundColor: 'gainsboro '
-      })
-    }), dash_button({
+    }, dash_button_000({
       ww: ww,
       wh: wh,
-      base_color: 'blanchedalmond'
+      base_color: 'lemonchiffon',
+      mouseover_color: 'magenta',
+      action_msg: 'nav_dash_222',
+      button_text: 'go dash-222',
+      text_color: 'darkslategrey',
+      mouseover_text_color: 'white'
+    }), dash_button_000({
+      ww: ww,
+      wh: wh,
+      base_color: 'blanchedalmond',
+      mouseover_color: 'magenta',
+      action_msg: 'nav_dash_333',
+      button_text: 'go dash-333',
+      text_color: 'darkslategrey',
+      mouseover_text_color: 'white'
+    }), dash_button_002({
+      action_msg: 'nav_dash_444',
+      button_text: 'go dash-444'
+    }), dash_button_002({
+      action_msg: 'nav_dash_555',
+      button_text: 'go dash-555'
     }));
   }
 });
@@ -49452,48 +49470,60 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 window.styles = {};
 
+styles.dash_button_002 = {
+  display: 'flex',
+  cursor: 'pointer',
+  minWidth: '10%',
+  minHeight: '100%',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '20%',
+  margin: '1%',
+  backgroundColor: 'blanchedalmond'
+};
+
+// styles.dash_button_003 = fp.assign styles.dash_button_002,
+//     backgroundColor: 'blanchedalmond'
+styles.dash_button_002_mouseover = fp.assign(styles.dash_button_002, {
+  backgroundColor: 'lightgreen'
+});
+
+styles.dash_button_text_002 = {
+  fontFamily: 'sans',
+  fontSize: '60%',
+  color: 'darkslategrey',
+  alignText: 'center',
+  fontWeight: 'normal'
+};
+
+styles.dash_button_text_002_mouseover = fp.assign(styles.dash_button_text_002, {
+  color: 'white',
+  fontWeight: 'bold'
+});
+
 styles.dash_button = {
   display: 'flex',
   cursor: 'pointer',
   minWidth: '10%',
-  minHeight: '100%'
+  minHeight: '100%',
+  alignItems: 'center',
+  justifyContent: 'center',
+  borderRadius: '20%',
+  margin: '1%'
+};
+
+styles.dash_button_text = function({ww, wh}) {
+  return {
+    fontFamily: 'sans',
+    fontSize: .02 * wh,
+    color: 'grey',
+    alignText: 'center'
+  };
 };
 
 
 /***/ }),
-/* 121 */
-/***/ (function(module, exports) {
-
-var comp, map_dispatch_to_props, map_state_to_props;
-
-comp = rr({
-  getInitialState: function() {
-    c('initial State has props', this.props);
-    return {};
-  },
-  render: function() {
-    var base_color, hover_color, wh, ww;
-    ({ww, wh, base_color, hover_color} = this.props);
-    return div({
-      style: fp.assign(styles.dash_button, {
-        backgroundColor: this.props.base_color
-      })
-    });
-  }
-});
-
-map_state_to_props = function(state) {
-  return state.get('lookup').toJS();
-};
-
-map_dispatch_to_props = function(dispatch) {
-  return {};
-};
-
-exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
-
-
-/***/ }),
+/* 121 */,
 /* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -50602,6 +50632,126 @@ exports.skipRearg = {
  * @type {Object}
  */
 module.exports = {};
+
+
+/***/ }),
+/* 127 */
+/***/ (function(module, exports) {
+
+// More customizable button that takes colors as parameters.  Will favor usage of the 002 version which favors
+// style classes
+var comp, map_dispatch_to_props, map_state_to_props;
+
+comp = rr({
+  getInitialState: function() {
+    return {
+      background_color: this.props.base_color,
+      text_color: this.props.text_color
+    };
+  },
+  render: function() {
+    var wh, ww;
+    ({ww, wh} = this.props);
+    return div({
+      style: fp.assign(styles.dash_button, {
+        backgroundColor: this.state.background_color
+      }),
+      onMouseOver: () => {
+        return this.setState({
+          background_color: this.props.mouseover_color,
+          text_color: this.props.mouseover_text_color
+        });
+      },
+      onMouseOut: () => {
+        return this.setState({
+          background_color: this.props.base_color,
+          text_color: this.props.text_color
+        });
+      },
+      onClick: () => {
+        return this.props.click_action(this.props.action_msg);
+      }
+    }, span({
+      style: fp.assign(styles.dash_button_text({ww, wh}), {
+        color: this.state.text_color
+      })
+    }, this.props.button_text));
+  }
+});
+
+map_state_to_props = function(state) {
+  return state.get('lookup').toJS();
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {
+    click_action: function(action_msg) {
+      return dispatch({
+        type: action_msg,
+        payload: null
+      });
+    }
+  };
+};
+
+exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
+
+
+/***/ }),
+/* 128 */
+/***/ (function(module, exports) {
+
+// not so customizable class using version of dash button.
+// doesn't take styles as args, just takes the dispatch msg, and button text
+var comp, map_dispatch_to_props, map_state_to_props;
+
+comp = rr({
+  getInitialState: function() {
+    return {
+      hovering: false
+    };
+  },
+  render: function() {
+    // { ww, wh } = @props
+    c(this.props);
+    return div({
+      style: this.state.hovering === true ? styles.dash_button_002_mouseover : styles.dash_button_002,
+      onMouseOver: () => {
+        return this.setState({
+          hovering: true
+        });
+      },
+      onMouseOut: () => {
+        return this.setState({
+          hovering: false
+        });
+      },
+      onClick: () => {
+        return this.props.click_action(this.props.action_msg);
+      }
+    }, span({
+      style: this.state.hovering === true ? styles.dash_button_text_002_mouseover : styles.dash_button_text_002
+    }, this.props.button_text));
+  }
+});
+
+// "hello"
+map_state_to_props = function(state) {
+  return state.get('lookup').toJS();
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {
+    click_action: function(action_msg) {
+      return dispatch({
+        type: action_msg,
+        payload: null
+      });
+    }
+  };
+};
+
+exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 
 /***/ })
