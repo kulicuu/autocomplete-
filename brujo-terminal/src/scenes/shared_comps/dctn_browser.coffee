@@ -18,7 +18,7 @@ comp = rr
 
     getInitialState: ->
         data_src_select: 'null'
-        upper_bound: 50
+        upper_bound: 100
         lower_bound: 10
 
     componentWillMount: ->
@@ -50,12 +50,12 @@ comp = rr
                 style: styles.dctn_word_scroll()
                 onScroll: (e) =>
                     # TODO: improve scroll handling logic
-                    if (e.target.scrollTop / e.target.scrollHeight) > .4
+                    if (e.target.scrollTop / e.target.scrollHeight) > .2
                         @scroll_func()
                 _.map @props['browse_rayy'], (word, k) ->
                     p
                         key: "word_item:#{k}"
-                        style: {}
+                        style: styles.dctn_scroll_item()
                         word
 
 
@@ -70,6 +70,10 @@ map_dispatch_to_props = (dispatch) ->
 
     browse_dctn: ({ filename, upper_bound, lower_bound }) ->
         dctn_name = filename
+        # TODO replace this ducttape logic with a redis side approach
+        # that lowers the upper bounds if the list is too small
+        if dctn_name isnt 'd1.txt'
+            upper_bound = 50
         dispatch
             type: 'browse_dctn'
             payload: { dctn_name, upper_bound, lower_bound }

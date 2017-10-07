@@ -49046,9 +49046,19 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 window.styles = {};
 
+styles.dctn_scroll_item = function() {
+  return {
+    fontSize: .012 * wh,
+    lineHeight: .00036 * wh,
+    color: 'grey'
+  };
+};
+
 styles.dctn_word_scroll = function() {
   return {
-    overflow: 'auto'
+    overflow: 'auto',
+    width: '80%',
+    height: '100%'
   };
 };
 
@@ -49057,9 +49067,9 @@ styles.dctn_browser = function() {
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: 'lightsteelblue',
-    minHeight: .5 * wh,
+    minHeight: .7 * wh,
     minWidth: .12 * ww,
-    maxHeight: .5 * wh,
+    maxHeight: .7 * wh,
     maxWidth: .12 * ww,
     alignItems: 'center',
     margin: .02 * ww
@@ -50750,7 +50760,7 @@ comp = rr({
   getInitialState: function() {
     return {
       data_src_select: 'null',
-      upper_bound: 50,
+      upper_bound: 100,
       lower_bound: 10
     };
   },
@@ -50785,14 +50795,14 @@ comp = rr({
       style: styles.dctn_word_scroll(),
       onScroll: (e) => {
         // TODO: improve scroll handling logic
-        if ((e.target.scrollTop / e.target.scrollHeight) > .4) {
+        if ((e.target.scrollTop / e.target.scrollHeight) > .2) {
           return this.scroll_func();
         }
       }
     }, _.map(this.props['browse_rayy'], function(word, k) {
       return p({
         key: `word_item:${k}`,
-        style: {}
+        style: styles.dctn_scroll_item()
       }, word);
     })));
   }
@@ -50812,6 +50822,11 @@ map_dispatch_to_props = function(dispatch) {
     browse_dctn: function({filename, upper_bound, lower_bound}) {
       var dctn_name;
       dctn_name = filename;
+      // TODO replace this ducttape logic with a redis side approach
+      // that lowers the upper bounds if the list is too small
+      if (dctn_name !== 'd1.txt') {
+        upper_bound = 50;
+      }
       return dispatch({
         type: 'browse_dctn',
         payload: {dctn_name, upper_bound, lower_bound}

@@ -4,17 +4,24 @@
 window.styles = {}
 
 
+styles.dctn_scroll_item = ->
+    fontSize: .012 * wh
+    lineHeight: .00036 * wh
+    color: 'grey'
+
 styles.dctn_word_scroll = ->
     overflow: 'auto'
+    width: '80%'
+    height: '100%'
 
 
 styles.dctn_browser = ->
     display: 'flex'
     flexDirection: 'column'
     backgroundColor: 'lightsteelblue'
-    minHeight: .5 * wh
+    minHeight: .7 * wh
     minWidth: .12 * ww
-    maxHeight: .5 * wh
+    maxHeight: .7 * wh
     maxWidth: .12 * ww
     alignItems: 'center'
     margin: .02 * ww
