@@ -61,9 +61,9 @@ arq['lookup_prefix'] = ({ desire, store }) ->
         lookup: true
 
 arq['init_primus'] = ({ desire, store }) ->
-    c 'initialising'
+    c 'primus initialising'
     primus.on 'data', (data) ->
-        c 'walla', data
+        c 'primus data:', data
         store.dispatch
             type: 'primus:data'
             payload: { data }

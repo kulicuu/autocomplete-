@@ -34,9 +34,6 @@ brujo_api = _.assign brujo_api, redis_lua_api
 spark_icebox = {}
 
 
-
-
-
 brujo_api['search_struct_nodemem'] = ({ type, payload, spark }) ->
     spark_ref = v4()
     spark_icebox[spark_ref] =
@@ -47,8 +44,6 @@ brujo_api['search_struct_nodemem'] = ({ type, payload, spark }) ->
         payload: _.assign payload, { spark_ref }
 
 
-
-
 brujo_api['build_selection'] = ({ type, payload, spark }) ->
     { data_src_select, data_struct_type_select, client_job_id } = payload
     cache_redis_api
@@ -57,8 +52,6 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
     .then ({ payload }) -> # contains arq plus some meta info
         { dctn_hash } = payload
         spark_ref = v4()
-        c "#{color.green('spark', on)}"
-        c spark
         spark_icebox[spark_ref] =
             spark: spark
             client_job_id: client_job_id
@@ -67,9 +60,6 @@ brujo_api['build_selection'] = ({ type, payload, spark }) ->
         nodemem_api
             type: 'build_selection'
             payload: { dctn_hash, data_struct_type_select, spark_ref, progress_update_msgr }
-
-
-
 
 
 brujo_api['browse_dctn'] = ({ type, payload, spark }) ->

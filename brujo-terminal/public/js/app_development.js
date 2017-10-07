@@ -48364,7 +48364,7 @@ function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, dis
 /* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Provider, nexus, root_component, root_el, set_and_render, store;
+var Provider, nexus, root_component, root_el, set_and_render, spacer_component, store;
 
 root_el = document.getElementById('root');
 
@@ -48376,8 +48376,6 @@ nexus = rc(__webpack_require__(116).default);
 
 root_component = rr({
   render: function() {
-    var wh, ww;
-    ({ww, wh} = this.props);
     return Provider({
       store: store
     }, nexus({
@@ -48387,13 +48385,27 @@ root_component = rr({
   }
 });
 
+// react components won't bother re-rendering on the ww, wh global var reset,
+//so we flash the spacer_component to reset it briefly
+spacer_component = function() {
+  return div({
+    style: {
+      width: '100%',
+      height: '100%',
+      color: 'snow'
+    }
+  });
+};
+
 set_and_render = function() {
   var height, width;
-  ({width, height} = root_el.getBoundingClientRect());
-  return React_DOM.render(root_component({
-    ww: width,
-    wh: height
-  }), root_el);
+  ({width, height} = root_el.getBoundingClientRect()); // remove the props in favor of the global
+  window.ww = width;
+  window.wh = height;
+  React_DOM.render(spacer_component(), root_el);
+  return setTimeout(function() {
+    return React_DOM.render(root_component(), root_el);
+  }, 1);
 };
 
 window.onload = function() {
@@ -48942,9 +48954,9 @@ arq['lookup_prefix'] = function({desire, store}) {
 };
 
 arq['init_primus'] = function({desire, store}) {
-  c('initialising');
+  c('primus initialising');
   return primus.on('data', function(data) {
-    c('walla', data);
+    c('primus data:', data);
     return store.dispatch({
       type: 'primus:data',
       payload: {data}
@@ -48963,16 +48975,15 @@ exports.default = arq;
 /* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var brujo_dash_000, brujo_dash_002, comp, map_dispatch_to_props, map_state_to_props, render;
+var comp, dash_000, dash_002, map_dispatch_to_props, map_state_to_props, render;
 
-brujo_dash_000 = rc(__webpack_require__(117).default);
+dash_000 = rc(__webpack_require__(129).default);
 
-brujo_dash_002 = rc(__webpack_require__(118).default);
+dash_002 = rc(__webpack_require__(130).default);
 
 render = function() {
-  var wh, ww;
-  ({ww, wh} = this.props);
-  return brujo_dash_002({ww, wh});
+  // dash_000()
+  return dash_002();
 };
 
 comp = rr({
@@ -48991,423 +49002,13 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 
 /***/ }),
-/* 117 */
-/***/ (function(module, exports) {
-
-var comp, data_structs_list, map_dispatch_to_props, map_state_to_props, pane_0;
-
-data_structs_list = ["Burkhard-Keller-tree", "prefix-tree"];
-
-pane_0 = function(props, state, setState, scroll_func) {
-  var ready_to_build;
-  if ((state.data_struct_type_select !== 'null') && (state.data_src_select !== 'null')) {
-    ready_to_build = true;
-  } else {
-    ready_to_build = false;
-  }
-  return div({
-    style: {
-      // position: 'absolute'
-      backgroundColor: 'lightgreen',
-      display: 'flex',
-      // top: 4 + '%'
-      // left: 4 + '%'
-      width: '100%',
-      height: '100%'
-    }
-  // marginRight: 10
-  }, div({
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      paddingLeft: 6 + '%'
-    }
-  }, h6(null, "data source"), select({
-    style: {
-      color: 'blue'
-    },
-    onChange: (e) => {
-      setState({
-        data_src_select: e.currentTarget.value
-      });
-      return props.browse_dctn({
-        filename: e.currentTarget.value,
-        upper_bound: state.upper_bound,
-        lower_bound: state.lower_bound
-      });
-    }
-  }, option({
-    disabled: true,
-    selected: true,
-    value: true
-  }, "select data source"), _.map(props.raw_dctns_list, function(dctn, idx) {
-    return option({
-      key: `option1:${idx}`,
-      value: dctn.filename
-    }, dctn.filename);
-  })), div({
-    onScroll: (e) => {
-      // c e.target.scrollTop
-      // c e.target.scrollHeight
-      // TODO improve this logic along with UI
-      if ((e.target.scrollTop / e.target.scrollHeight) > .4) {
-        return scroll_func();
-      }
-    },
-    style: {
-      height: '50%',
-      width: '100%',
-      // paddingTop: 6 + '%'
-      overflow: 'auto',
-      // scroll: 'auto'
-      marginTop: 6 + '%',
-      paddingLeft: 6 + '%',
-      backgroundColor: 'grey'
-    }
-  }, h6(null, "browse data source raw"), _.map(props['browse_rayy'], function(word, k) {
-    return p({
-      key: `word_item${k}`,
-      style: {
-        margin: '2%',
-        fontSize: '70%',
-        color: 'orange'
-      }
-    }, word);
-  }))), div({
-    style: {
-      margin: 20,
-      backgroundColor: 'tomato',
-      width: '40%',
-      display: 'flex',
-      flexDirection: 'column',
-      paddingLeft: 6 + '%'
-    }
-  }, h6(null, "data-structure type"), select({
-    style: {
-      maxWidth: '35%',
-      color: 'red'
-    },
-    onChange: (e) => {
-      return setState({
-        data_struct_type_select: e.currentTarget.value
-      });
-    }
-  }, option({
-    disabled: true,
-    selected: true,
-    value: true
-  }, "select a data-structure type"), _.map(data_structs_list, function(item, idx) {
-    return option({
-      key: `option2:${idx}`,
-      value: item
-    }, item);
-  })), button({
-    style: {
-      margin: '4%',
-      maxWidth: '20%',
-      backgroundColor: 'yellow',
-      color: 'purple'
-    },
-    disabled: ready_to_build ? false : true,
-    onClick: () => {
-      if (ready_to_build) {
-        return props.build_selection({
-          data_src_select: state.data_src_select,
-          data_struct_type_select: state.data_struct_type_select
-        });
-      }
-    }
-  // this call will trigger build and cache, bacause it assumes wasn't cached already
-  }, "Build it"), div({
-    style: {
-      display: 'flex',
-      flexDirection: 'column'
-    }
-  }, div({
-    style: {
-      display: 'flex'
-    }
-  }, button({
-    onClick: props.test_redis_lua_001
-  }, "x1"), button({
-    onClick: props.test_redis_lua_002
-  }, "x2"), button(null, "x3"), button(null, "x4")), div({
-    style: {
-      display: 'flex'
-    }
-  }, button(null, "y1"), button(null, "y2"), button(null, "y3"), button(null, "y4"))), div({
-    style: {
-      margin: 10,
-      display: 'flex',
-      flexDirection: 'column'
-    }
-  }, _.map(props.jobs, function(v, k) {
-    return (function(v, k) {
-      var time_elapsed;
-      time_elapsed = state.the_now - v.commence_time;
-      return div({
-        style: {
-          margin: '2%',
-          display: 'flex'
-        }
-      }, span({
-        style: {
-          // display: 'flex'
-          fontSize: '65%',
-          padding: '4%',
-          border: '1px solid black'
-        }
-      }, v.data_src_select), span({
-        style: {
-          fontSize: '65%',
-          padding: '4%',
-          border: '1px solid blue'
-        }
-      }, v.data_struct_type_select), v.build_status === 'building' ? div(null, span({
-        style: {
-          fontSize: '65%',
-          padding: '4%',
-          border: '1px solid grey'
-        }
-      }, v.perc_count + '% complete'), span({
-        style: {
-          fontSize: '58%',
-          padding: '2%',
-          border: '1px solid grey'
-        }
-      }, Math.floor(time_elapsed / 1000) + 'seconds')) : void 0, button({
-        onClick: function() {
-          return c(props);
-        },
-        style: {
-          color: 'magenta'
-        }
-      }, "select"));
-    })(v, k);
-  }))), div({
-    style: {
-      display: 'flex',
-      flexDirection: 'column',
-      backgroundColor: 'ivory',
-      width: 20 + '%',
-      marginLeft: 4 + '%'
-    }
-  }, h6(null, 'search entry'), input({
-    type: 'text',
-    placeholder: 'search text',
-    onChange: (e) => {
-      c(e.currentTarget.value);
-      return props.search_struct_001({
-        query_expr: e.currentTarget.value
-      });
-    }
-  }), div({
-    style: {
-      margin: '2%',
-      display: 'flex',
-      flexDirection: 'column'
-    }
-  // backgroundColor: 'orange'
-  }, _.map(props.search_results, function(candide, idx) {
-    return p({
-      key: `search_results:${idx}`,
-      style: {
-        margin: 0,
-        color: 'chartreuse',
-        fontSize: '70%'
-      }
-    }, candide);
-  }))));
-};
-
-// p null, 'hello'
-comp = rr({
-  scroll_func: function() {
-    this.setState({
-      upper_bound: this.state.upper_bound + 40,
-      lower_bound: this.state.lower_bound + 40
-    });
-    return this.props.browse_dctn({
-      filename: this.state.data_src_select,
-      upper_bound: this.state.upper_bound,
-      lower_bound: this.state.lower_bound
-    });
-  },
-  componentWillReceiveProps: function(nextProps) {
-    var have_building_job, stopwatch;
-    stopwatch = null;
-    have_building_job = _.reduce(nextProps.jobs, function(acc, job, job_id) {
-      if ((acc === true) || (job.build_status === 'building')) {
-        return acc = true;
-      } else {
-        return acc = false;
-      }
-    }, false);
-    if (have_building_job) {
-      return stopwatch = setInterval(() => {
-        return this.setState({
-          the_now: Date.now()
-        });
-      }, 1000);
-    } else {
-      clearInterval(stopwatch);
-      return stopwatch = null;
-    }
-  },
-  componentDidMount: function() {},
-  // setInterval @scroll_func, 3000
-  getInitialState: function() {
-    return {
-      upper_bound: 50,
-      lower_bound: 10,
-      data_src_select: 'null',
-      data_struct_type_select: 'null'
-    };
-  },
-  componentWillMount: function() {
-    this.props.get_raw_dctns_list();
-    return this.props.get_initial_stati();
-  },
-  render: function() {
-    return div({
-      style: {
-        display: 'flex',
-        backgroundColor: 'lightsteelblue',
-        height: '100%',
-        width: '100%'
-      }
-    // h1 null, 'received_it'
-    }, this.props['get_dctns_list_state'] === 'received_it' ? pane_0(this.props, this.state, this.setState.bind(this), this.scroll_func) : void 0);
-  }
-});
-
-map_state_to_props = function(state) {
-  return state.get('lookup').toJS();
-};
-
-map_dispatch_to_props = function(dispatch) {
-  return {
-    test_redis_lua_002: function() {
-      return dispatch({
-        type: 'primus_hotwire',
-        payload: {
-          type: 'test_redis_lua_002',
-          payload: null
-        }
-      });
-    },
-    test_redis_lua_001: function() {
-      return dispatch({
-        type: 'primus_hotwire',
-        payload: {
-          type: 'test_redis_lua_001',
-          payload: null
-        }
-      });
-    },
-    search_struct_001: function({query_expr}) {
-      return dispatch({
-        type: 'primus_hotwire',
-        payload: {
-          type: 'search_struct_nodemem',
-          payload: {
-            query_expr: query_expr
-          }
-        }
-      });
-    },
-    search_struct_000: function({query_expr}) {
-      return dispatch({
-        type: 'search_struct',
-        payload: {
-          query_expr: query_expr
-        }
-      });
-    },
-    build_selection: function({data_struct_type_select, data_src_select}) {
-      var client_job_id;
-      client_job_id = shortid();
-      return dispatch({
-        type: 'build_selection',
-        payload: {data_struct_type_select, data_src_select, client_job_id}
-      });
-    },
-    get_initial_stati: function() {
-      return dispatch({
-        type: 'get_initial_stati'
-      });
-    },
-    browse_dctn: function({filename, upper_bound, lower_bound}) {
-      var dctn_name;
-      dctn_name = filename;
-      return dispatch({
-        type: 'browse_dctn',
-        payload: {dctn_name, upper_bound, lower_bound}
-      });
-    },
-    get_raw_dctns_list: function() {
-      return dispatch({
-        type: 'get_raw_dctns_list'
-      });
-    },
-    change_to_autocomplete_mode: function() {
-      return dispatch({
-        type: 'change_to_autocomplete_mode'
-      });
-    },
-    change_to_spellcheck_mode: function() {
-      return dispatch({
-        type: 'change_to_spellcheck_mode'
-      });
-    },
-    lookup_prefix: function({payload}) {
-      return dispatch({
-        type: 'lookup_prefix',
-        payload: payload
-      });
-    },
-    placeholder: function({payload}) {
-      return dispatch({
-        type: 'placeholder'
-      });
-    }
-  };
-};
-
-exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
-
-
-/***/ }),
-/* 118 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var comp, map_dispatch_to_props, map_state_to_props, nav_bar;
-
-nav_bar = rc(__webpack_require__(119).default);
-
-comp = rr({
-  render: function() {
-    var wh, ww;
-    ({ww, wh} = this.props);
-    return nav_bar({ww, wh});
-  }
-});
-
-map_state_to_props = function(state) {
-  return state.get('lookup').toJS();
-};
-
-map_dispatch_to_props = function(dispatch) {
-  return {};
-};
-
-exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
-
-
-/***/ }),
+/* 117 */,
+/* 118 */,
 /* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
+// TODO : pass the ww, wh thing maybe globally instead of through the whole component chain,
+// it's just so much repetitive typing for one thing.
 var comp, dash_button_000, dash_button_002, map_dispatch_to_props, map_state_to_props;
 
 dash_button_000 = rc(__webpack_require__(127).default);
@@ -49416,39 +49017,21 @@ dash_button_002 = rc(__webpack_require__(128).default);
 
 comp = rr({
   render: function() {
-    var wh, ww;
-    ({ww, wh} = this.props);
     return div({
       style: {
         display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: 'gainsboro',
         width: '100%',
         height: '10%'
       }
-    }, dash_button_000({
-      ww: ww,
-      wh: wh,
-      base_color: 'lemonchiffon',
-      mouseover_color: 'magenta',
-      action_msg: 'nav_dash_222',
-      button_text: 'go dash-222',
-      text_color: 'darkslategrey',
-      mouseover_text_color: 'white'
-    }), dash_button_000({
-      ww: ww,
-      wh: wh,
-      base_color: 'blanchedalmond',
-      mouseover_color: 'magenta',
-      action_msg: 'nav_dash_333',
-      button_text: 'go dash-333',
-      text_color: 'darkslategrey',
-      mouseover_text_color: 'white'
-    }), dash_button_002({
+    }, dash_button_002({
       action_msg: 'nav_dash_444',
-      button_text: 'go dash-444'
+      button_text: 'dash-444'
     }), dash_button_002({
       action_msg: 'nav_dash_555',
-      button_text: 'go dash-555'
+      button_text: 'dash-555'
     }));
   }
 });
@@ -49488,18 +49071,25 @@ styles.dash_button_002_mouseover = fp.assign(styles.dash_button_002, {
   backgroundColor: 'lightgreen'
 });
 
-styles.dash_button_text_002 = {
-  fontFamily: 'sans',
-  fontSize: '60%',
-  color: 'darkslategrey',
-  alignText: 'center',
-  fontWeight: 'normal'
+styles.dash_button_text_002 = function() {
+  return {
+    fontFamily: 'sans',
+    fontSize: .03 * wh,
+    color: 'darkslategrey',
+    alignText: 'center',
+    fontWeight: 'normal'
+  };
 };
 
-styles.dash_button_text_002_mouseover = fp.assign(styles.dash_button_text_002, {
-  color: 'white',
-  fontWeight: 'bold'
-});
+styles.dash_button_text_002_mouseover = function() {
+  return {
+    fontFamily: 'sans',
+    fontSize: .03 * wh,
+    color: 'white',
+    alignText: 'center',
+    fontWeight: 'bold'
+  };
+};
 
 styles.dash_button = {
   display: 'flex',
@@ -50712,8 +50302,6 @@ comp = rr({
     };
   },
   render: function() {
-    // { ww, wh } = @props
-    c(this.props);
     return div({
       style: this.state.hovering === true ? styles.dash_button_002_mouseover : styles.dash_button_002,
       onMouseOver: () => {
@@ -50730,12 +50318,11 @@ comp = rr({
         return this.props.click_action(this.props.action_msg);
       }
     }, span({
-      style: this.state.hovering === true ? styles.dash_button_text_002_mouseover : styles.dash_button_text_002
+      style: this.state.hovering === true ? styles.dash_button_text_002_mouseover() : styles.dash_button_text_002()
     }, this.props.button_text));
   }
 });
 
-// "hello"
 map_state_to_props = function(state) {
   return state.get('lookup').toJS();
 };
@@ -50749,6 +50336,416 @@ map_dispatch_to_props = function(dispatch) {
       });
     }
   };
+};
+
+exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
+
+
+/***/ }),
+/* 129 */
+/***/ (function(module, exports) {
+
+var comp, data_structs_list, map_dispatch_to_props, map_state_to_props, pane_0;
+
+data_structs_list = ["Burkhard-Keller-tree", "prefix-tree"];
+
+pane_0 = function(props, state, setState, scroll_func) {
+  var ready_to_build;
+  if ((state.data_struct_type_select !== 'null') && (state.data_src_select !== 'null')) {
+    ready_to_build = true;
+  } else {
+    ready_to_build = false;
+  }
+  return div({
+    style: {
+      // position: 'absolute'
+      backgroundColor: 'lightgreen',
+      display: 'flex',
+      // top: 4 + '%'
+      // left: 4 + '%'
+      width: '100%',
+      height: '100%'
+    }
+  // marginRight: 10
+  }, div({
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      paddingLeft: 6 + '%'
+    }
+  }, h6(null, "data source"), select({
+    style: {
+      color: 'blue'
+    },
+    onChange: (e) => {
+      setState({
+        data_src_select: e.currentTarget.value
+      });
+      return props.browse_dctn({
+        filename: e.currentTarget.value,
+        upper_bound: state.upper_bound,
+        lower_bound: state.lower_bound
+      });
+    }
+  }, option({
+    disabled: true,
+    selected: true,
+    value: true
+  }, "select data source"), _.map(props.raw_dctns_list, function(dctn, idx) {
+    return option({
+      key: `option1:${idx}`,
+      value: dctn.filename
+    }, dctn.filename);
+  })), div({
+    onScroll: (e) => {
+      // c e.target.scrollTop
+      // c e.target.scrollHeight
+      // TODO improve this logic along with UI
+      if ((e.target.scrollTop / e.target.scrollHeight) > .4) {
+        return scroll_func();
+      }
+    },
+    style: {
+      height: '50%',
+      width: '100%',
+      // paddingTop: 6 + '%'
+      overflow: 'auto',
+      // scroll: 'auto'
+      marginTop: 6 + '%',
+      paddingLeft: 6 + '%',
+      backgroundColor: 'grey'
+    }
+  }, h6(null, "browse data source raw"), _.map(props['browse_rayy'], function(word, k) {
+    return p({
+      key: `word_item${k}`,
+      style: {
+        margin: '2%',
+        fontSize: '70%',
+        color: 'orange'
+      }
+    }, word);
+  }))), div({
+    style: {
+      margin: 20,
+      backgroundColor: 'tomato',
+      width: '40%',
+      display: 'flex',
+      flexDirection: 'column',
+      paddingLeft: 6 + '%'
+    }
+  }, h6(null, "data-structure type"), select({
+    style: {
+      maxWidth: '35%',
+      color: 'red'
+    },
+    onChange: (e) => {
+      return setState({
+        data_struct_type_select: e.currentTarget.value
+      });
+    }
+  }, option({
+    disabled: true,
+    selected: true,
+    value: true
+  }, "select a data-structure type"), _.map(data_structs_list, function(item, idx) {
+    return option({
+      key: `option2:${idx}`,
+      value: item
+    }, item);
+  })), button({
+    style: {
+      margin: '4%',
+      maxWidth: '20%',
+      backgroundColor: 'yellow',
+      color: 'purple'
+    },
+    disabled: ready_to_build ? false : true,
+    onClick: () => {
+      if (ready_to_build) {
+        return props.build_selection({
+          data_src_select: state.data_src_select,
+          data_struct_type_select: state.data_struct_type_select
+        });
+      }
+    }
+  // this call will trigger build and cache, bacause it assumes wasn't cached already
+  }, "Build it"), div({
+    style: {
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  }, div({
+    style: {
+      display: 'flex'
+    }
+  }, button({
+    onClick: props.test_redis_lua_001
+  }, "x1"), button({
+    onClick: props.test_redis_lua_002
+  }, "x2"), button(null, "x3"), button(null, "x4")), div({
+    style: {
+      display: 'flex'
+    }
+  }, button(null, "y1"), button(null, "y2"), button(null, "y3"), button(null, "y4"))), div({
+    style: {
+      margin: 10,
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  }, _.map(props.jobs, function(v, k) {
+    return (function(v, k) {
+      var time_elapsed;
+      time_elapsed = state.the_now - v.commence_time;
+      return div({
+        style: {
+          margin: '2%',
+          display: 'flex'
+        }
+      }, span({
+        style: {
+          // display: 'flex'
+          fontSize: '65%',
+          padding: '4%',
+          border: '1px solid black'
+        }
+      }, v.data_src_select), span({
+        style: {
+          fontSize: '65%',
+          padding: '4%',
+          border: '1px solid blue'
+        }
+      }, v.data_struct_type_select), v.build_status === 'building' ? div(null, span({
+        style: {
+          fontSize: '65%',
+          padding: '4%',
+          border: '1px solid grey'
+        }
+      }, v.perc_count + '% complete'), span({
+        style: {
+          fontSize: '58%',
+          padding: '2%',
+          border: '1px solid grey'
+        }
+      }, Math.floor(time_elapsed / 1000) + 'seconds')) : void 0, button({
+        onClick: function() {
+          return c(props);
+        },
+        style: {
+          color: 'magenta'
+        }
+      }, "select"));
+    })(v, k);
+  }))), div({
+    style: {
+      display: 'flex',
+      flexDirection: 'column',
+      backgroundColor: 'ivory',
+      width: 20 + '%',
+      marginLeft: 4 + '%'
+    }
+  }, h6(null, 'search entry'), input({
+    type: 'text',
+    placeholder: 'search text',
+    onChange: (e) => {
+      c(e.currentTarget.value);
+      return props.search_struct_001({
+        query_expr: e.currentTarget.value
+      });
+    }
+  }), div({
+    style: {
+      margin: '2%',
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  }, _.map(props.search_results, function(candide, idx) {
+    return p({
+      key: `search_results:${idx}`,
+      style: {
+        margin: 0,
+        color: 'chartreuse',
+        fontSize: '70%'
+      }
+    }, candide);
+  }))));
+};
+
+comp = rr({
+  scroll_func: function() {
+    this.setState({
+      upper_bound: this.state.upper_bound + 40,
+      lower_bound: this.state.lower_bound + 40
+    });
+    return this.props.browse_dctn({
+      filename: this.state.data_src_select,
+      upper_bound: this.state.upper_bound,
+      lower_bound: this.state.lower_bound
+    });
+  },
+  componentWillReceiveProps: function(nextProps) {
+    var have_building_job, stopwatch;
+    stopwatch = null;
+    have_building_job = _.reduce(nextProps.jobs, function(acc, job, job_id) {
+      if ((acc === true) || (job.build_status === 'building')) {
+        return acc = true;
+      } else {
+        return acc = false;
+      }
+    }, false);
+    if (have_building_job) {
+      return stopwatch = setInterval(() => {
+        return this.setState({
+          the_now: Date.now()
+        });
+      }, 1000);
+    } else {
+      clearInterval(stopwatch);
+      return stopwatch = null;
+    }
+  },
+  componentDidMount: function() {},
+  // setInterval @scroll_func, 3000
+  getInitialState: function() {
+    return {
+      upper_bound: 50,
+      lower_bound: 10,
+      data_src_select: 'null',
+      data_struct_type_select: 'null'
+    };
+  },
+  componentWillMount: function() {
+    this.props.get_raw_dctns_list();
+    return this.props.get_initial_stati();
+  },
+  render: function() {
+    return div({
+      style: {
+        display: 'flex',
+        backgroundColor: 'lightsteelblue',
+        height: '100%',
+        width: '100%'
+      }
+    // h1 null, 'received_it'
+    }, this.props['get_dctns_list_state'] === 'received_it' ? pane_0(this.props, this.state, this.setState.bind(this), this.scroll_func) : void 0);
+  }
+});
+
+map_state_to_props = function(state) {
+  return state.get('lookup').toJS();
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {
+    test_redis_lua_002: function() {
+      return dispatch({
+        type: 'primus_hotwire',
+        payload: {
+          type: 'test_redis_lua_002',
+          payload: null
+        }
+      });
+    },
+    test_redis_lua_001: function() {
+      return dispatch({
+        type: 'primus_hotwire',
+        payload: {
+          type: 'test_redis_lua_001',
+          payload: null
+        }
+      });
+    },
+    search_struct_001: function({query_expr}) {
+      return dispatch({
+        type: 'primus_hotwire',
+        payload: {
+          type: 'search_struct_nodemem',
+          payload: {
+            query_expr: query_expr
+          }
+        }
+      });
+    },
+    search_struct_000: function({query_expr}) {
+      return dispatch({
+        type: 'search_struct',
+        payload: {
+          query_expr: query_expr
+        }
+      });
+    },
+    build_selection: function({data_struct_type_select, data_src_select}) {
+      var client_job_id;
+      client_job_id = shortid();
+      return dispatch({
+        type: 'build_selection',
+        payload: {data_struct_type_select, data_src_select, client_job_id}
+      });
+    },
+    get_initial_stati: function() {
+      return dispatch({
+        type: 'get_initial_stati'
+      });
+    },
+    browse_dctn: function({filename, upper_bound, lower_bound}) {
+      var dctn_name;
+      dctn_name = filename;
+      return dispatch({
+        type: 'browse_dctn',
+        payload: {dctn_name, upper_bound, lower_bound}
+      });
+    },
+    get_raw_dctns_list: function() {
+      return dispatch({
+        type: 'get_raw_dctns_list'
+      });
+    },
+    change_to_autocomplete_mode: function() {
+      return dispatch({
+        type: 'change_to_autocomplete_mode'
+      });
+    },
+    change_to_spellcheck_mode: function() {
+      return dispatch({
+        type: 'change_to_spellcheck_mode'
+      });
+    },
+    lookup_prefix: function({payload}) {
+      return dispatch({
+        type: 'lookup_prefix',
+        payload: payload
+      });
+    },
+    placeholder: function({payload}) {
+      return dispatch({
+        type: 'placeholder'
+      });
+    }
+  };
+};
+
+exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
+
+
+/***/ }),
+/* 130 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var comp, map_dispatch_to_props, map_state_to_props, nav_bar;
+
+nav_bar = rc(__webpack_require__(119).default);
+
+comp = rr({
+  render: function() {
+    return nav_bar();
+  }
+});
+
+map_state_to_props = function(state) {
+  return state.get('lookup').toJS();
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {};
 };
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);

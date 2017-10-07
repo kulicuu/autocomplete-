@@ -8,8 +8,6 @@ comp = rr
         hovering : false
 
     render: ->
-        # { ww, wh } = @props
-        c @props
         div
             style: if @state.hovering is true
                     styles.dash_button_002_mouseover
@@ -25,17 +23,10 @@ comp = rr
                 @props.click_action @props.action_msg
             span
                 style: if @state.hovering is true
-                        styles.dash_button_text_002_mouseover
+                        styles.dash_button_text_002_mouseover()
                     else
-                        styles.dash_button_text_002
+                        styles.dash_button_text_002()
                 @props.button_text
-                # "hello"
-
-
-
-
-
-
 
 
 map_state_to_props = (state) ->
@@ -47,10 +38,6 @@ map_dispatch_to_props = (dispatch) ->
         dispatch
             type: action_msg
             payload: null
-
-
-
-
 
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp)

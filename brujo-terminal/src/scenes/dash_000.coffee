@@ -1,15 +1,9 @@
 
 
-
-
-
-
 data_structs_list = [
     "Burkhard-Keller-tree"
     "prefix-tree"
 ]
-
-
 
 
 pane_0 = (props, state, setState, scroll_func) ->
@@ -153,8 +147,6 @@ pane_0 = (props, state, setState, scroll_func) ->
                     display: 'flex'
                     flexDirection: 'column'
 
-
-
                 _.map props.jobs, (v, k) ->
                     do (v, k) ->
                         time_elapsed = state.the_now - v.commence_time
@@ -217,7 +209,6 @@ pane_0 = (props, state, setState, scroll_func) ->
                     margin: '2%'
                     display: 'flex'
                     flexDirection: 'column'
-                    # backgroundColor: 'orange'
 
                 _.map props.search_results, (candide, idx) ->
                     p
@@ -227,7 +218,6 @@ pane_0 = (props, state, setState, scroll_func) ->
                             color: 'chartreuse'
                             fontSize: '70%'
                         candide
-                # p null, 'hello'
 
 
 comp = rr

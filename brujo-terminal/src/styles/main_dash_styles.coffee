@@ -5,6 +5,8 @@ window.styles = {}
 
 
 
+
+
 styles.dash_button_002 =
     display: 'flex'
     cursor: 'pointer'
@@ -22,15 +24,18 @@ styles.dash_button_002 =
 styles.dash_button_002_mouseover = fp.assign styles.dash_button_002,
     backgroundColor: 'lightgreen'
 
-styles.dash_button_text_002 =
+styles.dash_button_text_002 = ->
     fontFamily: 'sans'
-    fontSize: '60%'
+    fontSize: .03 * wh
     color: 'darkslategrey'
     alignText: 'center'
     fontWeight: 'normal'
 
-styles.dash_button_text_002_mouseover = fp.assign styles.dash_button_text_002,
+styles.dash_button_text_002_mouseover = ->
+    fontFamily: 'sans'
+    fontSize: .03 * wh
     color: 'white'
+    alignText: 'center'
     fontWeight: 'bold'
 
 
