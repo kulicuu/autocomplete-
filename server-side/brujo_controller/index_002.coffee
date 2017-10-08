@@ -8,11 +8,8 @@ api = fp.assign api, redis_lua_lookup_api
 redis_naive_cache_api = require('../cache_redis/index_002').default
 api = fp.assign api, redis_naive_cache_api
 
-
-
-
-
-
+prefix_tree_api = require('../prefix_tree/index_002').default
+api = fp.assign api, prefix_tree_api
 
 
 keys_api = _.keys api

@@ -29,7 +29,6 @@
         "redux": "latest",
         "redux-immutable": "latest",
         "redux-thunk": "latest",
-        "rx": "latest",
         "shortid": "latest",
         "st": "latest",
         "webpack": "latest",

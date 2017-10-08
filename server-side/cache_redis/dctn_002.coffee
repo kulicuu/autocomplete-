@@ -41,4 +41,17 @@ api.browse_dctn = ({ payload, spark }) ->
 
 
 
+
+
+
+
 exports.default = api
+
+
+
+exports.get_dctn_raw = Bluebird.promisify ({ dctn_name }, cb) ->
+    dctn_lookup_id_by_name { dctn_name }
+    .then ({ dctn_id }) ->
+        redis.hgetAsync dctn_id, 'as_blob'
+        .then ( dctn_blob ) ->
+            cb null, { dctn_blob }
