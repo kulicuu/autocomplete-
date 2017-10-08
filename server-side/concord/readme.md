@@ -1,3 +1,7 @@
-#### Concorde
 
-Mostly this server can operate statelessly, but even if conceived to operate as part of a stateless-node architecture, doesn't prevent each node from maintaining some state of some things.  
+
+
+#### Concord
+
+Initially this server will operate statelessly.
+If we find the need to establish a reducer/update style functional state chain, this is the place for it.
