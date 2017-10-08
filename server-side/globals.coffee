@@ -7,6 +7,7 @@ global.control_flow = require 'async'
 global.Bluebird = require 'bluebird'
 global.c = console.log.bind console
 global._ = require 'lodash'
+global.fp = require 'lodash/fp'
 global.fs = Bluebird.promisifyAll require('fs')
 global.color = require 'bash-color'
 uuid = require 'node-uuid'
@@ -15,8 +16,6 @@ global.path = require 'path'
 
 
 Redis = require 'redis'
-
-
 
 
 Bluebird.promisifyAll(Redis.RedisClient.prototype)

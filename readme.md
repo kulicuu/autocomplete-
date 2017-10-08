@@ -30,8 +30,8 @@ $    npm i -g coffee-script@next
 
 There is now a startup stript in the root folder, so simply run:
 
-`$ coffee startup_dev.coffee`
+- `$ coffee startup_dev.coffee`
 
-This will give you three terminals, one with a watched webpack build of the brujo-term, one of the running dev-server, and one (soon to be two) for the redis-server.
+- Open a browser to `localhost:2229`
 
-Open a browser to `localhost:2229`
+This will give you four terminals, one with a watched webpack build of the brujo-term, one of the running dev-server, and two for redis servers. For development purposes, usually only the nodejs server and the webpack output matters.

@@ -79,7 +79,7 @@ brujo_primus.use 'session', primus_session, { store: brujo_redis_store }
 brujo_primus.save path.join(brujo_arq.public_dir, '/js' , '/primus.js')
 
 
-the_api = require('./brujo_layer_control/index').default
+the_api = require('./brujo_controller/index_002').default
 
 
 brujo_server.listen brujo_arq.port, ->

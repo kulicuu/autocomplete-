@@ -1,4 +1,6 @@
 
+# TODO : and Doing:  Clean up and refactor this implementation, in index_002.coffee
+
 
 cache_redis_api = require('../cache_redis/index').default
 
