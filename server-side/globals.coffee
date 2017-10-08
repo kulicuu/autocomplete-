@@ -2,7 +2,7 @@
 
 
 
-
+global.flow = require 'async' # alias could supercede control_flow name
 global.control_flow = require 'async'
 global.Bluebird = require 'bluebird'
 global.c = console.log.bind console
