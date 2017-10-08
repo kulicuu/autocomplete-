@@ -8,7 +8,8 @@ Bluebird = require 'bluebird'
 Redis = require 'redis'
 Bluebird.promisifyAll(Redis.RedisClient.prototype)
 Bluebird.promisifyAll(Redis.Multi.prototype)
-redis = Redis.createClient()
+redis = Redis.createClient
+    port: 6464
 
 
 bktree_arq = {}

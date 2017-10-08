@@ -23,4 +23,5 @@ Bluebird.promisifyAll(Redis.RedisClient.prototype)
 Bluebird.promisifyAll(Redis.Multi.prototype)
 
 
-global.redis = Redis.createClient()
+global.redis = Redis.createClient
+    port: 6464

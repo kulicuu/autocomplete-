@@ -32,7 +32,8 @@ express_session = require 'express-session'
 connect_redis = require 'connect-redis'
 Redis_Store = connect_redis express_session
 
-brujo_redis_store_opts = {}
+brujo_redis_store_opts =
+    port: 6464
 brujo_redis_store = new Redis_Store(brujo_redis_store_opts)
 
 
