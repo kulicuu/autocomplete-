@@ -35,3 +35,28 @@ There is now a startup stript in the root folder, so simply run:
 - Open a browser to `localhost:2229`
 
 This will give you four terminals, one with a watched webpack build of the brujo-term, one of the running dev-server, and two for redis servers. For development purposes, usually only the nodejs server and the webpack output matters.
+
+
+### Manual Startup:
+
+Typically one would need to restart individual processes, for example if need to flush one of the Redis servers, and test how the Nodejs server re-instantiates the base data-structures.
+
+###### Nodejs server:
+
+From `server-side` directory, `nodemon dev-server.coffee`
+
+
+###### Webpack build:
+
+From `brujo-terminal` directory, `webpack -w`
+
+
+###### Redis servers:
+
+e.g. from project root:
+
+`redis-server ./redis_mgmt/main_redis.conf`
+
+and
+
+`redis-server ./redis_mgmt/worker_redis.conf`

@@ -10,7 +10,6 @@
 #
 
 
-cache_redis_api = {}
 
 
 gr_basis_factory = ->
@@ -88,7 +87,7 @@ set_initialised = ->
             type: 'Initialised.'
 
 
-exports.default = cache_redis_api
+
 
 
 add_raw_dctn = Bluebird.promisify ({ filename }, cb) ->

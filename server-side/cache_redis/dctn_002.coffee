@@ -9,6 +9,7 @@ dctn_lookup_id_by_name = Bluebird.promisify ({ dctn_name }, cb) ->
 
 api = {}
 
+
 api.get_raw_dctns_list = ({ payload, spark }) ->
     ret_arq = []
     redis.hgetAsync 'gr_basis_hash', 'dctns'
@@ -37,13 +38,6 @@ api.browse_dctn = ({ payload, spark }) ->
                 spark.write
                     type: 'res_browse_raw_dctn'
                     payload: { browse_rayy }
-
-
-
-
-
-
-
 
 
 
