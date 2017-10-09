@@ -67,7 +67,7 @@ map_state_to_props = (state) ->
 
 map_dispatch_to_props = (dispatch) ->
     set_dctn_selected: ({ dctn_name }) ->
-        dispatch:
+        dispatch
             type: 'set_dctn_selected'
             payload: { dctn_name }
 

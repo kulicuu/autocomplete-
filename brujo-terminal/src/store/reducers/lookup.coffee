@@ -100,7 +100,9 @@ arq['build_selection'] = ({ state, action }) ->
 
 
 arq.set_dctn_selected = ({ state, action }) ->
-    { dctn_selected } = payload
+    c 'action.payload',
+    dctn_selected = action.payload.dctn_name
+    c 'in reducer dctn_selected', dctn_selected
     state = state.setIn ['dctn_selected'], dctn_selected
     state
 

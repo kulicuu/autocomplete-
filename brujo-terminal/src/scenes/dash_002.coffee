@@ -14,9 +14,10 @@ comp = rr
                     display: 'flex'
                 button
                     onClick: =>
+                        c @props.dctn_selected, 'selected dctn'
                         @props.prefix_tree_build_tree
                             dctn_selected: @props.dctn_selected
-                    "test 888"
+                    "build tree"
                 input
                     type: 'text'
                     placeholder: 'prefix autocomplete'
@@ -52,7 +53,7 @@ map_dispatch_to_props = (dispatch) ->
             payload:
                 type: 'prefix_tree_build_tree'
                 payload:
-                    dctn_name: dctn_selected or 'd3.txt'
+                    dctn_name: dctn_selected
 
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp)

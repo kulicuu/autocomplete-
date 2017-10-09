@@ -71,7 +71,6 @@ api.prefix_tree_build_tree = ({ payload, spark }) ->
     job_id = v4()
     tree_id = v4() # id for the data structure
     sparks[job_id] = spark
-    dctn_name = 'd3.txt' #temporarily a mock
     get_dctn_raw { dctn_name }
     .then ({ dctn_blob }) ->
         tree_worker.send

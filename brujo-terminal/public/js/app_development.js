@@ -50011,7 +50011,8 @@ arq['build_selection'] = function({state, action}) {
 
 arq.set_dctn_selected = function({state, action}) {
   var dctn_selected;
-  ({dctn_selected} = payload);
+  c('action.payload', dctn_selected = action.payload.dctn_name);
+  c('in reducer dctn_selected', dctn_selected);
   state = state.setIn(['dctn_selected'], dctn_selected);
   return state;
 };
@@ -50648,11 +50649,12 @@ comp = rr({
       }
     }, button({
       onClick: () => {
+        c(this.props.dctn_selected, 'selected dctn');
         return this.props.prefix_tree_build_tree({
           dctn_selected: this.props.dctn_selected
         });
       }
-    }, "test 888"), input({
+    }, "build tree"), input({
       type: 'text',
       placeholder: 'prefix autocomplete',
       onChange: (e) => {
@@ -50694,7 +50696,7 @@ map_dispatch_to_props = function(dispatch) {
         payload: {
           type: 'prefix_tree_build_tree',
           payload: {
-            dctn_name: dctn_selected || 'd3.txt'
+            dctn_name: dctn_selected
           }
         }
       });
@@ -50877,12 +50879,10 @@ map_state_to_props = function(state) {
 map_dispatch_to_props = function(dispatch) {
   return {
     set_dctn_selected: function({dctn_name}) {
-      return {
-        dispatch: {
-          type: 'set_dctn_selected',
-          payload: {dctn_name}
-        }
-      };
+      return dispatch({
+        type: 'set_dctn_selected',
+        payload: {dctn_name}
+      });
     },
     get_raw_dctns_list: function() {
       return dispatch({
