@@ -1,7 +1,5 @@
 
 
-
-
 arq = {}
 
 
@@ -16,12 +14,17 @@ concord_channel['res_build_selection'] = ({ state, action, data }) ->
     # state
 
 
+concord_channel.prefix_tree_match_report = ({ state, action, data }) ->
+    c data.payload, 'data.payload'
+    { match_set } = data.payload
+    state.setIn ['prefix_tree_match'], match_set
+
+
 concord_channel['build_progress_update'] = ({ state, action, data }) ->
     { client_job_id, perc_count } = data.payload
     if perc_count is 100
         state = state.setIn ['jobs', client_job_id, 'build_status'], 'completed_build'
     state.setIn ['jobs', client_job_id, 'perc_count'], perc_count
-
 
 
 concord_channel['res_search_struct_nodemem'] = ({ state, action, data }) ->

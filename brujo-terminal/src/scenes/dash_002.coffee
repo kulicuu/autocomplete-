@@ -22,7 +22,12 @@ comp = rr
                     placeholder: 'prefix autocomplete'
                     onChange: (e) =>
                         @props.search_prefix_tree
-                            prefix_tree: e.currentTarget.value
+                            prefix: e.currentTarget.value
+                div null,
+                    _.map @props.prefix_tree_match, (item, idx) ->
+                        span
+                            key: "prefix_tree_match_item:#{idx}"
+                            item.match_word + " "
 
 
 map_state_to_props = (state) ->
@@ -36,7 +41,8 @@ map_dispatch_to_props = (dispatch) ->
             payload:
                 type: 'search_prefix_tree'
                 payload:
-                    client_ref: 'placeholder' # will identify exactly which tree to search
+                    client_ref: 'placeholder'  # another client ref.
+                    tree_id: 'placeholder'   # will identify exactly which tree to search
                     prefix: prefix
 
     prefix_tree_build_tree : ({ dctn_selected }) ->

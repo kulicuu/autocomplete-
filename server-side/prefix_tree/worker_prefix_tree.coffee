@@ -15,6 +15,11 @@ redis = Redis.createClient
     port: 6464
 
 
+send_match = ({ match_set, job_id }) ->
+    c 'job_id in send_match', job_id
+    process.send
+        type: 'match_report'
+        payload: { match_set, job_id }
 
 
 send_progress = ({ perc_count, job_id }) ->
@@ -55,7 +60,25 @@ map_prefix_to_match = ({ dictionary, prefix }) ->
         return candides.pop()
 
 
-api['build_tree'] = (payload) ->
+api.search_prefix_tree = (payload) ->
+    prefix_tree = prefix_trees[_.keys(prefix_trees)[0]]
+    { prefix, job_id } = payload
+    cursor = prefix_tree
+    prefix_rayy = prefix.split ''
+    c prefix, color.blue('prefix', on)
+    for char in prefix_rayy
+        cursor = cursor.chd_nodes[char]
+        if cursor is undefined
+            return 'Not found.'
+    match = _.omit cursor, 'chd_nodes'
+    c match, 'match'
+    send_match
+        job_id: job_id
+        match_set: [ match ]
+
+
+
+api.build_tree = (payload) ->
     counter = 0
     { dctn_blob, job_id, spark_ref } = payload
     raw_rayy = dctn_blob.split '\n'

@@ -17,6 +17,16 @@ trees = {}
 worker_res_api = {}
 
 
+worker_res_api.match_report = ({ payload }) ->
+    { match_set, job_id } = payload
+    c job_id, 'job_id'
+    spark = sparks[job_id]
+    spark.write
+        type: 'prefix_tree_match_report'
+        payload: { match_set }
+
+
+
 worker_res_api.progress_update = ({ payload }) ->
     { perc_count, job_id, client_ref, tree_id } = payload
 
@@ -45,6 +55,17 @@ api = {}
 { get_dctn_raw }  = require('../cache_redis/dctn_002')
 
 
+api.search_prefix_tree = ({ payload, spark }) ->
+    # { tree_id, prefix, client_ref } = payload
+    # c payload, 'payload in index_002'
+
+    job_id = v4()
+    sparks[job_id] = spark
+    tree_worker.send
+        type: 'search_prefix_tree'
+        payload: fp.assign payload, { job_id }
+
+
 api.prefix_tree_build_tree = ({ payload, spark }) ->
     { dctn_name, job_id, client_ref } = payload
     job_id = v4()
@@ -62,9 +83,7 @@ api.prefix_tree_build_tree = ({ payload, spark }) ->
                 tree_id: tree_id
 
 
-api.prefix_tree_search = ({ payload, spark }) ->
-    # no need for this to go to a worker.
-    { tree_id, prefix, client_ref } = payload
+
 
 
 exports.default = api

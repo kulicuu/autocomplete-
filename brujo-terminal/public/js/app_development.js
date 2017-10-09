@@ -49913,6 +49913,13 @@ concord_channel['res_build_selection'] = function({state, action, data}) {
 };
 
 // state
+concord_channel.prefix_tree_match_report = function({state, action, data}) {
+  var match_set;
+  c(data.payload, 'data.payload');
+  ({match_set} = data.payload);
+  return state.setIn(['prefix_tree_match'], match_set);
+};
+
 concord_channel['build_progress_update'] = function({state, action, data}) {
   var client_job_id, perc_count;
   ({client_job_id, perc_count} = data.payload);
@@ -50065,6 +50072,7 @@ exports.default = {
     jobs: Imm.Map({}),
     search_results: [],
     dctn_selected: null,
+    prefix_tree_match: null,
     get_dctns_list_state: null,
     desires: Imm.Map({
       // "#{shortid()}":
@@ -50649,10 +50657,14 @@ comp = rr({
       placeholder: 'prefix autocomplete',
       onChange: (e) => {
         return this.props.search_prefix_tree({
-          prefix_tree: e.currentTarget.value
+          prefix: e.currentTarget.value
         });
       }
-    })));
+    }), div(null, _.map(this.props.prefix_tree_match, function(item, idx) {
+      return span({
+        key: `prefix_tree_match_item:${idx}`
+      }, item.match_word + " ");
+    }))));
   }
 });
 
@@ -50668,7 +50680,8 @@ map_dispatch_to_props = function(dispatch) {
         payload: {
           type: 'search_prefix_tree',
           payload: {
-            client_ref: 'placeholder', // will identify exactly which tree to search
+            client_ref: 'placeholder', // another client ref.
+            tree_id: 'placeholder', // will identify exactly which tree to search
             prefix: prefix
           }
         }
@@ -50805,7 +50818,7 @@ comp = rr({
   getInitialState: function() {
     return {
       data_src_select: 'null',
-      upper_bound: 100,
+      upper_bound: 80,
       lower_bound: 10
     };
   },

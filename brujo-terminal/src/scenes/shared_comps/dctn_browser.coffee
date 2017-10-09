@@ -18,7 +18,7 @@ comp = rr
 
     getInitialState: ->
         data_src_select: 'null'
-        upper_bound: 100
+        upper_bound: 80
         lower_bound: 10
 
     componentWillMount: ->
