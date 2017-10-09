@@ -60,21 +60,44 @@ map_prefix_to_match = ({ dictionary, prefix }) ->
         return candides.pop()
 
 
+
+# search_prefix_tree__ = ({ prefix_tree, prefix }) ->
+#     cursor = prefix_tree
+#     prefix_rayy = prefix.split ''
+#     c prefix, color.blue('prefix', on)
+#     for char in prefix_rayy
+#         cursor = cursor.chd_nodes[char]
+#         if cursor is undefined
+#             return 'Not found.'
+#     _.omit cursor, 'chd_nodes'
+
+
+reduce_tree = (acc, tree) ->
+    if acc.indexOf(tree.match_word) is -1
+        acc = [].concat(acc, tree.match_word)
+    _.reduce tree.chd_nodes, (acc2, node, prefix) ->
+        reduce_tree acc2, node
+    , acc
+
+
+
+
+
 api.search_prefix_tree = (payload) ->
-    prefix_tree = prefix_trees[_.keys(prefix_trees)[0]]
+    cursor = prefix_trees[_.keys(prefix_trees)[0]]
     { prefix, job_id } = payload
-    cursor = prefix_tree
     prefix_rayy = prefix.split ''
     c prefix, color.blue('prefix', on)
     for char in prefix_rayy
-        cursor = cursor.chd_nodes[char]
-        if cursor is undefined
-            return 'Not found.'
-    match = _.omit cursor, 'chd_nodes'
-    c match, 'match'
+        if cursor.chd_nodes[char] isnt undefined
+            cursor = cursor.chd_nodes[char]
+        else
+            break
+    c "#{color.red('---------------------------------------------------')}"
+    # reduce_tree [], cursor
     send_match
         job_id: job_id
-        match_set: [ match ]
+        match_set: reduce_tree([], cursor)
 
 
 

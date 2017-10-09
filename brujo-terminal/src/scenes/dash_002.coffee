@@ -27,7 +27,8 @@ comp = rr
                     _.map @props.prefix_tree_match, (item, idx) ->
                         span
                             key: "prefix_tree_match_item:#{idx}"
-                            item.match_word + " "
+                            # item.match_word + " "
+                            item + " "
 
 
 map_state_to_props = (state) ->

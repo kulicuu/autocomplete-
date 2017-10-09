@@ -50663,7 +50663,8 @@ comp = rr({
     }), div(null, _.map(this.props.prefix_tree_match, function(item, idx) {
       return span({
         key: `prefix_tree_match_item:${idx}`
-      }, item.match_word + " ");
+      // item.match_word + " "
+      }, item + " ");
     }))));
   }
 });
