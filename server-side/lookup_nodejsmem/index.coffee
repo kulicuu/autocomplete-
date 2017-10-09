@@ -29,10 +29,10 @@ closure_responder = ({ search_responder, msgr_func, bktree_build }) ->
         {spark_ref, results } = payload
         search_responder payload
 
-    prefix_tree_res_api['progress_update'] = (payload) ->
-        { perc_count, job_id, spark_ref } = payload
-        { spark_ref, client_job_id } = spark_job_ref[job_id]
-        msgr_func { spark_ref, perc_count, client_job_id }
+    # prefix_tree_res_api['progress_update'] = (payload) ->
+    #     { perc_count, job_id, spark_ref } = payload
+    #     { spark_ref, client_job_id } = spark_job_ref[job_id]
+    #     msgr_func { spark_ref, perc_count, client_job_id }
 
     bktree_build_res_api['res_search_it'] = (payload) ->
         { client_job_id, results, word, delta, search_job_id, spark_ref } = payload
