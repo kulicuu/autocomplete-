@@ -50002,6 +50002,13 @@ arq['build_selection'] = function({state, action}) {
   });
 };
 
+arq.set_dctn_selected = function({state, action}) {
+  var dctn_selected;
+  ({dctn_selected} = payload);
+  state = state.setIn(['dctn_selected'], dctn_selected);
+  return state;
+};
+
 arq['browse_dctn'] = function({state, action}) {
   if (state.getIn(['dctn_browse_src']) !== action.payload.dctn_name) {
     state = state.setIn(['dctn_browse_src'], action.payload.dctn_name);
@@ -50057,6 +50064,7 @@ exports.default = {
   lookup: {
     jobs: Imm.Map({}),
     search_results: [],
+    dctn_selected: null,
     get_dctns_list_state: null,
     desires: Imm.Map({
       // "#{shortid()}":
@@ -50626,9 +50634,25 @@ dctn_browser = rc(__webpack_require__(127).default);
 
 comp = rr({
   render: function() {
-    return div(null, nav_bar(), dctn_browser(), button({
-      onClick: this.props.prefix_tree_build_tree
-    }, "test 888"));
+    return div(null, nav_bar(), dctn_browser(), div({
+      style: {
+        display: 'flex'
+      }
+    }, button({
+      onClick: () => {
+        return this.props.prefix_tree_build_tree({
+          dctn_selected: this.props.dctn_selected
+        });
+      }
+    }, "test 888"), input({
+      type: 'text',
+      placeholder: 'prefix autocomplete',
+      onChange: (e) => {
+        return this.props.search_prefix_tree({
+          prefix_tree: e.currentTarget.value
+        });
+      }
+    })));
   }
 });
 
@@ -50638,13 +50662,25 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
-    prefix_tree_build_tree: function() {
+    search_prefix_tree: function({prefix}) {
+      return dispatch({
+        type: 'primus_hotwire',
+        payload: {
+          type: 'search_prefix_tree',
+          payload: {
+            client_ref: 'placeholder', // will identify exactly which tree to search
+            prefix: prefix
+          }
+        }
+      });
+    },
+    prefix_tree_build_tree: function({dctn_selected}) {
       return dispatch({
         type: 'primus_hotwire',
         payload: {
           type: 'prefix_tree_build_tree',
           payload: {
-            dctn_name: 'd3.txt'
+            dctn_name: dctn_selected || 'd3.txt'
           }
         }
       });
@@ -50785,8 +50821,11 @@ comp = rr({
         this.setState({
           data_src_select: e.currentTarget.value
         });
+        this.props.set_dctn_selected({
+          dctn_name: e.currentTarget.value
+        });
         return this.props.browse_dctn({
-          filename: e.currentTarget.value,
+          dctn_name: e.currentTarget.value,
           upper_bound: this.state.upper_bound,
           lower_bound: this.state.lower_bound
         });
@@ -50823,14 +50862,20 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
+    set_dctn_selected: function({dctn_name}) {
+      return {
+        dispatch: {
+          type: 'set_dctn_selected',
+          payload: {dctn_name}
+        }
+      };
+    },
     get_raw_dctns_list: function() {
       return dispatch({
         type: 'get_raw_dctns_list'
       });
     },
-    browse_dctn: function({filename, upper_bound, lower_bound}) {
-      var dctn_name;
-      dctn_name = filename;
+    browse_dctn: function({dctn_name, upper_bound, lower_bound}) {
       // TODO replace this ducttape logic with a redis side approach
       // that lowers the upper bounds if the list is too small
       if (dctn_name !== 'd1.txt') {

@@ -28,6 +28,9 @@ send_progress = ({ perc_count, job_id }) ->
 api = {}
 
 
+prefix_trees = {}
+
+
 naive_cache_it = ({ prefix_tree, job_id }) ->
     the_str = JSON.stringify prefix_tree
     redis.hsetAsync 'prefix_tree_naive_cache', job_id, the_str
@@ -41,10 +44,21 @@ break_ties = ({ candides }) ->
     candides[0]
 
 
+map_prefix_to_match = ({ dictionary, prefix }) ->
+    candides = []
+    for word in dictionary
+        if word.indexOf(prefix) is 0
+            candides.push word
+    if candides.length > 1
+        return break_ties { candides }
+    else
+        return candides.pop()
+
+
 api['build_tree'] = (payload) ->
     counter = 0
     { dctn_blob, job_id, spark_ref } = payload
-    raw_rayy = blob.split '\n'
+    raw_rayy = dctn_blob.split '\n'
     len_raw_rayy = raw_rayy.length
     perc_count = len_raw_rayy / 100
 
@@ -56,7 +70,6 @@ api['build_tree'] = (payload) ->
         cursor = tree
         prefix = ''
         unless word.length < 1
-
             counter++
             perc = counter / perc_count
 
@@ -76,8 +89,8 @@ api['build_tree'] = (payload) ->
                         chd_nodes: {}
                 cursor = cursor.chd_nodes[char]
 
-    naive_cache_it { prefix_tree: tree, job_id: job_id }
-    prefix_tree_arq[job_id] = tree
+    # naive_cache_it { prefix_tree: tree, job_id: job_id }
+    prefix_trees[job_id] = tree
     c "#{color.yellow('should be done now', on)}"
 
     send_progress

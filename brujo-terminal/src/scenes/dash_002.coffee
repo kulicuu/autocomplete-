@@ -9,10 +9,20 @@ comp = rr
         div null,
             nav_bar()
             dctn_browser()
-
-            button
-                onClick: @props.prefix_tree_build_tree
-                "test 888"
+            div
+                style:
+                    display: 'flex'
+                button
+                    onClick: =>
+                        @props.prefix_tree_build_tree
+                            dctn_selected: @props.dctn_selected
+                    "test 888"
+                input
+                    type: 'text'
+                    placeholder: 'prefix autocomplete'
+                    onChange: (e) =>
+                        @props.search_prefix_tree
+                            prefix_tree: e.currentTarget.value
 
 
 map_state_to_props = (state) ->
@@ -20,13 +30,22 @@ map_state_to_props = (state) ->
 
 
 map_dispatch_to_props = (dispatch) ->
-    prefix_tree_build_tree : ->
+    search_prefix_tree : ({ prefix }) ->
+        dispatch
+            type: 'primus_hotwire'
+            payload:
+                type: 'search_prefix_tree'
+                payload:
+                    client_ref: 'placeholder' # will identify exactly which tree to search
+                    prefix: prefix
+
+    prefix_tree_build_tree : ({ dctn_selected }) ->
         dispatch
             type: 'primus_hotwire'
             payload:
                 type: 'prefix_tree_build_tree'
                 payload:
-                    dctn_name: 'd3.txt'
+                    dctn_name: dctn_selected or 'd3.txt'
 
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp)

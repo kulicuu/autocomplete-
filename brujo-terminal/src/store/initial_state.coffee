@@ -6,6 +6,8 @@ exports.default =
 
         search_results: []
 
+        dctn_selected: null
+
         get_dctns_list_state: null
 
         desires : Imm.Map

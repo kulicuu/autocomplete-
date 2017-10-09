@@ -96,6 +96,12 @@ arq['build_selection'] = ({ state, action }) ->
         payload: action.payload
 
 
+arq.set_dctn_selected = ({ state, action }) ->
+    { dctn_selected } = payload
+    state = state.setIn ['dctn_selected'], dctn_selected
+    state
+
+
 arq['browse_dctn'] = ({ state, action }) ->
     if state.getIn(['dctn_browse_src']) isnt action.payload.dctn_name
         state = state.setIn ['dctn_browse_src'], action.payload.dctn_name

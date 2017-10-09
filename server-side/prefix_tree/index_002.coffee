@@ -7,15 +7,15 @@ tree_worker = fork(path.resolve(__dirname, 'worker_prefix_tree.coffee'))
 
 sparks = {}
 
-trees = {}
 
+trees = {}
 
 
 # tree_build_complete = ({}) ->
 
 
-
 worker_res_api = {}
+
 
 worker_res_api.progress_update = ({ payload }) ->
     { perc_count, job_id, client_ref, tree_id } = payload
@@ -23,16 +23,10 @@ worker_res_api.progress_update = ({ payload }) ->
     if parseInt(perc_count) is 100
         trees[tree_id] = payload.tree
 
-    spark = spark[job_id]
+    spark = sparks[job_id]
     spark.write
         type: 'progress_update_prefix_tree_build'
         payload: { perc_count, client_ref }
-
-
-
-
-
-
 
 
 keys_worker_res_api = _.keys worker_res_api
@@ -71,9 +65,6 @@ api.prefix_tree_build_tree = ({ payload, spark }) ->
 api.prefix_tree_search = ({ payload, spark }) ->
     # no need for this to go to a worker.
     { tree_id, prefix, client_ref } = payload
-
-
-
 
 
 exports.default = api

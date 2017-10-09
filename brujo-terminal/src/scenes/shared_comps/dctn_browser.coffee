@@ -32,8 +32,10 @@ comp = rr
                 onChange: (e) =>
                     @setState
                         data_src_select: e.currentTarget.value
+                    @props.set_dctn_selected
+                        dctn_name: e.currentTarget.value
                     @props.browse_dctn
-                        filename: e.currentTarget.value
+                        dctn_name: e.currentTarget.value
                         upper_bound: @state.upper_bound
                         lower_bound: @state.lower_bound
                 option
@@ -64,12 +66,16 @@ map_state_to_props = (state) ->
 
 
 map_dispatch_to_props = (dispatch) ->
+    set_dctn_selected: ({ dctn_name }) ->
+        dispatch:
+            type: 'set_dctn_selected'
+            payload: { dctn_name }
+
     get_raw_dctns_list: ->
         dispatch
             type: 'get_raw_dctns_list'
 
-    browse_dctn: ({ filename, upper_bound, lower_bound }) ->
-        dctn_name = filename
+    browse_dctn: ({ dctn_name, upper_bound, lower_bound }) ->
         # TODO replace this ducttape logic with a redis side approach
         # that lowers the upper bounds if the list is too small
         if dctn_name isnt 'd1.txt'
