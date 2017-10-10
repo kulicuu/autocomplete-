@@ -60,12 +60,27 @@ comp = rr
                         style: styles.dctn_scroll_item()
                         word
 
+            button
+                onClick: =>
+                    c @props.dctn_selected, 'selected dctn'
+                    @props.prefix_tree_build_tree
+                        dctn_selected: @props.dctn_selected
+                "build tree"
+
 
 map_state_to_props = (state) ->
     state.get('lookup').toJS()
 
 
 map_dispatch_to_props = (dispatch) ->
+    prefix_tree_build_tree : ({ dctn_selected }) ->
+        dispatch
+            type: 'primus_hotwire'
+            payload:
+                type: 'prefix_tree_build_tree'
+                payload:
+                    dctn_name: dctn_selected
+
     set_dctn_selected: ({ dctn_name }) ->
         dispatch
             type: 'set_dctn_selected'

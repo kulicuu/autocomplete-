@@ -2,34 +2,18 @@
 
 nav_bar = rc require('./shared_comps/nav_bar.coffee').default
 dctn_browser = rc require('./shared_comps/dctn_browser.coffee').default
+text_entry_feedback = rc require('./shared_comps/text_entry_feedback.coffee').default
 
 
 comp = rr
     render: ->
         div null,
             nav_bar()
-            dctn_browser()
             div
                 style:
                     display: 'flex'
-                button
-                    onClick: =>
-                        c @props.dctn_selected, 'selected dctn'
-                        @props.prefix_tree_build_tree
-                            dctn_selected: @props.dctn_selected
-                    "build tree"
-                input
-                    type: 'text'
-                    placeholder: 'prefix autocomplete'
-                    onChange: (e) =>
-                        @props.search_prefix_tree
-                            prefix: e.currentTarget.value
-                div null,
-                    _.map @props.prefix_tree_match, (item, idx) ->
-                        span
-                            key: "prefix_tree_match_item:#{idx}"
-                            # item.match_word + " "
-                            item + " "
+                dctn_browser()
+                text_entry_feedback()
 
 
 map_state_to_props = (state) ->
@@ -46,14 +30,6 @@ map_dispatch_to_props = (dispatch) ->
                     client_ref: 'placeholder'  # another client ref.
                     tree_id: 'placeholder'   # will identify exactly which tree to search
                     prefix: prefix
-
-    prefix_tree_build_tree : ({ dctn_selected }) ->
-        dispatch
-            type: 'primus_hotwire'
-            payload:
-                type: 'prefix_tree_build_tree'
-                payload:
-                    dctn_name: dctn_selected
 
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp)

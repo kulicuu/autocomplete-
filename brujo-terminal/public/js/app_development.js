@@ -50635,39 +50635,21 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var comp, dctn_browser, map_dispatch_to_props, map_state_to_props, nav_bar;
+var comp, dctn_browser, map_dispatch_to_props, map_state_to_props, nav_bar, text_entry_feedback;
 
 nav_bar = rc(__webpack_require__(125).default);
 
 dctn_browser = rc(__webpack_require__(127).default);
 
+text_entry_feedback = rc(__webpack_require__(128).default);
+
 comp = rr({
   render: function() {
-    return div(null, nav_bar(), dctn_browser(), div({
+    return div(null, nav_bar(), div({
       style: {
         display: 'flex'
       }
-    }, button({
-      onClick: () => {
-        c(this.props.dctn_selected, 'selected dctn');
-        return this.props.prefix_tree_build_tree({
-          dctn_selected: this.props.dctn_selected
-        });
-      }
-    }, "build tree"), input({
-      type: 'text',
-      placeholder: 'prefix autocomplete',
-      onChange: (e) => {
-        return this.props.search_prefix_tree({
-          prefix: e.currentTarget.value
-        });
-      }
-    }), div(null, _.map(this.props.prefix_tree_match, function(item, idx) {
-      return span({
-        key: `prefix_tree_match_item:${idx}`
-      // item.match_word + " "
-      }, item + " ");
-    }))));
+    }, dctn_browser(), text_entry_feedback()));
   }
 });
 
@@ -50686,17 +50668,6 @@ map_dispatch_to_props = function(dispatch) {
             client_ref: 'placeholder', // another client ref.
             tree_id: 'placeholder', // will identify exactly which tree to search
             prefix: prefix
-          }
-        }
-      });
-    },
-    prefix_tree_build_tree: function({dctn_selected}) {
-      return dispatch({
-        type: 'primus_hotwire',
-        payload: {
-          type: 'prefix_tree_build_tree',
-          payload: {
-            dctn_name: dctn_selected
           }
         }
       });
@@ -50868,7 +50839,14 @@ comp = rr({
         key: `word_item:${k}`,
         style: styles.dctn_scroll_item()
       }, word);
-    })));
+    })), button({
+      onClick: () => {
+        c(this.props.dctn_selected, 'selected dctn');
+        return this.props.prefix_tree_build_tree({
+          dctn_selected: this.props.dctn_selected
+        });
+      }
+    }, "build tree"));
   }
 });
 
@@ -50878,6 +50856,17 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
+    prefix_tree_build_tree: function({dctn_selected}) {
+      return dispatch({
+        type: 'primus_hotwire',
+        payload: {
+          type: 'prefix_tree_build_tree',
+          payload: {
+            dctn_name: dctn_selected
+          }
+        }
+      });
+    },
     set_dctn_selected: function({dctn_name}) {
       return dispatch({
         type: 'set_dctn_selected',
@@ -50898,6 +50887,80 @@ map_dispatch_to_props = function(dispatch) {
       return dispatch({
         type: 'browse_dctn',
         payload: {dctn_name, upper_bound, lower_bound}
+      });
+    }
+  };
+};
+
+exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
+
+
+/***/ }),
+/* 128 */
+/***/ (function(module, exports) {
+
+var comp, map_dispatch_to_props, map_state_to_props;
+
+comp = rr({
+  render: function() {
+    return div({
+      style: {
+        display: 'flex',
+        flexDirection: 'column',
+        minWidth: .6 * ww,
+        alignItems: 'center',
+        justifyContent: 'flexStart',
+        margin: .032 * ww,
+        backgroundColor: 'lavender'
+      }
+    }, input({
+      style: {
+        textAlign: 'center',
+        color: 'darkslategrey',
+        margin: .024 * wh
+      },
+      type: 'text',
+      placeholder: 'type word here',
+      onChange: (e) => {
+        return this.props.search_prefix_tree({
+          prefix: e.currentTarget.value
+        });
+      }
+    }), div({
+      style: {
+        backgroundColor: 'lavenderblush'
+      }
+    }, _.map(this.props.prefix_tree_match, function(item, idx) {
+      return span({
+        key: `prefix_tree_match_item:${idx}`,
+        style: {
+          fontSize: .016 * wh,
+          color: 'magenta',
+          fontFamily: 'sans'
+        }
+      // item.match_word + " "
+      }, item + " ");
+    })));
+  }
+});
+
+map_state_to_props = function(state) {
+  return state.get('lookup').toJS();
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {
+    search_prefix_tree: function({prefix}) {
+      return dispatch({
+        type: 'primus_hotwire',
+        payload: {
+          type: 'search_prefix_tree',
+          payload: {
+            client_ref: 'placeholder', // another client ref.
+            tree_id: 'placeholder', // will identify exactly which tree to search
+            prefix: prefix
+          }
+        }
       });
     }
   };
