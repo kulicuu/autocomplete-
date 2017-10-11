@@ -2,6 +2,8 @@ exports.default =
 
     lookup:
 
+        view: "prefix_tree_view"
+
         jobs: Imm.Map({})
 
         search_results: []

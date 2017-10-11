@@ -4,6 +4,8 @@
 # so customisable
 
 
+
+
 comp = rr
 
     scroll_func: ->
@@ -60,26 +62,12 @@ comp = rr
                         style: styles.dctn_scroll_item()
                         word
 
-            button
-                onClick: =>
-                    c @props.dctn_selected, 'selected dctn'
-                    @props.prefix_tree_build_tree
-                        dctn_selected: @props.dctn_selected
-                "build tree"
-
 
 map_state_to_props = (state) ->
     state.get('lookup').toJS()
 
 
 map_dispatch_to_props = (dispatch) ->
-    prefix_tree_build_tree : ({ dctn_selected }) ->
-        dispatch
-            type: 'primus_hotwire'
-            payload:
-                type: 'prefix_tree_build_tree'
-                payload:
-                    dctn_name: dctn_selected
 
     set_dctn_selected: ({ dctn_name }) ->
         dispatch
@@ -88,7 +76,9 @@ map_dispatch_to_props = (dispatch) ->
 
     get_raw_dctns_list: ->
         dispatch
-            type: 'get_raw_dctns_list'
+            type: 'primus_hotwire'
+            payload:
+                type: 'get_raw_dctns_list'
 
     browse_dctn: ({ dctn_name, upper_bound, lower_bound }) ->
         # TODO replace this ducttape logic with a redis side approach
@@ -96,8 +86,10 @@ map_dispatch_to_props = (dispatch) ->
         if dctn_name isnt 'd1.txt'
             upper_bound = 50
         dispatch
-            type: 'browse_dctn'
-            payload: { dctn_name, upper_bound, lower_bound }
+            type: 'primus_hotwire'
+            payload:
+                type: 'browse_dctn'
+                payload: { dctn_name, upper_bound, lower_bound }
 
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp)

@@ -18,47 +18,18 @@ arq = {}
 #         payload: desire.payload
 
 
+# NOTE: this one has identical implementation as 'primus_hotwire'
+# but differentiated to illuminate that these have been intercepted at the
+# reducer/update level.
+arq['gen_primus'] = ({ desire, state }) ->
+    { type, payload } = desire.payload
+    primus.write { type, payload }
 
 
 arq['primus_hotwire'] = ({ desire, state }) ->
     { type, payload } = desire.payload
     primus.write { type, payload }
 
-
-
-arq['build_selection'] = ({ desire, state }) ->
-    primus.write
-        type: 'build_selection'
-        payload: desire.payload
-
-
-arq['apply_parse_build_data_structure'] = ({ desire, state }) ->
-    primus.write
-        type: 'apply_parse_build_data_structure'
-        payload: desire.payload
-
-
-arq['get_initial_stati'] = ({ desire, state }) ->
-    primus.write
-        type: 'get_initial_stati'
-
-arq['browse_dctn'] = ({ desire, state }) ->
-    primus.write
-        type: 'browse_dctn'
-        payload: desire.payload
-
-arq['get_raw_dctns_list'] = ({ desire, store }) ->
-    primus.write
-        type: 'get_raw_dctns_list'
-
-
-
-arq['lookup_prefix'] = ({ desire, store }) ->
-    { payload } = desire
-    primus.write
-        type: 'lookup_prefix'
-        payload: payload
-        lookup: true
 
 arq['init_primus'] = ({ desire, store }) ->
     c 'primus initialising'

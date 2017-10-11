@@ -14,12 +14,12 @@ comp = rr
             style: styles.nav_bar()
 
             nav_button_002
-                action_msg: 'nav_dash_444'
-                button_text: 'dash-444'
+                action_msg: 'nav_prefix_tree'
+                button_text: 'autocomplete'
 
-            nav_button_002
-                action_msg: 'nav_dash_555'
-                button_text: 'dash-555'
+            # nav_button_002
+            #     action_msg: 'nav_bktree'
+            #     button_text: 'spellcheck'
 
 
 map_state_to_props = (state) ->

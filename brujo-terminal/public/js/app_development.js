@@ -49477,6 +49477,16 @@ function verifySubselectors(mapStateToProps, mapDispatchToProps, mergeProps, dis
 
 window.styles = {};
 
+styles.jobs_browser = function() {
+  return {
+    margin: .01 * ww,
+    display: 'flex',
+    flexDirection: 'column',
+    backgroundColor: 'lightcyan',
+    fontSize: .012 * wh
+  };
+};
+
 styles.dctn_scroll_item = function() {
   return {
     fontSize: .012 * wh,
@@ -49896,71 +49906,19 @@ exports['default'] = thunk;
 
 /***/ }),
 /* 118 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-var arq, concord_channel, keys_arq, keys_concord_channel, lookup;
+var arq, concord_api, concord_channel, dctn_api, keys_arq, keys_concord_channel, lookup;
 
-arq = {};
+({concord_api, dctn_api} = __webpack_require__(129));
+
+arq = {}; // change name to something like 'api'
+
+arq = fp.assign(arq, dctn_api);
 
 concord_channel = {};
 
-concord_channel['res_build_selection'] = function({state, action, data}) {
-  var job_id;
-  c(data);
-  c(data.payload, 'data.payload');
-  ({job_id} = data.payload);
-  return state.setIn(['jobs', job_id, 'build_status'], 'completed_build');
-};
-
-// state
-concord_channel.prefix_tree_match_report = function({state, action, data}) {
-  var match_set;
-  c(data.payload, 'data.payload');
-  ({match_set} = data.payload);
-  return state.setIn(['prefix_tree_match'], match_set);
-};
-
-concord_channel['build_progress_update'] = function({state, action, data}) {
-  var client_job_id, perc_count;
-  ({client_job_id, perc_count} = data.payload);
-  if (perc_count === 100) {
-    state = state.setIn(['jobs', client_job_id, 'build_status'], 'completed_build');
-  }
-  return state.setIn(['jobs', client_job_id, 'perc_count'], perc_count);
-};
-
-concord_channel['res_search_struct_nodemem'] = function({state, action, data}) {
-  return state.setIn(['search_results'], data.payload.search_results);
-};
-
-concord_channel['res_browse_raw_dctn'] = function({state, action, data}) {
-  var browse_rayy, mid_rayy, old_rayy;
-  ({browse_rayy} = data.payload);
-  old_rayy = state.getIn(['browse_rayy']);
-  if (old_rayy !== void 0) {
-    mid_rayy = [].concat(old_rayy);
-    mid_rayy = mid_rayy.concat(browse_rayy);
-    state = state.setIn(['browse_rayy'], mid_rayy);
-    return state;
-  } else {
-    state = state.setIn(['browse_rayy'], browse_rayy);
-    return state;
-  }
-};
-
-concord_channel['dctn_initial_blob'] = function({state, action, data}) {
-  return state.setIn(['dctn_blob'], data.payload.blob);
-};
-
-concord_channel['lookup_resp'] = function({state, action, data}) {
-  return state.setIn(['match'], data.payload);
-};
-
-concord_channel['res_get_raw_dctns_list'] = function({state, action, data}) {
-  c(data.payload, 'data.payload in res_get_raw_dctns_list');
-  state = state.setIn(['get_dctns_list_state'], 'received_it');
-  return state.setIn(['raw_dctns_list'], data.payload);
-};
+concord_channel = fp.assign(concord_channel, concord_api); // TODO converge the naming in favor of concord_api or better yet something more descriptive
 
 keys_concord_channel = keys(concord_channel);
 
@@ -50011,8 +49969,9 @@ arq['build_selection'] = function({state, action}) {
 
 arq.set_dctn_selected = function({state, action}) {
   var dctn_selected;
-  c('action.payload', dctn_selected = action.payload.dctn_name);
-  c('in reducer dctn_selected', dctn_selected);
+  // c 'action.payload',
+  dctn_selected = action.payload.dctn_name;
+  // c 'in reducer dctn_selected', dctn_selected
   state = state.setIn(['dctn_selected'], dctn_selected);
   return state;
 };
@@ -50035,18 +49994,12 @@ arq['get_initial_stati'] = function({state, action}) {
   return state.setIn(['get_initial_stati_req_status'], 'sent_request');
 };
 
-arq['get_raw_dctns_list'] = function({state, action}) {
-  state = state.setIn(['desires', shortid()], {
-    type: 'get_raw_dctns_list'
-  });
-  return state.setIn(['get_dctns_list_state'], 'sent_request');
+arq.nav_bktree = function({state, action}) {
+  return state.setIn(['view'], "bktree_view");
 };
 
-arq['lookup_prefix'] = function({state, action}) {
-  return state.setIn(['desires', shortid()], {
-    type: 'lookup_prefix',
-    payload: action.payload
-  });
+arq.nav_prefix_tree = function({state, action}) {
+  return state.setIn(['view'], "prefix_tree_view");
 };
 
 keys_arq = keys(arq);
@@ -50070,6 +50023,7 @@ exports.default = lookup;
 
 exports.default = {
   lookup: {
+    view: "prefix_tree_view",
     jobs: Imm.Map({}),
     search_results: [],
     dctn_selected: null,
@@ -50149,53 +50103,20 @@ arq = {};
 //     primus.writeeo
 //         type: 'send_message'
 //         payload: desire.payload
-arq['primus_hotwire'] = function({desire, state}) {
+
+// NOTE: this one has identical implementation as 'primus_hotwire'
+// but differentiated to illuminate that these have been intercepted at the
+// reducer/update level.
+arq['gen_primus'] = function({desire, state}) {
   var payload, type;
   ({type, payload} = desire.payload);
   return primus.write({type, payload});
 };
 
-arq['build_selection'] = function({desire, state}) {
-  return primus.write({
-    type: 'build_selection',
-    payload: desire.payload
-  });
-};
-
-arq['apply_parse_build_data_structure'] = function({desire, state}) {
-  return primus.write({
-    type: 'apply_parse_build_data_structure',
-    payload: desire.payload
-  });
-};
-
-arq['get_initial_stati'] = function({desire, state}) {
-  return primus.write({
-    type: 'get_initial_stati'
-  });
-};
-
-arq['browse_dctn'] = function({desire, state}) {
-  return primus.write({
-    type: 'browse_dctn',
-    payload: desire.payload
-  });
-};
-
-arq['get_raw_dctns_list'] = function({desire, store}) {
-  return primus.write({
-    type: 'get_raw_dctns_list'
-  });
-};
-
-arq['lookup_prefix'] = function({desire, store}) {
-  var payload;
-  ({payload} = desire);
-  return primus.write({
-    type: 'lookup_prefix',
-    payload: payload,
-    lookup: true
-  });
+arq['primus_hotwire'] = function({desire, state}) {
+  var payload, type;
+  ({type, payload} = desire.payload);
+  return primus.write({type, payload});
 };
 
 arq['init_primus'] = function({desire, store}) {
@@ -50224,11 +50145,18 @@ var comp, dash_000, dash_002, map_dispatch_to_props, map_state_to_props, render;
 
 dash_000 = rc(__webpack_require__(123).default);
 
-dash_002 = rc(__webpack_require__(124).default);
+dash_002 = rc(__webpack_require__(124).default); // prefix tree
 
 render = function() {
   // dash_000()
-  return dash_002();
+  switch (this.props.view) {
+    case "prefix_tree_view":
+      return dash_002();
+    case "bktree_view":
+      return div(null, "bktree view placeholder");
+    default:
+      return div(null, "error in views nexus");
+  }
 };
 
 comp = rr({
@@ -50236,7 +50164,7 @@ comp = rr({
 });
 
 map_state_to_props = function(state) {
-  return {};
+  return state.get('lookup').toJS();
 };
 
 map_dispatch_to_props = function(dispatch) {
@@ -50635,7 +50563,7 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var comp, dctn_browser, map_dispatch_to_props, map_state_to_props, nav_bar, text_entry_feedback;
+var comp, dctn_browser, jobs_browser, map_dispatch_to_props, map_state_to_props, nav_bar, text_entry_feedback;
 
 nav_bar = rc(__webpack_require__(125).default);
 
@@ -50643,13 +50571,31 @@ dctn_browser = rc(__webpack_require__(127).default);
 
 text_entry_feedback = rc(__webpack_require__(128).default);
 
+jobs_browser = rc(__webpack_require__(130).default);
+
 comp = rr({
   render: function() {
     return div(null, nav_bar(), div({
       style: {
         display: 'flex'
       }
-    }, dctn_browser(), text_entry_feedback()));
+    }, div({
+      style: {
+        display: 'flex',
+        flexDirection: 'column'
+      }
+    // alignItems: 'center'
+    }, dctn_browser(), button({
+      style: {
+        margin: .01 * ww,
+        width: .04 * ww
+      },
+      onClick: () => {
+        return this.props.prefix_tree_build_tree({
+          dctn_selected: this.props.dctn_selected
+        });
+      }
+    }, "build tree"), jobs_browser()), text_entry_feedback()));
   }
 });
 
@@ -50659,6 +50605,14 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
+    prefix_tree_build_tree: function({dctn_selected}) {
+      return dispatch({
+        type: 'prefix_tree_build_tree',
+        payload: {
+          dctn_name: dctn_selected
+        }
+      });
+    },
     search_prefix_tree: function({prefix}) {
       return dispatch({
         type: 'primus_hotwire',
@@ -50695,15 +50649,15 @@ comp = rr({
     return div({
       style: styles.nav_bar()
     }, nav_button_002({
-      action_msg: 'nav_dash_444',
-      button_text: 'dash-444'
-    }), nav_button_002({
-      action_msg: 'nav_dash_555',
-      button_text: 'dash-555'
+      action_msg: 'nav_prefix_tree',
+      button_text: 'autocomplete'
     }));
   }
 });
 
+// nav_button_002
+//     action_msg: 'nav_bktree'
+//     button_text: 'spellcheck'
 map_state_to_props = function(state) {
   return state.get('lookup').toJS();
 };
@@ -50839,14 +50793,7 @@ comp = rr({
         key: `word_item:${k}`,
         style: styles.dctn_scroll_item()
       }, word);
-    })), button({
-      onClick: () => {
-        c(this.props.dctn_selected, 'selected dctn');
-        return this.props.prefix_tree_build_tree({
-          dctn_selected: this.props.dctn_selected
-        });
-      }
-    }, "build tree"));
+    })));
   }
 });
 
@@ -50856,17 +50803,6 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
-    prefix_tree_build_tree: function({dctn_selected}) {
-      return dispatch({
-        type: 'primus_hotwire',
-        payload: {
-          type: 'prefix_tree_build_tree',
-          payload: {
-            dctn_name: dctn_selected
-          }
-        }
-      });
-    },
     set_dctn_selected: function({dctn_name}) {
       return dispatch({
         type: 'set_dctn_selected',
@@ -50875,7 +50811,10 @@ map_dispatch_to_props = function(dispatch) {
     },
     get_raw_dctns_list: function() {
       return dispatch({
-        type: 'get_raw_dctns_list'
+        type: 'primus_hotwire',
+        payload: {
+          type: 'get_raw_dctns_list'
+        }
       });
     },
     browse_dctn: function({dctn_name, upper_bound, lower_bound}) {
@@ -50885,8 +50824,11 @@ map_dispatch_to_props = function(dispatch) {
         upper_bound = 50;
       }
       return dispatch({
-        type: 'browse_dctn',
-        payload: {dctn_name, upper_bound, lower_bound}
+        type: 'primus_hotwire',
+        payload: {
+          type: 'browse_dctn',
+          payload: {dctn_name, upper_bound, lower_bound}
+        }
       });
     }
   };
@@ -50964,6 +50906,144 @@ map_dispatch_to_props = function(dispatch) {
       });
     }
   };
+};
+
+exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
+
+
+/***/ }),
+/* 129 */
+/***/ (function(module, exports) {
+
+var api, concord_channel;
+
+concord_channel = {};
+
+concord_channel.progress_update_prefix_tree_build = function({state, action, data}) {
+  var client_ref, perc_count;
+  ({perc_count, client_ref} = data.payload);
+  state = state.setIn(['jobs', client_ref, 'perc_count'], perc_count);
+  return state;
+};
+
+concord_channel['res_browse_raw_dctn'] = function({state, action, data}) {
+  var browse_rayy, mid_rayy, old_rayy;
+  ({browse_rayy} = data.payload);
+  old_rayy = state.getIn(['browse_rayy']);
+  if (old_rayy !== void 0) {
+    mid_rayy = [].concat(old_rayy);
+    mid_rayy = mid_rayy.concat(browse_rayy);
+    state = state.setIn(['browse_rayy'], mid_rayy);
+    return state;
+  } else {
+    state = state.setIn(['browse_rayy'], browse_rayy);
+    return state;
+  }
+};
+
+concord_channel['res_get_raw_dctns_list'] = function({state, action, data}) {
+  state = state.setIn(['get_dctns_list_state'], 'received_it');
+  return state.setIn(['raw_dctns_list'], data.payload);
+};
+
+concord_channel.prefix_tree_match_report = function({state, action, data}) {
+  var match_set;
+  ({match_set} = data.payload);
+  return state.setIn(['prefix_tree_match'], match_set);
+};
+
+concord_channel['build_progress_update'] = function({state, action, data}) {
+  var client_job_id, perc_count;
+  ({client_job_id, perc_count} = data.payload);
+  if (perc_count === 100) {
+    state = state.setIn(['jobs', client_job_id, 'build_status'], 'completed_build');
+  }
+  return state.setIn(['jobs', client_job_id, 'perc_count'], perc_count);
+};
+
+api = {};
+
+// api['get_raw_dctns_list'] = ({ state, action }) ->
+//     state = state.setIn ['desires', shortid()],
+//         type: 'get_raw_dctns_list'
+//     state.setIn ['get_dctns_list_state'], 'sent_request'
+api.prefix_tree_build_tree = function({state, action}) {
+  var client_ref, dctn_name;
+  ({dctn_name} = action.payload);
+  client_ref = shortid();
+  state = state.setIn(['jobs', client_ref], Imm.Map({
+    job_type: `prefix_tree from: ${dctn_name}`,
+    perc_count: 0
+  }));
+  return state.setIn(['desires', shortid()], {
+    type: 'gen_primus',
+    payload: {
+      type: 'prefix_tree_build_tree',
+      payload: {dctn_name, client_ref}
+    }
+  });
+};
+
+exports.dctn_api = api;
+
+exports.concord_api = concord_channel;
+
+
+/***/ }),
+/* 130 */
+/***/ (function(module, exports) {
+
+// TODO: make a custom select element, the default is not
+// so customisable
+var comp, map_dispatch_to_props, map_state_to_props;
+
+comp = rr({
+  getInitialState: function() {
+    return {};
+  },
+  render: function() {
+    return div({
+      style: styles.jobs_browser()
+    }, div({
+      style: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-around'
+      }
+    }, span({
+      style: {
+        fontSize: .012 * wh
+      }
+    }, "job_type"), span({
+      style: {
+        fontSize: .012 * wh
+      }
+    }, "% complete")), _.map(this.props.jobs, (job, client_ref) => {
+      return div({
+        key: `job:${client_ref}`,
+        style: {
+          display: 'flex',
+          justifyContent: 'space-around'
+        }
+      }, span({
+        style: {
+          minWidth: '40%'
+        }
+      }, job.job_type), span({
+        style: {
+          minWidth: '40%'
+        }
+      }, job.perc_count));
+    }));
+  }
+});
+
+map_state_to_props = function(state) {
+  return state.get('lookup').toJS();
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {};
 };
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);

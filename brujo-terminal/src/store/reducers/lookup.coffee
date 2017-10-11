@@ -1,66 +1,17 @@
 
 
-arq = {}
+{ concord_api, dctn_api } = require('./dctn_stuff.coffee')
+
+
+arq = {} # change name to something like 'api'
+arq = fp.assign arq, dctn_api
 
 
 concord_channel = {}
-
-
-concord_channel['res_build_selection'] = ({ state, action, data }) ->
-    c data
-    c data.payload, 'data.payload'
-    { job_id } = data.payload
-    state.setIn ['jobs', job_id, 'build_status'], 'completed_build'
-    # state
-
-
-concord_channel.prefix_tree_match_report = ({ state, action, data }) ->
-    c data.payload, 'data.payload'
-    { match_set } = data.payload
-    state.setIn ['prefix_tree_match'], match_set
-
-
-concord_channel['build_progress_update'] = ({ state, action, data }) ->
-    { client_job_id, perc_count } = data.payload
-    if perc_count is 100
-        state = state.setIn ['jobs', client_job_id, 'build_status'], 'completed_build'
-    state.setIn ['jobs', client_job_id, 'perc_count'], perc_count
-
-
-concord_channel['res_search_struct_nodemem'] = ({ state, action, data }) ->
-    state.setIn ['search_results'], data.payload.search_results
-
-
-concord_channel['res_browse_raw_dctn'] = ({ state, action, data }) ->
-    { browse_rayy } = data.payload
-    old_rayy = state.getIn ['browse_rayy']
-    if old_rayy isnt undefined
-        mid_rayy = [].concat old_rayy
-        mid_rayy = mid_rayy.concat browse_rayy
-        state = state.setIn ['browse_rayy'], mid_rayy
-        state
-    else
-        state = state.setIn ['browse_rayy'], browse_rayy
-        state
-
-
-concord_channel['dctn_initial_blob'] = ({ state, action, data }) ->
-    state.setIn ['dctn_blob'], data.payload.blob
-
-
-concord_channel['lookup_resp'] = ({ state, action, data }) ->
-    state.setIn ['match'], data.payload
-
-
-concord_channel['res_get_raw_dctns_list'] = ({ state, action, data }) ->
-    c data.payload, 'data.payload in res_get_raw_dctns_list'
-    state = state.setIn ['get_dctns_list_state'], 'received_it'
-    state.setIn ['raw_dctns_list'], data.payload
+concord_channel = fp.assign concord_channel, concord_api # TODO converge the naming in favor of concord_api or better yet something more descriptive
 
 
 keys_concord_channel = keys concord_channel
-
-
 arq['primus:data'] = ({ state, action }) ->
     { data } = action.payload
     { type, payload } = action.payload.data
@@ -68,6 +19,9 @@ arq['primus:data'] = ({ state, action }) ->
         concord_channel[type] { state, action, data }
     else
         state
+
+
+
 
 
 # these that require primus write sideeffects can be
@@ -100,9 +54,9 @@ arq['build_selection'] = ({ state, action }) ->
 
 
 arq.set_dctn_selected = ({ state, action }) ->
-    c 'action.payload',
+    # c 'action.payload',
     dctn_selected = action.payload.dctn_name
-    c 'in reducer dctn_selected', dctn_selected
+    # c 'in reducer dctn_selected', dctn_selected
     state = state.setIn ['dctn_selected'], dctn_selected
     state
 
@@ -122,16 +76,13 @@ arq['get_initial_stati'] = ({ state, action }) ->
     state.setIn ['get_initial_stati_req_status'], 'sent_request'
 
 
-arq['get_raw_dctns_list'] = ({ state, action }) ->
-    state = state.setIn ['desires', shortid()],
-        type: 'get_raw_dctns_list'
-    state.setIn ['get_dctns_list_state'], 'sent_request'
+
+arq.nav_bktree = ({ state, action }) ->
+    state.setIn ['view'], "bktree_view"
 
 
-arq['lookup_prefix'] = ({ state, action }) ->
-    state.setIn ['desires', shortid()],
-        type: 'lookup_prefix'
-        payload: action.payload
+arq.nav_prefix_tree = ({ state, action }) ->
+    state.setIn ['view'], "prefix_tree_view"
 
 
 keys_arq = keys arq

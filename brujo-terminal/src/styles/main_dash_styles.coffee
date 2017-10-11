@@ -4,6 +4,14 @@
 window.styles = {}
 
 
+styles.jobs_browser = ->
+    margin: .01 * ww
+    display: 'flex'
+    flexDirection: 'column'
+    backgroundColor: 'lightcyan'
+    fontSize: .012 * wh
+
+
 styles.dctn_scroll_item = ->
     fontSize: .012 * wh
     lineHeight: .00036 * wh
