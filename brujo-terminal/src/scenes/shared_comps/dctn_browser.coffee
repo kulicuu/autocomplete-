@@ -13,7 +13,7 @@ comp = rr
             upper_bound: @state.upper_bound + 40
             lower_bound: @state.lower_bound + 40
         @props.browse_dctn
-            filename: @state.data_src_select
+            dctn_name: @state.data_src_select
             upper_bound: @state.upper_bound
             lower_bound: @state.lower_bound
 
@@ -54,7 +54,10 @@ comp = rr
                 style: styles.dctn_word_scroll()
                 onScroll: (e) =>
                     # TODO: improve scroll handling logic
-                    if (e.target.scrollTop / e.target.scrollHeight) > .2
+                    c 'scrollTop', e.target.scrollTop
+                    c 'scrollHeight', e.target.scrollHeight
+                    if (e.target.scrollTop / e.target.scrollHeight) > .43
+                        c 'should activate scrollfunc'
                         @scroll_func()
                 _.map @props['browse_rayy'], (word, k) ->
                     p

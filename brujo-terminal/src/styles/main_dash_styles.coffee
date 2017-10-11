@@ -40,7 +40,7 @@ styles.select = ->
     minHeight: .04 * wh
     maxHeight: .04 * wh
     fontFamily: 'sans'
-    fontSize: .02 * wh
+    fontSize: .012 * wh
     color: 'grey'
 
 

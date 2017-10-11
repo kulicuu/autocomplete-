@@ -87,23 +87,19 @@ api.search_prefix_tree = (payload) ->
     cursor = prefix_trees[_.keys(prefix_trees)[0]]
     { prefix, job_id } = payload
     prefix_rayy = prefix.split ''
-    c prefix, color.blue('prefix', on)
     for char in prefix_rayy
         if cursor.chd_nodes[char] isnt undefined
             cursor = cursor.chd_nodes[char]
         else
             break
-    c "#{color.red('---------------------------------------------------')}"
-    # reduce_tree [], cursor
     send_match
         job_id: job_id
         match_set: reduce_tree([], cursor)
 
 
-
 api.build_tree = (payload) ->
     counter = 0
-    { dctn_blob, job_id, spark_ref } = payload
+    { dctn_blob, job_id, tree_id } = payload
     raw_rayy = dctn_blob.split '\n'
     len_raw_rayy = raw_rayy.length
     perc_count = len_raw_rayy / 100
@@ -142,6 +138,7 @@ api.build_tree = (payload) ->
     send_progress
         perc_count: 100
         job_id: job_id
+        tree_id: tree_id
 
 
 keys_api = _.keys api

@@ -49523,7 +49523,7 @@ styles.select = function() {
     minHeight: .04 * wh,
     maxHeight: .04 * wh,
     fontFamily: 'sans',
-    fontSize: .02 * wh,
+    fontSize: .012 * wh,
     color: 'grey'
   };
 };
@@ -50738,7 +50738,7 @@ comp = rr({
       lower_bound: this.state.lower_bound + 40
     });
     return this.props.browse_dctn({
-      filename: this.state.data_src_select,
+      dctn_name: this.state.data_src_select,
       upper_bound: this.state.upper_bound,
       lower_bound: this.state.lower_bound
     });
@@ -50784,7 +50784,10 @@ comp = rr({
       style: styles.dctn_word_scroll(),
       onScroll: (e) => {
         // TODO: improve scroll handling logic
-        if ((e.target.scrollTop / e.target.scrollHeight) > .2) {
+        c('scrollTop', e.target.scrollTop);
+        c('scrollHeight', e.target.scrollHeight);
+        if ((e.target.scrollTop / e.target.scrollHeight) > .43) {
+          c('should activate scrollfunc');
           return this.scroll_func();
         }
       }
@@ -50859,6 +50862,7 @@ comp = rr({
       style: {
         textAlign: 'center',
         color: 'darkslategrey',
+        fontSize: .014 * wh,
         margin: .024 * wh
       },
       type: 'text',
@@ -50876,7 +50880,7 @@ comp = rr({
       return span({
         key: `prefix_tree_match_item:${idx}`,
         style: {
-          fontSize: .016 * wh,
+          fontSize: .012 * wh,
           color: 'magenta',
           fontFamily: 'sans'
         }
@@ -51004,21 +51008,20 @@ comp = rr({
   render: function() {
     return div({
       style: styles.jobs_browser()
-    }, div({
-      style: {
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-around'
-      }
-    }, span({
-      style: {
-        fontSize: .012 * wh
-      }
-    }, "job_type"), span({
-      style: {
-        fontSize: .012 * wh
-      }
-    }, "% complete")), _.map(this.props.jobs, (job, client_ref) => {
+    // div
+    //     style:
+    //         display: 'flex'
+    //         flexDirection: 'row'
+    //         justifyContent: 'space-around'
+    //     span
+    //         style:
+    //             fontSize: .012 * wh
+    //         "job_type"
+    //     span
+    //         style:
+    //             fontSize: .012 * wh
+    //         "% complete"
+    }, _.map(this.props.jobs, (job, client_ref) => {
       return div({
         key: `job:${client_ref}`,
         style: {
@@ -51027,13 +51030,23 @@ comp = rr({
         }
       }, span({
         style: {
-          minWidth: '40%'
+          fontSize: .011 * wh,
+          color: 'darkslategrey',
+          fontFamily: 'sans'
         }
-      }, job.job_type), span({
+      }, job.job_type), parseInt(job.perc_count) < 100 ? span({
         style: {
-          minWidth: '40%'
+          // minWidth: '40%'
+          fontSize: .011 * wh,
+          color: 'darkslategrey',
+          fontFamily: 'sans'
         }
-      }, job.perc_count));
+      }, job.perc_count + " % ") : span({
+        style: {
+          fontFamily: 'sans',
+          color: 'chartreuse'
+        }
+      }, 'DONE'));
     }));
   }
 });

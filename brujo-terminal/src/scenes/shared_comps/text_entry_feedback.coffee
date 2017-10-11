@@ -19,6 +19,7 @@ comp = rr
                 style:
                     textAlign: 'center'
                     color: 'darkslategrey'
+                    fontSize: .014 * wh
                     margin: .024 * wh
                 type: 'text'
                 placeholder: 'type word here'
@@ -33,7 +34,7 @@ comp = rr
                     span
                         key: "prefix_tree_match_item:#{idx}"
                         style:
-                            fontSize: .016 * wh
+                            fontSize: .012 * wh
                             color: 'magenta'
                             fontFamily: 'sans'
                         # item.match_word + " "
