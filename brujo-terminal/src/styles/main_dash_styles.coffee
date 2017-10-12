@@ -52,26 +52,33 @@ styles.dash_button_002 =
     minHeight: '100%'
     alignItems: 'center'
     justifyContent: 'center'
-    borderRadius: '20%'
+    # borderRadius: '20%'
     margin: '1%'
     backgroundColor: 'blanchedalmond'
 
 # styles.dash_button_003 = fp.assign styles.dash_button_002,
 #     backgroundColor: 'blanchedalmond'
 
+styles.click_white = (time) ->
+    backgroundColor: "hsl(#{time % 360}, #{time % 100}%, #{(1000 - time)/10}%)"
+    color: 'snow'
+
+
 styles.dash_button_002_mouseover = fp.assign styles.dash_button_002,
     backgroundColor: 'lightgreen'
 
 styles.dash_button_text_002 = ->
+    userSelect: 'none'
     fontFamily: 'sans'
-    fontSize: .03 * wh
+    fontSize: .016 * wh
     color: 'darkslategrey'
     alignText: 'center'
     fontWeight: 'normal'
 
 styles.dash_button_text_002_mouseover = ->
+    userSelect: 'none'
     fontFamily: 'sans'
-    fontSize: .03 * wh
+    fontSize: .016 * wh
     color: 'white'
     alignText: 'center'
     fontWeight: 'bold'
@@ -83,7 +90,7 @@ styles.nav_bar = ->
     justifyContent: 'center'
     backgroundColor: 'gainsboro'
     width: '100%'
-    height: .06 * wh
+    height: .024 * wh
 
 
 styles.dash_button =

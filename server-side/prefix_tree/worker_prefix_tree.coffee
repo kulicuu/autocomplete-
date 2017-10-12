@@ -85,16 +85,17 @@ reduce_tree = (acc, tree) ->
 
 api.search_prefix_tree = (payload) ->
     cursor = prefix_trees[_.keys(prefix_trees)[0]]
-    { prefix, job_id } = payload
-    prefix_rayy = prefix.split ''
-    for char in prefix_rayy
-        if cursor.chd_nodes[char] isnt undefined
-            cursor = cursor.chd_nodes[char]
-        else
-            break
-    send_match
-        job_id: job_id
-        match_set: reduce_tree([], cursor)
+    if cursor isnt undefined
+        { prefix, job_id } = payload
+        prefix_rayy = prefix.split ''
+        for char in prefix_rayy
+            if cursor.chd_nodes[char] isnt undefined
+                cursor = cursor.chd_nodes[char]
+            else
+                break
+        send_match
+            job_id: job_id
+            match_set: reduce_tree([], cursor)
 
 
 api.build_tree = (payload) ->

@@ -49535,21 +49535,29 @@ styles.dash_button_002 = {
   minHeight: '100%',
   alignItems: 'center',
   justifyContent: 'center',
-  borderRadius: '20%',
+  // borderRadius: '20%'
   margin: '1%',
   backgroundColor: 'blanchedalmond'
 };
 
 // styles.dash_button_003 = fp.assign styles.dash_button_002,
 //     backgroundColor: 'blanchedalmond'
+styles.click_white = function(time) {
+  return {
+    backgroundColor: `hsl(${time % 360}, ${time % 100}%, ${(1000 - time) / 10}%)`,
+    color: 'snow'
+  };
+};
+
 styles.dash_button_002_mouseover = fp.assign(styles.dash_button_002, {
   backgroundColor: 'lightgreen'
 });
 
 styles.dash_button_text_002 = function() {
   return {
+    userSelect: 'none',
     fontFamily: 'sans',
-    fontSize: .03 * wh,
+    fontSize: .016 * wh,
     color: 'darkslategrey',
     alignText: 'center',
     fontWeight: 'normal'
@@ -49558,8 +49566,9 @@ styles.dash_button_text_002 = function() {
 
 styles.dash_button_text_002_mouseover = function() {
   return {
+    userSelect: 'none',
     fontFamily: 'sans',
-    fontSize: .03 * wh,
+    fontSize: .016 * wh,
     color: 'white',
     alignText: 'center',
     fontWeight: 'bold'
@@ -49573,7 +49582,7 @@ styles.nav_bar = function() {
     justifyContent: 'center',
     backgroundColor: 'gainsboro',
     width: '100%',
-    height: .06 * wh
+    height: .024 * wh
   };
 };
 
@@ -49610,7 +49619,7 @@ Provider = rc(__webpack_require__(30).Provider);
 
 store = __webpack_require__(111);
 
-nexus = rc(__webpack_require__(122).default);
+nexus = rc(__webpack_require__(123).default);
 
 root_component = rr({
   render: function() {
@@ -49670,13 +49679,13 @@ lookup = __webpack_require__(118).default;
 
 reducers = {lookup};
 
-initial_state = __webpack_require__(119).default;
+initial_state = __webpack_require__(120).default;
 
 imm_initial_state = Imm.fromJS(initial_state);
 
 store = createStore(combineReducers(reducers), imm_initial_state, compose(applyMiddleware(middleware)));
 
-side_effects = __webpack_require__(120).default({store});
+side_effects = __webpack_require__(121).default({store});
 
 side_effect_trigger_f = function({store}) {
   return function() {
@@ -49910,7 +49919,7 @@ exports['default'] = thunk;
 
 var arq, concord_api, concord_channel, dctn_api, keys_arq, keys_concord_channel, lookup;
 
-({concord_api, dctn_api} = __webpack_require__(129));
+({concord_api, dctn_api} = __webpack_require__(119));
 
 arq = {}; // change name to something like 'api'
 
@@ -50021,6 +50030,84 @@ exports.default = lookup;
 /* 119 */
 /***/ (function(module, exports) {
 
+var api, concord_channel;
+
+concord_channel = {};
+
+concord_channel.progress_update_prefix_tree_build = function({state, action, data}) {
+  var client_ref, perc_count;
+  ({perc_count, client_ref} = data.payload);
+  state = state.setIn(['jobs', client_ref, 'perc_count'], perc_count);
+  return state;
+};
+
+concord_channel['res_browse_raw_dctn'] = function({state, action, data}) {
+  var browse_rayy, mid_rayy, old_rayy;
+  ({browse_rayy} = data.payload);
+  old_rayy = state.getIn(['browse_rayy']);
+  if (old_rayy !== void 0) {
+    mid_rayy = [].concat(old_rayy);
+    mid_rayy = mid_rayy.concat(browse_rayy);
+    state = state.setIn(['browse_rayy'], mid_rayy);
+    return state;
+  } else {
+    state = state.setIn(['browse_rayy'], browse_rayy);
+    return state;
+  }
+};
+
+concord_channel['res_get_raw_dctns_list'] = function({state, action, data}) {
+  state = state.setIn(['get_dctns_list_state'], 'received_it');
+  return state.setIn(['raw_dctns_list'], data.payload);
+};
+
+concord_channel.prefix_tree_match_report = function({state, action, data}) {
+  var match_set;
+  ({match_set} = data.payload);
+  return state.setIn(['prefix_tree_match'], match_set);
+};
+
+concord_channel['build_progress_update'] = function({state, action, data}) {
+  var client_job_id, perc_count;
+  ({client_job_id, perc_count} = data.payload);
+  if (perc_count === 100) {
+    state = state.setIn(['jobs', client_job_id, 'build_status'], 'completed_build');
+  }
+  return state.setIn(['jobs', client_job_id, 'perc_count'], perc_count);
+};
+
+api = {};
+
+// api['get_raw_dctns_list'] = ({ state, action }) ->
+//     state = state.setIn ['desires', shortid()],
+//         type: 'get_raw_dctns_list'
+//     state.setIn ['get_dctns_list_state'], 'sent_request'
+api.prefix_tree_build_tree = function({state, action}) {
+  var client_ref, dctn_name;
+  ({dctn_name} = action.payload);
+  client_ref = shortid();
+  state = state.setIn(['jobs', client_ref], Imm.Map({
+    job_type: `prefix_tree from: ${dctn_name}`,
+    perc_count: 0
+  }));
+  return state.setIn(['desires', shortid()], {
+    type: 'gen_primus',
+    payload: {
+      type: 'prefix_tree_build_tree',
+      payload: {dctn_name, client_ref}
+    }
+  });
+};
+
+exports.dctn_api = api;
+
+exports.concord_api = concord_channel;
+
+
+/***/ }),
+/* 120 */
+/***/ (function(module, exports) {
+
 exports.default = {
   lookup: {
     view: "prefix_tree_view",
@@ -50048,7 +50135,7 @@ exports.default = {
 
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var arq, keys_arq, side_effects_f;
@@ -50056,7 +50143,7 @@ var arq, keys_arq, side_effects_f;
 arq = {};
 
 // arq = assign arq, require('./side_effects/init.coffee').default
-arq = assign(arq, __webpack_require__(121).default);
+arq = assign(arq, __webpack_require__(122).default);
 
 keys_arq = keys(arq);
 
@@ -50082,7 +50169,7 @@ exports.default = side_effects_f;
 
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports) {
 
 var arq;
@@ -50138,14 +50225,14 @@ exports.default = arq;
 
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var comp, dash_000, dash_002, map_dispatch_to_props, map_state_to_props, render;
 
-dash_000 = rc(__webpack_require__(123).default);
+dash_000 = rc(__webpack_require__(124).default);
 
-dash_002 = rc(__webpack_require__(124).default); // prefix tree
+dash_002 = rc(__webpack_require__(125).default); // prefix tree
 
 render = function() {
   // dash_000()
@@ -50175,7 +50262,7 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports) {
 
 var comp, data_structs_list, map_dispatch_to_props, map_state_to_props, pane_0;
@@ -50560,16 +50647,16 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var comp, dctn_browser, jobs_browser, map_dispatch_to_props, map_state_to_props, nav_bar, text_entry_feedback;
 
-nav_bar = rc(__webpack_require__(125).default);
+nav_bar = rc(__webpack_require__(126).default);
 
-dctn_browser = rc(__webpack_require__(127).default);
+dctn_browser = rc(__webpack_require__(128).default);
 
-text_entry_feedback = rc(__webpack_require__(128).default);
+text_entry_feedback = rc(__webpack_require__(129).default);
 
 jobs_browser = rc(__webpack_require__(130).default);
 
@@ -50633,7 +50720,7 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // TODO : pass the ww, wh thing maybe globally instead of through the whole component chain,
@@ -50642,7 +50729,7 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 // dash_button_000 = rc require('./dash_button_000.coffee').default
 var comp, map_dispatch_to_props, map_state_to_props, nav_button_002;
 
-nav_button_002 = rc(__webpack_require__(126).default);
+nav_button_002 = rc(__webpack_require__(127).default);
 
 comp = rr({
   render: function() {
@@ -50670,22 +50757,41 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports) {
 
 // not so customizable class using version of dash button.
 // doesn't take styles as args, just takes the dispatch msg, and button text
-var comp, map_dispatch_to_props, map_state_to_props;
+var click_time, comp, map_dispatch_to_props, map_state_to_props;
+
+click_time = function(counter, setState) {
+  return setTimeout(function() {
+    counter -= 10;
+    setState({
+      click_time: counter
+    });
+    if (counter > 0) {
+      return click_time(counter, setState);
+    } else {
+      return setState({
+        click_time: null,
+        click_white: false
+      });
+    }
+  }, 10);
+};
 
 comp = rr({
   getInitialState: function() {
     return {
-      hovering: false
+      click_white: false,
+      hovering: false,
+      click_time: null
     };
   },
   render: function() {
     return div({
-      style: this.state.hovering === true ? styles.dash_button_002_mouseover : styles.dash_button_002,
+      style: this.state.click_white === true ? styles.click_white(this.state.click_time) : this.state.hovering === true ? styles.dash_button_002_mouseover : styles.dash_button_002,
       onMouseOver: () => {
         return this.setState({
           hovering: true
@@ -50697,6 +50803,10 @@ comp = rr({
         });
       },
       onClick: () => {
+        this.setState({
+          click_white: true
+        });
+        click_time(1000, this.setState.bind(this));
         return this.props.click_action(this.props.action_msg);
       }
     }, span({
@@ -50724,7 +50834,7 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports) {
 
 // TODO: make a custom select element, the default is not
@@ -50841,7 +50951,7 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports) {
 
 var comp, map_dispatch_to_props, map_state_to_props;
@@ -50913,84 +51023,6 @@ map_dispatch_to_props = function(dispatch) {
 };
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
-
-
-/***/ }),
-/* 129 */
-/***/ (function(module, exports) {
-
-var api, concord_channel;
-
-concord_channel = {};
-
-concord_channel.progress_update_prefix_tree_build = function({state, action, data}) {
-  var client_ref, perc_count;
-  ({perc_count, client_ref} = data.payload);
-  state = state.setIn(['jobs', client_ref, 'perc_count'], perc_count);
-  return state;
-};
-
-concord_channel['res_browse_raw_dctn'] = function({state, action, data}) {
-  var browse_rayy, mid_rayy, old_rayy;
-  ({browse_rayy} = data.payload);
-  old_rayy = state.getIn(['browse_rayy']);
-  if (old_rayy !== void 0) {
-    mid_rayy = [].concat(old_rayy);
-    mid_rayy = mid_rayy.concat(browse_rayy);
-    state = state.setIn(['browse_rayy'], mid_rayy);
-    return state;
-  } else {
-    state = state.setIn(['browse_rayy'], browse_rayy);
-    return state;
-  }
-};
-
-concord_channel['res_get_raw_dctns_list'] = function({state, action, data}) {
-  state = state.setIn(['get_dctns_list_state'], 'received_it');
-  return state.setIn(['raw_dctns_list'], data.payload);
-};
-
-concord_channel.prefix_tree_match_report = function({state, action, data}) {
-  var match_set;
-  ({match_set} = data.payload);
-  return state.setIn(['prefix_tree_match'], match_set);
-};
-
-concord_channel['build_progress_update'] = function({state, action, data}) {
-  var client_job_id, perc_count;
-  ({client_job_id, perc_count} = data.payload);
-  if (perc_count === 100) {
-    state = state.setIn(['jobs', client_job_id, 'build_status'], 'completed_build');
-  }
-  return state.setIn(['jobs', client_job_id, 'perc_count'], perc_count);
-};
-
-api = {};
-
-// api['get_raw_dctns_list'] = ({ state, action }) ->
-//     state = state.setIn ['desires', shortid()],
-//         type: 'get_raw_dctns_list'
-//     state.setIn ['get_dctns_list_state'], 'sent_request'
-api.prefix_tree_build_tree = function({state, action}) {
-  var client_ref, dctn_name;
-  ({dctn_name} = action.payload);
-  client_ref = shortid();
-  state = state.setIn(['jobs', client_ref], Imm.Map({
-    job_type: `prefix_tree from: ${dctn_name}`,
-    perc_count: 0
-  }));
-  return state.setIn(['desires', shortid()], {
-    type: 'gen_primus',
-    payload: {
-      type: 'prefix_tree_build_tree',
-      payload: {dctn_name, client_ref}
-    }
-  });
-};
-
-exports.dctn_api = api;
-
-exports.concord_api = concord_channel;
 
 
 /***/ }),
