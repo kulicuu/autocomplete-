@@ -49479,7 +49479,7 @@ window.styles = {};
 
 styles.jobs_browser = function() {
   return {
-    margin: .01 * ww,
+    margin: .008 * ww,
     display: 'flex',
     flexDirection: 'column',
     backgroundColor: 'lightcyan',
@@ -50034,6 +50034,13 @@ var api, concord_channel;
 
 concord_channel = {};
 
+concord_channel.res_radar_graph = function({state, action, data}) {
+  var string_tree, tree_id;
+  ({tree_id, string_tree} = data.payload);
+  state = state.setIn(['tree_cursor'], JSON.parse(string_tree));
+  return state.setIn(['view'], 'radar_graph');
+};
+
 concord_channel.progress_update_prefix_tree_build = function({state, action, data}) {
   var client_ref, perc_count;
   ({perc_count, client_ref} = data.payload);
@@ -50068,15 +50075,28 @@ concord_channel.prefix_tree_match_report = function({state, action, data}) {
 };
 
 concord_channel['build_progress_update'] = function({state, action, data}) {
-  var client_job_id, perc_count;
-  ({client_job_id, perc_count} = data.payload);
+  var client_job_id, perc_count, tree_id;
+  ({client_job_id, perc_count, tree_id} = data.payload);
   if (perc_count === 100) {
     state = state.setIn(['jobs', client_job_id, 'build_status'], 'completed_build');
   }
+  state = state.setIn(['jobs', client_job_id, 'tree_id'], tree_id);
   return state.setIn(['jobs', client_job_id, 'perc_count'], perc_count);
 };
 
 api = {};
+
+api.radar_graph = function({state, action}) {
+  var tree_id;
+  ({tree_id} = action.payload);
+  return state.setIn(['desires', shortid()], {
+    type: 'gen_primus',
+    payload: {
+      type: 'radar_graph',
+      payload: {tree_id}
+    }
+  });
+};
 
 api.cancel_prefix_tree_job = function({state, action}) {
   state = state.setIn(['jobs'], Imm.Map({})); //TODO kill just the one job
@@ -50127,6 +50147,7 @@ exports.concord_api = concord_channel;
 exports.default = {
   lookup: {
     view: "prefix_tree_view",
+    tree_cursor: null,
     jobs: Imm.Map({}),
     search_results: [],
     dctn_selected: null,
@@ -50244,13 +50265,15 @@ exports.default = arq;
 /* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var bktree_view, comp, dash_000, dash_002, map_dispatch_to_props, map_state_to_props, render;
+var bktree_view, comp, dash_000, dash_002, map_dispatch_to_props, map_state_to_props, radar_graph, render;
 
 dash_000 = rc(__webpack_require__(124).default);
 
 dash_002 = rc(__webpack_require__(125).default); // prefix tree
 
 bktree_view = rc(__webpack_require__(131).default);
+
+radar_graph = rc(__webpack_require__(132).default);
 
 render = function() {
   // dash_000()
@@ -50259,6 +50282,8 @@ render = function() {
       return dash_002();
     case "bktree_view":
       return bktree_view();
+    case "radar_graph":
+      return radar_graph();
     default:
       return div(null, "error in views nexus");
   }
@@ -51081,20 +51106,9 @@ comp = rr({
   render: function() {
     return div({
       style: styles.jobs_browser()
-    // div
-    //     style:
-    //         display: 'flex'
-    //         flexDirection: 'row'
-    //         justifyContent: 'space-around'
-    //     span
-    //         style:
-    //             fontSize: .012 * wh
-    //         "job_type"
-    //     span
-    //         style:
-    //             fontSize: .012 * wh
-    //         "% complete"
     }, _.map(this.props.jobs, (job, client_ref) => {
+      var tree_id;
+      ({tree_id} = job);
       return div({
         key: `job:${client_ref}`,
         style: {
@@ -51103,23 +51117,47 @@ comp = rr({
         }
       }, span({
         style: {
-          fontSize: .011 * wh,
+          fontSize: .01 * wh,
           color: 'darkslategrey',
           fontFamily: 'sans'
         }
       }, job.job_type), parseInt(job.perc_count) < 100 ? span({
         style: {
-          // minWidth: '40%'
-          fontSize: .011 * wh,
+          fontSize: .01 * wh,
           color: 'darkslategrey',
           fontFamily: 'sans'
         }
-      }, job.perc_count + " % ") : span({
+      }, job.perc_count + " % ") : div({
+        style: {
+          display: 'flex',
+          justifyContent: 'space-around'
+        }
+      }, div({
+        style: {
+          marginLeft: .004 * ww,
+          marginRight: .004 * ww
+        }
+      }, span({
         style: {
           fontFamily: 'sans',
           color: 'chartreuse'
         }
-      }, 'DONE'));
+      }, 'DONE')), div({
+        style: {
+          marginLeft: .004 * ww
+        }
+      }, button({
+        style: {
+          fontFamily: 'sans',
+          fontSize: .01 * wh,
+          color: 'turquoise'
+        },
+        onClick: ((tree_id) => {
+          return () => {
+            return this.props.radar_graph({tree_id});
+          };
+        })(tree_id)
+      }, "RADAR"))));
     }));
   }
 });
@@ -51129,7 +51167,14 @@ map_state_to_props = function(state) {
 };
 
 map_dispatch_to_props = function(dispatch) {
-  return {};
+  return {
+    radar_graph: function({tree_id}) {
+      return dispatch({
+        type: 'radar_graph',
+        payload: {tree_id}
+      });
+    }
+  };
 };
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
@@ -51202,6 +51247,53 @@ map_dispatch_to_props = function(dispatch) {
       });
     }
   };
+};
+
+exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
+
+
+/***/ }),
+/* 132 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var comp, map_dispatch_to_props, map_state_to_props, nav_bar;
+
+nav_bar = rc(__webpack_require__(126).default);
+
+comp = rr({
+  render: function() {
+    return div({
+      style: {
+        display: "flex",
+        flexDirection: "column"
+      }
+    }, nav_bar(), div({
+      style: {
+        display: "flex",
+        color: "chartreuse",
+        alignItems: "center",
+        justifyContent: "center"
+      }
+    }, "graph radar"), svg({
+      width: .9 * ww,
+      height: .8 * wh
+    }, rect({
+      x: .2 * ww,
+      y: .2 * wh,
+      width: .4 * ww,
+      height: .6 * wh,
+      fill: 'magenta'
+    })));
+  }
+});
+
+// _.map @props.tree_cursor.string_tree, (v, k) ->
+map_state_to_props = function(state) {
+  return state.get('lookup').toJS();
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {};
 };
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);

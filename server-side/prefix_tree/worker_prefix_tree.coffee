@@ -60,23 +60,23 @@ map_prefix_to_match = ({ dictionary, prefix }) ->
         return candides.pop()
 
 
-# search_prefix_tree__ = ({ prefix_tree, prefix }) ->
-#     cursor = prefix_tree
-#     prefix_rayy = prefix.split ''
-#     c prefix, color.blue('prefix', on)
-#     for char in prefix_rayy
-#         cursor = cursor.chd_nodes[char]
-#         if cursor is undefined
-#             return 'Not found.'
-#     _.omit cursor, 'chd_nodes'
-
-
 reduce_tree = (acc, tree) ->
     if acc.indexOf(tree.match_word) is -1
         acc = [].concat(acc, tree.match_word)
     _.reduce tree.chd_nodes, (acc2, node, prefix) ->
         reduce_tree acc2, node
     , acc
+
+
+api.get_tree = (payload) ->
+    { tree_id, job_id } = payload
+    prefix_tree = prefix_trees[_.keys(prefix_trees)[0]] # for now just get the first available
+    process.send
+        type: 'prefix_tree_blob'
+        payload:
+            string_tree: JSON.stringify(prefix_tree)
+            job_id: job_id
+            tree_id: tree_id
 
 
 api.search_prefix_tree = (payload) ->
@@ -104,21 +104,15 @@ api.search_prefix_tree = (payload) ->
                     match_set: reduce_tree([], cursor)
 
 
-# api.cancel_build_job = ->
-
-
-
 api.build_tree = (payload) ->
     counter = 0
     { dctn_blob, job_id, tree_id } = payload
     raw_rayy = dctn_blob.split '\n'
     len_raw_rayy = raw_rayy.length
     perc_count = len_raw_rayy / 100
-
     tree =
         chd_nodes: {}
         prefix: ''
-
     for word, idx in raw_rayy
         c "#{color.green(word, on)}"
         cursor = tree
@@ -126,12 +120,11 @@ api.build_tree = (payload) ->
         unless word.length < 1
             counter++
             perc = counter / perc_count
-
             if Math.floor(counter % perc_count) is 0
                 send_progress
                     perc_count: Math.floor perc
                     job_id: job_id
-
+                    tree_id: tree_id
             for char, jdx in word
                 prefix+= char
                 if not _.includes(_.keys(cursor.chd_nodes), char)
@@ -142,11 +135,8 @@ api.build_tree = (payload) ->
                         prefix: prefix
                         chd_nodes: {}
                 cursor = cursor.chd_nodes[char]
-
-    # naive_cache_it { prefix_tree: tree, job_id: job_id }
-    prefix_trees[job_id] = tree
+    prefix_trees[tree_id] = tree
     c "#{color.yellow('should be done now', on)}"
-
     send_progress
         perc_count: 100
         job_id: job_id
@@ -161,3 +151,20 @@ process.on 'message', ({ type, payload }) ->
         api[type] payload
     else
         c "#{color.yellow('No-Op in worker_prefix_tree with :', on)} #{color.white(type, on)}"
+
+
+
+
+
+
+# --------------------------------------------
+
+# search_prefix_tree__ = ({ prefix_tree, prefix }) ->
+#     cursor = prefix_tree
+#     prefix_rayy = prefix.split ''
+#     c prefix, color.blue('prefix', on)
+#     for char in prefix_rayy
+#         cursor = cursor.chd_nodes[char]
+#         if cursor is undefined
+#             return 'Not found.'
+#     _.omit cursor, 'chd_nodes'

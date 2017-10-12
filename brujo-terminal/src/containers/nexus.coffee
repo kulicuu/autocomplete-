@@ -6,6 +6,8 @@ dash_002 = rc require('../scenes/dash_002.coffee').default # prefix tree
 
 bktree_view = rc require('../scenes/bktree_view.coffee').default
 
+radar_graph = rc require('../scenes/radar_graph.coffee').default
+
 
 
 render = ->
@@ -15,6 +17,8 @@ render = ->
             dash_002()
         when "bktree_view"
             bktree_view()
+        when "radar_graph"
+            radar_graph()
         else
             div null, "error in views nexus"
 

@@ -3,6 +3,12 @@
 concord_channel = {}
 
 
+concord_channel.res_radar_graph = ({ state, action, data }) ->
+    { tree_id, string_tree } = data.payload
+    state = state.setIn ['tree_cursor'], JSON.parse(string_tree)
+    state.setIn ['view'], 'radar_graph'
+
+
 concord_channel.progress_update_prefix_tree_build = ({ state, action, data }) ->
      { perc_count, client_ref } = data.payload
      state = state.setIn ['jobs', client_ref, 'perc_count'],
@@ -34,15 +40,24 @@ concord_channel.prefix_tree_match_report = ({ state, action, data }) ->
 
 
 concord_channel['build_progress_update'] = ({ state, action, data }) ->
-    { client_job_id, perc_count } = data.payload
+    { client_job_id, perc_count, tree_id } = data.payload
     if perc_count is 100
         state = state.setIn ['jobs', client_job_id, 'build_status'], 'completed_build'
+    state = state.setIn ['jobs', client_job_id, 'tree_id'], tree_id
     state.setIn ['jobs', client_job_id, 'perc_count'], perc_count
 
 
 
 api = {}
 
+
+api.radar_graph = ({ state, action }) ->
+    { tree_id } = action.payload
+    state.setIn ['desires', shortid()],
+        type: 'gen_primus'
+        payload:
+            type: 'radar_graph'
+            payload: { tree_id }
 
 
 api.cancel_prefix_tree_job = ({ state, action }) ->

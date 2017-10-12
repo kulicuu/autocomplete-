@@ -5,7 +5,7 @@ window.styles = {}
 
 
 styles.jobs_browser = ->
-    margin: .01 * ww
+    margin: .008 * ww
     display: 'flex'
     flexDirection: 'column'
     backgroundColor: 'lightcyan'

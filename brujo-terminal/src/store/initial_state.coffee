@@ -4,6 +4,8 @@ exports.default =
 
         view: "prefix_tree_view"
 
+        tree_cursor: null
+
         jobs: Imm.Map({})
 
         search_results: []

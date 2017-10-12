@@ -14,21 +14,8 @@ comp = rr
     render: ->
         div
             style: styles.jobs_browser()
-            # div
-            #     style:
-            #         display: 'flex'
-            #         flexDirection: 'row'
-            #         justifyContent: 'space-around'
-            #     span
-            #         style:
-            #             fontSize: .012 * wh
-            #         "job_type"
-            #     span
-            #         style:
-            #             fontSize: .012 * wh
-            #         "% complete"
-
             _.map @props.jobs, (job, client_ref) =>
+                { tree_id } = job
                 div
                     key: "job:#{client_ref}"
                     style:
@@ -36,24 +23,43 @@ comp = rr
                         justifyContent: 'space-around'
                     span
                         style:
-                            fontSize: .011 * wh
+                            fontSize: .01 * wh
                             color: 'darkslategrey'
                             fontFamily: 'sans'
                         job.job_type
                     if parseInt(job.perc_count) < 100
                         span
                             style:
-                                # minWidth: '40%'
-                                fontSize: .011 * wh
+                                fontSize: .01 * wh
                                 color: 'darkslategrey'
                                 fontFamily: 'sans'
                             job.perc_count + " % "
                     else
-                        span
+                        div
                             style:
-                                fontFamily: 'sans'
-                                color: 'chartreuse'
-                            'DONE'
+                                display: 'flex'
+                                justifyContent: 'space-around'
+                            div
+                                style:
+                                    marginLeft: .004 * ww
+                                    marginRight: .004 * ww
+                                span
+                                    style:
+                                        fontFamily: 'sans'
+                                        color: 'chartreuse'
+                                    'DONE'
+                            div
+                                style:
+                                    marginLeft: .004 * ww
+                                button
+                                    style:
+                                        fontFamily: 'sans'
+                                        fontSize: .01 * wh
+                                        color: 'turquoise'
+                                    onClick: do (tree_id) =>
+                                        =>
+                                            @props.radar_graph { tree_id }
+                                    "RADAR"
 
 
 
@@ -62,7 +68,10 @@ map_state_to_props = (state) ->
 
 
 map_dispatch_to_props = (dispatch) ->
-    {}
+    radar_graph: ({ tree_id }) ->
+        dispatch
+            type: 'radar_graph'
+            payload: { tree_id }
 
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp)
