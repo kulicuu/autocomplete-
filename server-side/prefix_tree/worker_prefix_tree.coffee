@@ -104,7 +104,7 @@ api.search_prefix_tree = (payload) ->
                     match_set: reduce_tree([], cursor)
 
 
-api.cancel_build_job = ->
+# api.cancel_build_job = ->
 
 
 

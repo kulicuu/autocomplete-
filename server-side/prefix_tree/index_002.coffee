@@ -2,7 +2,7 @@
 
 
 
-tree_worker = fork(path.resolve(__dirname, 'worker_prefix_tree.coffee'))
+
 
 
 sparks = {}
@@ -14,6 +14,8 @@ trees = {}
 
 
 # tree_build_complete = ({}) ->
+
+tree_worker = null # scoped here
 
 
 worker_res_api = {}
@@ -45,11 +47,15 @@ worker_res_api.progress_update = ({ payload }) ->
 keys_worker_res_api = _.keys worker_res_api
 
 
-tree_worker.on 'message', ({ type, payload }) ->
-    if _.includes(keys_worker_res_api, type)
-        worker_res_api[type] { payload }
-    else
-        c "#{color.yellow('No-Op in prefix_tree_worker_res_api with :', on)} #{color.white(type, on)}"
+start_drone = ->
+    tree_worker = fork(path.resolve(__dirname, 'worker_prefix_tree.coffee'))
+    tree_worker.on 'message', ({ type, payload }) ->
+        if _.includes(keys_worker_res_api, type)
+            worker_res_api[type] { payload }
+        else
+            c "#{color.yellow('No-Op in prefix_tree_worker_res_api with :', on)} #{color.white(type, on)}"
+
+
 
 
 api = {}
@@ -74,7 +80,7 @@ api.cancel_prefix_tree_job = ({ payload, spark }) ->
     #     payload: null # but will cleanup later, and also should get acks, TODO
     tree_worker.kill()
     setTimeout ->
-        tree_worker = fork(path.resolve(__dirname, 'worker_prefix_tree.coffee'))
+        start_drone()
     , 100
 
 
@@ -100,3 +106,8 @@ api.prefix_tree_build_tree = ({ payload, spark }) ->
 
 
 exports.default = api
+
+
+setTimeout ->
+    start_drone()
+, 100
