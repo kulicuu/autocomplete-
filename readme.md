@@ -63,9 +63,10 @@ and
 
 
 ##### previews ::
-_eventually there will be some interactive graphics like this_
-
+_Eventually there will be some interactive graphics.  Here is a very primitive early version, for what will be a point and click driven graph navigation tool:_
 <img src="./graph_radar.png"/>
 
+
+Already there is some structure building functions and test traversing:
 _and testing traversing functions (like autocomplete)_
 <img src="./autocomplete.png"/>
