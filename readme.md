@@ -60,3 +60,12 @@ e.g. from project root:
 and
 
 `redis-server ./redis_mgmt/worker_redis.conf`
+
+
+##### previews ::
+_eventually there will be some interactive graphics like this_
+
+<img src="./graph_radar.png"/>
+
+_and testing traversing functions (like autocomplete)_
+<img src="./autocomplete.png"/>
