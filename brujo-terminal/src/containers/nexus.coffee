@@ -4,6 +4,8 @@ dash_000 = rc require('../scenes/dash_000.coffee').default
 
 dash_002 = rc require('../scenes/dash_002.coffee').default # prefix tree
 
+bktree_view = rc require('../scenes/bktree_view.coffee').default
+
 
 
 render = ->
@@ -12,7 +14,7 @@ render = ->
         when "prefix_tree_view"
             dash_002()
         when "bktree_view"
-            div null, "bktree view placeholder"
+            bktree_view()
         else
             div null, "error in views nexus"
 

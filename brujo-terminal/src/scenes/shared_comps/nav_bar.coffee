@@ -15,11 +15,11 @@ comp = rr
 
             nav_button_002
                 action_msg: 'nav_prefix_tree'
-                button_text: 'autocomplete'
+                button_text: 'Prefix-tree'
 
-            # nav_button_002
-            #     action_msg: 'nav_bktree'
-            #     button_text: 'spellcheck'
+            nav_button_002
+                action_msg: 'nav_bktree'
+                button_text: 'Burkhard-Keller-tree'
 
 
 map_state_to_props = (state) ->

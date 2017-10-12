@@ -50078,10 +50078,26 @@ concord_channel['build_progress_update'] = function({state, action, data}) {
 
 api = {};
 
-// api['get_raw_dctns_list'] = ({ state, action }) ->
-//     state = state.setIn ['desires', shortid()],
-//         type: 'get_raw_dctns_list'
-//     state.setIn ['get_dctns_list_state'], 'sent_request'
+api.cancel_prefix_tree_job = function({state, action}) {
+  state = state.setIn(['jobs'], Imm.Map({})); //TODO kill just the one job
+  return state.setIn(['desires', shortid()], {
+    type: 'gen_primus',
+    payload: {
+      type: 'cancel_prefix_tree_job',
+      payload: null
+    }
+  });
+};
+
+api.search_prefix_tree = function({state, action}) {
+  state = state.setIn(['prefix_tree_match'], []);
+  return state.setIn(['desires', shortid()], {
+    type: 'gen_primus',
+    payload: action.payload
+  });
+};
+
+// TODO with Elm inspiration can rename side-effects to effects and rename desires to 'commands'
 api.prefix_tree_build_tree = function({state, action}) {
   var client_ref, dctn_name;
   ({dctn_name} = action.payload);
@@ -50228,11 +50244,13 @@ exports.default = arq;
 /* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var comp, dash_000, dash_002, map_dispatch_to_props, map_state_to_props, render;
+var bktree_view, comp, dash_000, dash_002, map_dispatch_to_props, map_state_to_props, render;
 
 dash_000 = rc(__webpack_require__(124).default);
 
 dash_002 = rc(__webpack_require__(125).default); // prefix tree
+
+bktree_view = rc(__webpack_require__(131).default);
 
 render = function() {
   // dash_000()
@@ -50240,7 +50258,7 @@ render = function() {
     case "prefix_tree_view":
       return dash_002();
     case "bktree_view":
-      return div(null, "bktree view placeholder");
+      return bktree_view();
     default:
       return div(null, "error in views nexus");
   }
@@ -50650,7 +50668,7 @@ exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
 /* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var comp, dctn_browser, jobs_browser, map_dispatch_to_props, map_state_to_props, nav_bar, text_entry_feedback;
+var comp, dctn_browser, job_in_progress, jobs_browser, map_dispatch_to_props, map_state_to_props, nav_bar, text_entry_feedback;
 
 nav_bar = rc(__webpack_require__(126).default);
 
@@ -50660,8 +50678,18 @@ text_entry_feedback = rc(__webpack_require__(129).default);
 
 jobs_browser = rc(__webpack_require__(130).default);
 
+job_in_progress = function(jobs) {
+  return _.reduce(jobs, function(acc, job, k) {
+    if (parseInt(job.perc_count) < 100) {
+      return true;
+    }
+  }, false);
+};
+
 comp = rr({
   render: function() {
+    var is_busy;
+    is_busy = job_in_progress(this.props.jobs);
     return div(null, nav_bar(), div({
       style: {
         display: 'flex'
@@ -50671,8 +50699,8 @@ comp = rr({
         display: 'flex',
         flexDirection: 'column'
       }
-    // alignItems: 'center'
     }, dctn_browser(), button({
+      disabled: is_busy,
       style: {
         margin: .01 * ww,
         width: .04 * ww
@@ -50682,7 +50710,17 @@ comp = rr({
           dctn_selected: this.props.dctn_selected
         });
       }
-    }, "build tree"), jobs_browser()), text_entry_feedback()));
+    }, is_busy ? "busy building" : "build prefix tree"), jobs_browser(), is_busy ? button({
+      style: {
+        margin: .01 * ww,
+        width: .04 * ww,
+        backgroundColor: 'thistle',
+        color: 'snow'
+      },
+      onClick: () => {
+        return this.props.cancel_job();
+      }
+    }, "cancel job") : void 0), text_entry_feedback()));
   }
 });
 
@@ -50692,6 +50730,12 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {
+    cancel_job: function() { //TODO: identify the precise job to be canceled
+      return dispatch({
+        type: 'cancel_prefix_tree_job',
+        payload: null
+      });
+    },
     prefix_tree_build_tree: function({dctn_selected}) {
       return dispatch({
         type: 'prefix_tree_build_tree',
@@ -50702,14 +50746,11 @@ map_dispatch_to_props = function(dispatch) {
     },
     search_prefix_tree: function({prefix}) {
       return dispatch({
-        type: 'primus_hotwire',
+        type: 'search_prefix_tree',
         payload: {
-          type: 'search_prefix_tree',
-          payload: {
-            client_ref: 'placeholder', // another client ref.
-            tree_id: 'placeholder', // will identify exactly which tree to search
-            prefix: prefix
-          }
+          client_ref: 'placeholder', // another client ref.
+          tree_id: 'placeholder', // will identify exactly which tree to search
+          prefix: prefix
         }
       });
     }
@@ -50737,14 +50778,14 @@ comp = rr({
       style: styles.nav_bar()
     }, nav_button_002({
       action_msg: 'nav_prefix_tree',
-      button_text: 'autocomplete'
+      button_text: 'Prefix-tree'
+    }), nav_button_002({
+      action_msg: 'nav_bktree',
+      button_text: 'Burkhard-Keller-tree'
     }));
   }
 });
 
-// nav_button_002
-//     action_msg: 'nav_bktree'
-//     button_text: 'spellcheck'
 map_state_to_props = function(state) {
   return state.get('lookup').toJS();
 };
@@ -51089,6 +51130,78 @@ map_state_to_props = function(state) {
 
 map_dispatch_to_props = function(dispatch) {
   return {};
+};
+
+exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
+
+
+/***/ }),
+/* 131 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var comp, dctn_browser, jobs_browser, map_dispatch_to_props, map_state_to_props, nav_bar, text_entry_feedback;
+
+nav_bar = rc(__webpack_require__(126).default);
+
+dctn_browser = rc(__webpack_require__(128).default);
+
+text_entry_feedback = rc(__webpack_require__(129).default);
+
+jobs_browser = rc(__webpack_require__(130).default);
+
+comp = rr({
+  render: function() {
+    return div(null, nav_bar(), div({
+      style: {
+        display: 'flex'
+      }
+    }, div({
+      style: {
+        display: 'flex',
+        flexDirection: 'column'
+      }
+    }, dctn_browser(), button({
+      style: {
+        margin: .01 * ww,
+        width: .04 * ww
+      },
+      onClick: () => {
+        return this.props.bktree_build_tree({
+          dctn_selected: this.props.dctn_selected
+        });
+      }
+    }, "build BK tree"), jobs_browser()), text_entry_feedback()));
+  }
+});
+
+map_state_to_props = function(state) {
+  return state.get('lookup').toJS();
+};
+
+map_dispatch_to_props = function(dispatch) {
+  return {
+    bktree_build_tree: function({dctn_selected}) {
+      return dispatch({
+        type: 'bktree_build_tree',
+        payload: {
+          dctn_name: dctn_selected
+        }
+      });
+    },
+    search_bktree_tree: function({prefix}) {
+      return dispatch({
+        type: 'primus_hotwire',
+        payload: {
+          type: 'search_bktree',
+          payload: {
+            client_ref: 'placeholder', // another client ref.
+            tree_id: 'placeholder', // will identify exactly which tree to search
+            prefix: prefix
+          }
+        }
+      });
+    }
+  };
 };
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);

@@ -60,7 +60,6 @@ map_prefix_to_match = ({ dictionary, prefix }) ->
         return candides.pop()
 
 
-
 # search_prefix_tree__ = ({ prefix_tree, prefix }) ->
 #     cursor = prefix_tree
 #     prefix_rayy = prefix.split ''
@@ -80,22 +79,33 @@ reduce_tree = (acc, tree) ->
     , acc
 
 
-
-
-
 api.search_prefix_tree = (payload) ->
-    cursor = prefix_trees[_.keys(prefix_trees)[0]]
-    if cursor isnt undefined
-        { prefix, job_id } = payload
-        prefix_rayy = prefix.split ''
-        for char in prefix_rayy
-            if cursor.chd_nodes[char] isnt undefined
-                cursor = cursor.chd_nodes[char]
-            else
-                break
+    { prefix, job_id } = payload
+    if prefix.length is 0
         send_match
             job_id: job_id
-            match_set: reduce_tree([], cursor)
+            match_set: []
+    else
+        cursor = prefix_trees[_.keys(prefix_trees)[0]]
+        canceled = false
+        if cursor isnt undefined
+            prefix_rayy = prefix.split ''
+            for char in prefix_rayy
+                if cursor.chd_nodes[char] isnt undefined
+                    cursor = cursor.chd_nodes[char]
+                else
+                    canceled = true
+                    send_match
+                        job_id: job_id
+                        match_set: []
+            if canceled is false
+                send_match
+                    job_id: job_id
+                    match_set: reduce_tree([], cursor)
+
+
+api.cancel_build_job = ->
+
 
 
 api.build_tree = (payload) ->
@@ -110,6 +120,7 @@ api.build_tree = (payload) ->
         prefix: ''
 
     for word, idx in raw_rayy
+        c "#{color.green(word, on)}"
         cursor = tree
         prefix = ''
         unless word.length < 1

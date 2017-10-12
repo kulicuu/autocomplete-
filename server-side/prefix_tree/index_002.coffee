@@ -59,14 +59,23 @@ api = {}
 
 
 api.search_prefix_tree = ({ payload, spark }) ->
-    # { tree_id, prefix, client_ref } = payload
-    # c payload, 'payload in index_002'
-
     job_id = v4()
     sparks[job_id] = spark
     tree_worker.send
         type: 'search_prefix_tree'
         payload: fp.assign payload, { job_id }
+
+
+
+api.cancel_prefix_tree_job = ({ payload, spark }) ->
+    # TODO : specifics on particular job, and also spark cleanup.
+    # tree_worker.send
+    #     type: 'cancel_build_job'
+    #     payload: null # but will cleanup later, and also should get acks, TODO
+    tree_worker.kill()
+    setTimeout ->
+        tree_worker = fork(path.resolve(__dirname, 'worker_prefix_tree.coffee'))
+    , 100
 
 
 api.prefix_tree_build_tree = ({ payload, spark }) ->

@@ -45,10 +45,22 @@ api = {}
 
 
 
-# api['get_raw_dctns_list'] = ({ state, action }) ->
-#     state = state.setIn ['desires', shortid()],
-#         type: 'get_raw_dctns_list'
-#     state.setIn ['get_dctns_list_state'], 'sent_request'
+api.cancel_prefix_tree_job = ({ state, action }) ->
+    state = state.setIn ['jobs'], Imm.Map({}) #TODO kill just the one job
+    state.setIn ['desires', shortid()],
+        type: 'gen_primus'
+        payload:
+            type: 'cancel_prefix_tree_job'
+            payload: null
+
+
+api.search_prefix_tree = ({ state, action }) ->
+    state = state.setIn ['prefix_tree_match'], []
+    state.setIn ['desires', shortid()],
+        type: 'gen_primus'
+        payload: action.payload
+        # TODO with Elm inspiration can rename side-effects to effects and rename desires to 'commands'
+
 
 
 api.prefix_tree_build_tree = ({ state, action }) ->
