@@ -49983,7 +49983,7 @@ window.onload = function() {
 /* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var applyMiddleware, combineReducers, compose, createStore, imm_initial_state, initial_state, lookup, middleware, reducers, set, side_effect_trigger_f, side_effects, state_js, store, thunk;
+var applyMiddleware, combineReducers, compose, createStore, effect_trigger_f, effects, imm_initial_state, initial_state, lookup, middleware, reducers, set, state_js, store, thunk;
 
 ({applyMiddleware, compose, createStore} = __webpack_require__(35));
 
@@ -50003,23 +50003,23 @@ imm_initial_state = Imm.fromJS(initial_state);
 
 store = createStore(combineReducers(reducers), imm_initial_state, compose(applyMiddleware(middleware)));
 
-side_effects = __webpack_require__(125).default({store});
+effects = __webpack_require__(133).default({store});
 
-side_effect_trigger_f = function({store}) {
+effect_trigger_f = function({store}) {
   return function() {
     var state_js;
     state_js = store.getState().toJS();
-    return side_effects({state_js});
+    return effects({state_js});
   };
 };
 
-set = side_effect_trigger_f({store});
+set = effect_trigger_f({store});
 
 store.subscribe(set);
 
 state_js = imm_initial_state.toJS();
 
-side_effects({state_js});
+effects({state_js});
 
 module.exports = store;
 
@@ -50235,13 +50235,13 @@ exports['default'] = thunk;
 /* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var arq, concord_api, concord_channel, dctn_api, keys_arq, keys_concord_channel, lookup;
+var api, concord_api, concord_channel, dctn_api, keys_api, keys_concord_channel, lookup;
 
 ({concord_api, dctn_api} = __webpack_require__(123));
 
-arq = {}; // change name to something like 'api'
+api = {}; // change name to something like 'api'
 
-arq = fp.assign(arq, dctn_api);
+api = fp.assign(api, dctn_api);
 
 concord_channel = {};
 
@@ -50249,7 +50249,7 @@ concord_channel = fp.assign(concord_channel, concord_api); // TODO converge the 
 
 keys_concord_channel = keys(concord_channel);
 
-arq['primus:data'] = function({state, action}) {
+api['primus:data'] = function({state, action}) {
   var data, payload, type;
   ({data} = action.payload);
   ({type, payload} = action.payload.data);
@@ -50263,21 +50263,21 @@ arq['primus:data'] = function({state, action}) {
 // these that require primus write sideeffects can be
 // handled by a single function from now on so additions
 // should require code edits in fewer places.
-arq['primus_hotwire'] = function({state, action}) {
+api['primus_hotwire'] = function({state, action}) {
   return state.setIn(['desires', shortid()], {
     type: 'primus_hotwire',
     payload: action.payload
   });
 };
 
-arq['search_struct'] = function({state, action}) {
+api['search_struct'] = function({state, action}) {
   return state.setIn(['desires', shortid()], {
     type: 'search_struct_nodemem',
     payload: action.payload
   });
 };
 
-arq['build_selection'] = function({state, action}) {
+api['build_selection'] = function({state, action}) {
   var client_job_id, data_src_select, data_struct_type_select;
   ({data_src_select, data_struct_type_select, client_job_id} = action.payload);
   state = state.setIn(['jobs', client_job_id], Imm.Map({
@@ -50294,7 +50294,7 @@ arq['build_selection'] = function({state, action}) {
   });
 };
 
-arq.set_dctn_selected = function({state, action}) {
+api.set_dctn_selected = function({state, action}) {
   var dctn_selected;
   // c 'action.payload',
   dctn_selected = action.payload.dctn_name;
@@ -50303,7 +50303,7 @@ arq.set_dctn_selected = function({state, action}) {
   return state;
 };
 
-arq['browse_dctn'] = function({state, action}) {
+api['browse_dctn'] = function({state, action}) {
   if (state.getIn(['dctn_browse_src']) !== action.payload.dctn_name) {
     state = state.setIn(['dctn_browse_src'], action.payload.dctn_name);
     state = state.setIn(['browse_rayy'], []);
@@ -50314,27 +50314,27 @@ arq['browse_dctn'] = function({state, action}) {
   });
 };
 
-arq['get_initial_stati'] = function({state, action}) {
+api['get_initial_stati'] = function({state, action}) {
   state = state.setIn(['desires', shortid()], {
     type: 'get_initial_stati'
   });
   return state.setIn(['get_initial_stati_req_status'], 'sent_request');
 };
 
-arq.nav_bktree = function({state, action}) {
+api.nav_bktree = function({state, action}) {
   return state.setIn(['view'], "bktree_view");
 };
 
-arq.nav_prefix_tree = function({state, action}) {
+api.nav_prefix_tree = function({state, action}) {
   return state.setIn(['view'], "prefix_tree_view");
 };
 
-keys_arq = keys(arq);
+keys_api = keys(api);
 
 lookup = function(state, action) {
-  state = state.setIn(['desires'], Imm.Map({}));
-  if (includes(keys_arq, action.type)) {
-    return arq[action.type]({state, action});
+  state = state.setIn(['effects'], Imm.Map({}));
+  if (includes(keys_api, action.type)) {
+    return api[action.type]({state, action});
   } else {
     c('noop with ', action.type);
     return state;
@@ -50407,7 +50407,7 @@ api = {};
 api.radar_graph = function({state, action}) {
   var tree_id;
   ({tree_id} = action.payload);
-  return state.setIn(['desires', shortid()], {
+  return state.setIn(['effects', shortid()], {
     type: 'gen_primus',
     payload: {
       type: 'radar_graph',
@@ -50418,7 +50418,7 @@ api.radar_graph = function({state, action}) {
 
 api.cancel_prefix_tree_job = function({state, action}) {
   state = state.setIn(['jobs'], Imm.Map({})); //TODO kill just the one job
-  return state.setIn(['desires', shortid()], {
+  return state.setIn(['effects', shortid()], {
     type: 'gen_primus',
     payload: {
       type: 'cancel_prefix_tree_job',
@@ -50429,13 +50429,13 @@ api.cancel_prefix_tree_job = function({state, action}) {
 
 api.search_prefix_tree = function({state, action}) {
   state = state.setIn(['prefix_tree_match'], []);
-  return state.setIn(['desires', shortid()], {
+  return state.setIn(['effects', shortid()], {
     type: 'gen_primus',
     payload: action.payload
   });
 };
 
-// TODO with Elm inspiration can rename side-effects to effects and rename desires to 'commands'
+// TODO with Elm inspiration can rename side-effects to effects and rename effects to 'commands'
 api.prefix_tree_build_tree = function({state, action}) {
   var client_ref, dctn_name;
   ({dctn_name} = action.payload);
@@ -50444,7 +50444,7 @@ api.prefix_tree_build_tree = function({state, action}) {
     job_type: `prefix_tree from: ${dctn_name}`,
     perc_count: 0
   }));
-  return state.setIn(['desires', shortid()], {
+  return state.setIn(['effects', shortid()], {
     type: 'gen_primus',
     payload: {
       type: 'prefix_tree_build_tree',
@@ -50471,7 +50471,7 @@ exports.default = {
     dctn_selected: null,
     prefix_tree_match: null,
     get_dctns_list_state: null,
-    desires: Imm.Map({
+    effects: Imm.Map({
       // "#{shortid()}":
       //     type: 'init_keyboard'
       //     payload: 'asnetuhnn'
@@ -50490,96 +50490,8 @@ exports.default = {
 
 
 /***/ }),
-/* 125 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arq, keys_arq, side_effects_f;
-
-arq = {};
-
-// arq = assign arq, require('./side_effects/init.coffee').default
-arq = assign(arq, __webpack_require__(126).default);
-
-keys_arq = keys(arq);
-
-side_effects_f = function({store}) {
-  return function({state_js}) {
-    var desire, key_id, ref, results, state;
-    state = state_js;
-    ref = state.lookup.desires;
-    results = [];
-    for (key_id in ref) {
-      desire = ref[key_id];
-      if (includes(keys_arq, desire.type)) {
-        results.push(arq[desire.type]({desire, store}));
-      } else {
-        results.push(void 0);
-      }
-    }
-    return results;
-  };
-};
-
-exports.default = side_effects_f;
-
-
-/***/ }),
-/* 126 */
-/***/ (function(module, exports) {
-
-var arq;
-
-arq = {};
-
-// arq['send_edited_message'] = ({ desire, store }) ->
-//     primus.write
-//         type: 'send_edited_message'
-//         payload: desire.payload
-
-// arq['change_username'] = ({ desire, store }) ->
-//     primus.write
-//         type: 'change_username'
-//         payload: desire.payload
-
-// arq['send_message'] = ({ desire, store }) ->
-//     primus.writeeo
-//         type: 'send_message'
-//         payload: desire.payload
-
-// NOTE: this one has identical implementation as 'primus_hotwire'
-// but differentiated to illuminate that these have been intercepted at the
-// reducer/update level.
-arq['gen_primus'] = function({desire, state}) {
-  var payload, type;
-  ({type, payload} = desire.payload);
-  return primus.write({type, payload});
-};
-
-arq['primus_hotwire'] = function({desire, state}) {
-  var payload, type;
-  ({type, payload} = desire.payload);
-  return primus.write({type, payload});
-};
-
-arq['init_primus'] = function({desire, store}) {
-  c('primus initialising');
-  return primus.on('data', function(data) {
-    c('primus data:', data);
-    return store.dispatch({
-      type: 'primus:data',
-      payload: {data}
-    });
-  });
-};
-
-// setInterval =>
-//     primus.write
-//         type: 'request_orient'
-// , 300
-exports.default = arq;
-
-
-/***/ }),
+/* 125 */,
+/* 126 */,
 /* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -51340,6 +51252,78 @@ map_dispatch_to_props = function(dispatch) {
 };
 
 exports.default = connect(map_state_to_props, map_dispatch_to_props)(comp);
+
+
+/***/ }),
+/* 133 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var api, effects_f, keys_api;
+
+api = {};
+
+// arq = assign arq, require('./side_effects/init.coffee').default
+api = assign(api, __webpack_require__(134).default);
+
+keys_api = keys(api);
+
+effects_f = function({store}) {
+  return function({state_js}) {
+    var effect, key_id, ref, results, state;
+    state = state_js;
+    ref = state.lookup.effect;
+    results = [];
+    for (key_id in ref) {
+      effect = ref[key_id];
+      if (includes(keys_api, effect.type)) {
+        results.push(api[effect.type]({effect, store}));
+      } else {
+        results.push(void 0);
+      }
+    }
+    return results;
+  };
+};
+
+exports.default = effects_f;
+
+
+/***/ }),
+/* 134 */
+/***/ (function(module, exports) {
+
+var api;
+
+api = {};
+
+api['gen_primus'] = function({effect, state}) {
+  var payload, type;
+  ({type, payload} = desire.payload);
+  return primus.write({type, payload});
+};
+
+api['primus_hotwire'] = function({effect, state}) {
+  var payload, type;
+  ({type, payload} = desire.payload);
+  return primus.write({type, payload});
+};
+
+api['init_primus'] = function({effect, store}) {
+  c('primus initialising');
+  return primus.on('data', function(data) {
+    c('primus data:', data);
+    return store.dispatch({
+      type: 'primus:data',
+      payload: {data}
+    });
+  });
+};
+
+// setInterval =>
+//     primus.write
+//         type: 'request_orient'
+// , 300
+exports.default = api;
 
 
 /***/ })

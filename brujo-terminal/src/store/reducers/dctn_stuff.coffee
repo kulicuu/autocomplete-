@@ -53,7 +53,7 @@ api = {}
 
 api.radar_graph = ({ state, action }) ->
     { tree_id } = action.payload
-    state.setIn ['desires', shortid()],
+    state.setIn ['effects', shortid()],
         type: 'gen_primus'
         payload:
             type: 'radar_graph'
@@ -62,7 +62,7 @@ api.radar_graph = ({ state, action }) ->
 
 api.cancel_prefix_tree_job = ({ state, action }) ->
     state = state.setIn ['jobs'], Imm.Map({}) #TODO kill just the one job
-    state.setIn ['desires', shortid()],
+    state.setIn ['effects', shortid()],
         type: 'gen_primus'
         payload:
             type: 'cancel_prefix_tree_job'
@@ -71,10 +71,10 @@ api.cancel_prefix_tree_job = ({ state, action }) ->
 
 api.search_prefix_tree = ({ state, action }) ->
     state = state.setIn ['prefix_tree_match'], []
-    state.setIn ['desires', shortid()],
+    state.setIn ['effects', shortid()],
         type: 'gen_primus'
         payload: action.payload
-        # TODO with Elm inspiration can rename side-effects to effects and rename desires to 'commands'
+        # TODO with Elm inspiration can rename side-effects to effects and rename effects to 'commands'
 
 
 
@@ -84,7 +84,7 @@ api.prefix_tree_build_tree = ({ state, action }) ->
     state = state.setIn ['jobs', client_ref], Imm.Map
         job_type: "prefix_tree from: #{dctn_name}"
         perc_count: 0
-    state.setIn ['desires', shortid()],
+    state.setIn ['effects', shortid()],
         type: 'gen_primus'
         payload:
             type: 'prefix_tree_build_tree'
